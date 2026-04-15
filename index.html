@@ -1,52 +1,753 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XrenBeats</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      margin: 0;
-      background: #0f0f0f;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
+    :root {
+      --black: #080808;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: rgba(255,255,255,0.07);
+      --white: #f5f5f5;
+      --muted: #888;
+      --accent: #c8ff00;
+      --accent2: #ff3c3c;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'Space Mono', monospace;
     }
-    .container {
-      padding: 50px;
-    }
-    hr {
-      width: 60%;
-      opacity: 0.3;
-      margin: 20px auto;
-    }
-    audio {
-      margin-top: 20px;
-      width: 80%;
-      max-width: 400px;
-    }
+
+```
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2.5rem;
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--accent); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 2.5rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%, rgba(200,255,0,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(255,60,60,0.05) 0%, transparent 60%),
+    var(--black);
+  z-index: 0;
+}
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 16vw, 14rem);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.4s forwards;
+}
+
+.hero-title .outline {
+  -webkit-text-stroke: 1.5px var(--white);
+  color: transparent;
+}
+
+.hero-title .accent { color: var(--accent); }
+
+.hero-sub {
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 420px;
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s forwards;
+}
+
+.hero-cta {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+
+.btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.85rem 2rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+
+.btn:hover { transform: translateY(-2px); }
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--black);
+}
+
+.btn-primary:hover { background: #d4ff1a; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost:hover {
+  border-color: var(--white);
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── SCROLLING TICKER ── */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0.75rem 0;
+  white-space: nowrap;
+}
+
+.ticker {
+  display: inline-flex;
+  animation: ticker 22s linear infinite;
+}
+
+.ticker span {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  padding: 0 2.5rem;
+}
+
+.ticker span.hi { color: var(--accent); }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── SECTION COMMONS ── */
+section {
+  padding: 6rem 2.5rem;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin-bottom: 1.5rem;
+}
+
+/* ── ABOUT ── */
+#about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  border-top: 1px solid var(--border);
+}
+
+.about-text p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.about-text p strong {
+  color: var(--white);
+  font-weight: 500;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s;
+}
+
+.stat-card:hover::before { transform: scaleX(1); }
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  color: var(--white);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+/* ── LATEST RELEASE ── */
+#release {
+  border-top: 1px solid var(--border);
+}
+
+.release-card {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 3rem;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.release-card::after {
+  content: 'NEW';
+  position: absolute;
+  top: 1.5rem; right: 1.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  background: var(--accent);
+  color: var(--black);
+  padding: 0.3rem 0.6rem;
+}
+
+.release-art {
+  width: 100%;
+  aspect-ratio: 1;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.release-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(200,255,0,0.15), transparent 60%);
+}
+
+.release-info .release-type {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.release-info h3 {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.release-info .release-artist {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.release-info .release-desc {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+  max-width: 380px;
+}
+
+/* ── ALBUM COUNTDOWN ── */
+#countdown-section {
+  border-top: 1px solid var(--border);
+  display: none; /* Toggle to block when there's an album */
+}
+
+#countdown-section.active { display: block; }
+
+.countdown-inner {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.countdown-inner .album-name {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 7rem);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.countdown-inner .album-name span { color: var(--accent); }
+
+.countdown-inner .coming {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3rem;
+}
+
+.countdown-grid {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cd-unit {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2rem 2.5rem;
+  min-width: 120px;
+  text-align: center;
+  position: relative;
+}
+
+.cd-unit::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.cd-num {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--white);
+  min-width: 2ch;
+  display: block;
+}
+
+.cd-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 0.4rem;
+}
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+}
+
+.footer-logo span { color: var(--accent); }
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--accent); }
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.25rem; }
+  .nav-links { display: none; }
+  #hero { padding: 0 1.25rem 4rem; }
+  section { padding: 4rem 1.25rem; }
+  #about { grid-template-columns: 1fr; gap: 2.5rem; }
+  .release-card { grid-template-columns: 1fr; }
+  .release-art { max-width: 200px; }
+  footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+  .footer-links { flex-wrap: wrap; justify-content: center; }
+}
+```
+
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>XrenBeats</h1>
-    <p>Daily Message: you left something on the table</p>
 
-    <hr>
+  <!-- NAV -->
 
-    <h2>🎵 Latest Beat</h2>
-    <p>FAR AWAY - Xren!</p>
+  <nav>
+    <a class="nav-logo" href="#">Xren<span>Beats</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#release">Music</a></li>
+      <li><a href="#countdown-section">Upcoming</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </nav>
 
-    <!-- Audio player -->
-    <audio controls>
-      <source src="far-away.wma" type="audio/mpeg">
-      Your browser does not support audio.
-    </audio>
+  <!-- HERO -->
 
-    <br><br>
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <p class="hero-tag">// Est. 2024 &nbsp;·&nbsp; Music &amp; Creative Studio</p>
+    <h1 class="hero-title">
+      <span class="outline">Xren</span><br>
+      <span class="accent">Beats</span>
+    </h1>
+    <p class="hero-sub">We don't just make beats — we build worlds. Music, art, and culture, crafted from the ground up.</p>
+    <div class="hero-cta">
+      <a href="#release" class="btn btn-primary">Latest Drop</a>
+      <a href="#about" class="btn btn-ghost">Who We Are</a>
+    </div>
+  </section>
 
-    <h3>💿 About</h3>
-    <p>new album "VVEX" coming around May! HOW RAD DUDE!/p>
+  <!-- TICKER -->
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>XrenBeats</span><span class="hi">✦</span>
+      <span>Music</span><span class="hi">✦</span>
+      <span>Art</span><span class="hi">✦</span>
+      <span>Culture</span><span class="hi">✦</span>
+      <span>Beats</span><span class="hi">✦</span>
+      <span>Creative Studio</span><span class="hi">✦</span>
+      <span>New Drops</span><span class="hi">✦</span>
+      <span>XrenBeats</span><span class="hi">✦</span>
+      <span>Music</span><span class="hi">✦</span>
+      <span>Art</span><span class="hi">✦</span>
+      <span>Culture</span><span class="hi">✦</span>
+      <span>Beats</span><span class="hi">✦</span>
+      <span>Creative Studio</span><span class="hi">✦</span>
+      <span>New Drops</span><span class="hi">✦</span>
+    </div>
   </div>
+
+  <!-- ABOUT -->
+
+  <section id="about">
+    <div class="about-text">
+      <p class="section-label">// About Us</p>
+      <h2 class="section-title">We Are<br>XrenBeats.</h2>
+      <p>
+        <strong>XrenBeats</strong> is an independent music and creative collective led by <strong>Xren</strong>. 
+        We produce original beats, songs, and sonic experiences — pushing the boundaries of what independent artists can create.
+      </p>
+      <p>
+        Our team brings together <strong>producers, visual artists, and creatives</strong> who all contribute to a single mission: 
+        making music that hits different and art that makes you feel something.
+      </p>
+      <p>
+        Everything you hear and see from us is built from scratch — no shortcuts, no compromise.
+      </p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Independent</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">OG</div>
+        <div class="stat-label">Original Sound</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Creative Energy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Vision. Ours.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LATEST RELEASE -->
+
+  <section id="release">
+    <p class="section-label">// Latest Release</p>
+    <h2 class="section-title">Fresh Drop.</h2>
+
+```
+<div class="release-card">
+  <div class="release-art">🎧</div>
+  <div class="release-info">
+    <div class="release-type">Single</div>
+    <h3 id="release-title">Track Title</h3>
+    <p class="release-artist">Xren &mdash; XrenBeats</p>
+    <p class="release-desc" id="release-desc">
+      Update this with your latest release description. Add a link below to your streaming platforms so fans can listen immediately.
+    </p>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <a href="#" class="btn btn-primary">Stream Now</a>
+      <a href="#" class="btn btn-ghost">Download</a>
+    </div>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- ALBUM COUNTDOWN (hidden by default — add class="active" to show) -->
+
+  <section id="countdown-section">
+    <p class="section-label">// Coming Soon</p>
+    <div class="countdown-inner">
+      <h2 class="album-name">Album <span id="album-name-display">Title</span></h2>
+      <p class="coming">Dropping in</p>
+      <div class="countdown-grid">
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-days">00</span>
+          <div class="cd-label">Days</div>
+        </div>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-hours">00</span>
+          <div class="cd-label">Hours</div>
+        </div>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-mins">00</span>
+          <div class="cd-label">Minutes</div>
+        </div>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-secs">00</span>
+          <div class="cd-label">Seconds</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-logo">Xren<span>Beats</span></div>
+    <ul class="footer-links">
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">SoundCloud</a></li>
+      <li><a href="#">YouTube</a></li>
+      <li><a href="#">Spotify</a></li>
+    </ul>
+    <p class="footer-copy">&copy; 2025 XrenBeats. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // ── COUNTDOWN CONFIG ──────────────────────────────────────────────
+    // To activate the countdown:
+    // 1. Set ALBUM_DROP_DATE to your album release date
+    // 2. Set ALBUM_NAME to your album name
+    // 3. Uncomment the activateCountdown() line below
+    // ─────────────────────────────────────────────────────────────────
+
+    const ALBUM_DROP_DATE = new Date('2025-12-31T00:00:00'); // ← Change this
+    const ALBUM_NAME = 'Vol. 1'; // ← Change this
+
+    function activateCountdown() {
+      const section = document.getElementById('countdown-section');
+      section.classList.add('active');
+      document.getElementById('album-name-display').textContent = ALBUM_NAME;
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const target = ALBUM_DROP_DATE.getTime();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        document.getElementById('cd-days').textContent = '00';
+        document.getElementById('cd-hours').textContent = '00';
+        document.getElementById('cd-mins').textContent = '00';
+        document.getElementById('cd-secs').textContent = '00';
+        return;
+      }
+
+      const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs  = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('cd-days').textContent  = String(days).padStart(2,'0');
+      document.getElementById('cd-hours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('cd-mins').textContent  = String(mins).padStart(2,'0');
+      document.getElementById('cd-secs').textContent  = String(secs).padStart(2,'0');
+    }
+
+    // Uncomment the line below when you have an album coming:
+    // activateCountdown();
+
+    // ── SCROLL FADE-IN ────────────────────────────────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('#about, #release, #countdown-section, footer').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      observer.observe(el);
+    });
+  </script>
+
 </body>
 </html>
