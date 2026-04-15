@@ -34,7 +34,7 @@ body {
   cursor: default;
 }
 
-/* ── NOISE OVERLAY ── */
+
 body::before {
   content: '';
   position: fixed;
@@ -45,7 +45,7 @@ body::before {
   z-index: 9999;
 }
 
-/* ── NAV ── */
+    
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -87,7 +87,7 @@ nav {
 
 .nav-links a:hover { color: var(--accent); }
 
-/* ── HERO ── */
+
 #hero {
   min-height: 100vh;
   display: flex;
@@ -195,7 +195,7 @@ nav {
   background: rgba(255,255,255,0.04);
 }
 
-/* ── SCROLLING TICKER ── */
+
 .ticker-wrap {
   overflow: hidden;
   border-top: 1px solid var(--border);
@@ -225,7 +225,8 @@ nav {
   to { transform: translateX(-50%); }
 }
 
-/* ── SECTION COMMONS ── */
+
+    
 section {
   padding: 6rem 2.5rem;
 }
@@ -247,7 +248,7 @@ section {
   margin-bottom: 1.5rem;
 }
 
-/* ── ABOUT ── */
+
 #about {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -312,7 +313,7 @@ section {
   margin-top: 0.4rem;
 }
 
-/* ── LATEST RELEASE ── */
+
 #release {
   border-top: 1px solid var(--border);
 }
@@ -392,10 +393,10 @@ section {
   max-width: 380px;
 }
 
-/* ── ALBUM COUNTDOWN ── */
+
 #countdown-section {
   border-top: 1px solid var(--border);
-  display: none; /* Toggle to block when there's an album */
+  display: none;
 }
 
 #countdown-section.active { display: block; }
@@ -465,7 +466,7 @@ section {
   margin-top: 0.4rem;
 }
 
-/* ── FOOTER ── */
+
 footer {
   border-top: 1px solid var(--border);
   padding: 3rem 2.5rem;
@@ -507,13 +508,13 @@ footer {
   letter-spacing: 0.08em;
 }
 
-/* ── ANIMATIONS ── */
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── RESPONSIVE ── */
+
 @media (max-width: 768px) {
   nav { padding: 1rem 1.25rem; }
   .nav-links { display: none; }
@@ -531,7 +532,7 @@ footer {
 </head>
 <body>
 
-  <!-- NAV -->
+
 
   <nav>
     <a class="nav-logo" href="#">Xren<span>Beats</span></a>
@@ -543,7 +544,7 @@ footer {
     </ul>
   </nav>
 
-  <!-- HERO -->
+
 
   <section id="hero">
     <div class="hero-bg"></div>
@@ -559,43 +560,43 @@ footer {
     </div>
   </section>
 
-  <!-- TICKER -->
+
 
   <div class="ticker-wrap">
     <div class="ticker">
       <span>XrenBeats</span><span class="hi">✦</span>
       <span>Music</span><span class="hi">✦</span>
       <span>Art</span><span class="hi">✦</span>
-      <span>Culture</span><span class="hi">✦</span>
+      <span>Friendship</span><span class="hi">✦</span>
       <span>Beats</span><span class="hi">✦</span>
-      <span>Creative Studio</span><span class="hi">✦</span>
+      <span>Studio</span><span class="hi">✦</span>
       <span>New Drops</span><span class="hi">✦</span>
       <span>XrenBeats</span><span class="hi">✦</span>
       <span>Music</span><span class="hi">✦</span>
       <span>Art</span><span class="hi">✦</span>
-      <span>Culture</span><span class="hi">✦</span>
+      <span>Friendship</span><span class="hi">✦</span>
       <span>Beats</span><span class="hi">✦</span>
       <span>Creative Studio</span><span class="hi">✦</span>
-      <span>New Drops</span><span class="hi">✦</span>
+      <span>New Drops🔥</span><span class="hi">✦</span>
     </div>
   </div>
 
-  <!-- ABOUT -->
+
 
   <section id="about">
     <div class="about-text">
       <p class="section-label">// About Us</p>
       <h2 class="section-title">We Are<br>XrenBeats.</h2>
       <p>
-        <strong>XrenBeats</strong> is an independent music and creative collective led by <strong>Xren</strong>. 
-        We produce original beats, songs, and sonic experiences — pushing the boundaries of what independent artists can create.
+        <strong>XrenBeats</strong> is an independent music and creative project created by <strong>Xren</strong>. 
+        We produce original beats, songs, and arts. We strive to make the best 
       </p>
       <p>
         Our team brings together <strong>producers, visual artists, and creatives</strong> who all contribute to a single mission: 
         making music that hits different and art that makes you feel something.
       </p>
       <p>
-        Everything you hear and see from us is built from scratch — no shortcuts, no compromise.
+        Everything you hear and see from us is built by Xren and OUR team. THANK YOU :)
       </p>
     </div>
     <div class="about-stats">
@@ -609,30 +610,31 @@ footer {
       </div>
       <div class="stat-card">
         <div class="stat-num">∞</div>
-        <div class="stat-label">Creative Energy</div>
+        <div class="stat-label">thank you</div>
       </div>
       <div class="stat-card">
         <div class="stat-num">1</div>
-        <div class="stat-label">Vision. Ours.</div>
+        <div class="stat-label">please come back again</div>
       </div>
     </div>
   </section>
 
-  <!-- LATEST RELEASE -->
+
 
   <section id="release">
     <p class="section-label">// Latest Release</p>
-    <h2 class="section-title">Fresh Drop.</h2>
+    <h2 class="section-title">GET PREPARED AND LISTEN TO THIS FIRE BEFORE VVEX COMES OUT!!</h2>
 
 ```
 <div class="release-card">
-  <div class="release-art">🎧</div>
+  <div class="release-art">
+    <img src="misc/song-art/far-away.png"
   <div class="release-info">
     <div class="release-type">Single</div>
-    <h3 id="release-title">Track Title</h3>
-    <p class="release-artist">Xren &mdash; XrenBeats</p>
+    <h3 id="release-title">FAR AWAY</h3>
+    <p class="release-artist">Xren!&mdash; XrenBeats</p>
     <p class="release-desc" id="release-desc">
-      Update this with your latest release description. Add a link below to your streaming platforms so fans can listen immediately.
+      
     </p>
     <div style="display:flex; gap:1rem; flex-wrap:wrap;">
       <a href="#" class="btn btn-primary">Stream Now</a>
@@ -644,13 +646,13 @@ footer {
 
   </section>
 
-  <!-- ALBUM COUNTDOWN (hidden by default — add class="active" to show) -->
+
 
   <section id="countdown-section">
     <p class="section-label">// Coming Soon</p>
     <div class="countdown-inner">
-      <h2 class="album-name">Album <span id="album-name-display">Title</span></h2>
-      <p class="coming">Dropping in</p>
+      <h2 class="album-name">Album <span id="album-name-display">VVEX</span></h2>
+      <p class="coming">Coming Soon!</p>
       <div class="countdown-grid">
         <div class="cd-unit">
           <span class="cd-num" id="cd-days">00</span>
@@ -672,7 +674,7 @@ footer {
     </div>
   </section>
 
-  <!-- FOOTER -->
+
 
   <footer>
     <div class="footer-logo">Xren<span>Beats</span></div>
