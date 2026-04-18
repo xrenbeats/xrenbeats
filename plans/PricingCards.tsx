@@ -9,15 +9,12 @@ const plans = [
   {
     name: 'Basic',
     price: '$9.99',
-    period: '/month',
-    description: 'Perfect for hobbyists and beginners',
+    period: 'One-time purchase',
+    description: 'YAAA',
     features: [
-      '10 beat downloads per month',
-      'MP3 format (320kbps)',
-      'Non-exclusive rights',
-      'Email support',
-      'Access to basic beat library',
-      'Personal use only'
+      'Access to upcoming songs',
+      'Supporter access (have a badge om your profile!)',
+      
     ],
     buttonText: 'Get Started',
     popular: false,
@@ -25,19 +22,16 @@ const plans = [
     borderColor: 'border-blue-500/20'
   },
   {
-    name: 'Pro',
-    price: '$29.99',
-    period: '/month',
-    description: 'For serious artists and content creators',
+    name: 'SUPPORTER!!',
+    price: '$19.99',
+    period: 'One-time purchase',
+    description: 'BECOME THE ULTIMATE SUPPORTER!',
     features: [
-      '50 beat downloads per month',
-      'WAV + MP3 formats',
-      'Non-exclusive rights',
-      'Priority email support',
-      'Access to premium beat library',
-      'Commercial use allowed',
-      'Basic mixing & mastering presets',
+      'Everything in previous plan!',
+      'Random beats every month',
+      'Access to help code on GitHub',
       'Early access to new beats'
+      'We will add even more soon!'
     ],
     buttonText: 'Go Pro',
     popular: true,
@@ -45,39 +39,7 @@ const plans = [
     borderColor: 'border-purple-500/50'
   },
   {
-    name: 'Premium',
-    price: '$79.99',
-    period: '/month',
-    description: 'Ultimate package for professionals',
-    features: [
-      'Unlimited beat downloads',
-      'WAV + MP3 + Stems',
-      'Exclusive rights option available',
-      '24/7 priority support',
-      'Access to entire beat library',
-      'Full commercial use',
-      'Professional mixing & mastering',
-      'Custom beat requests (2 per month)',
-      'One-on-one producer consultation',
-      'Royalty-free licensing'
-    ],
-    buttonText: 'Get Premium',
-    popular: false,
-    gradient: 'from-amber-500/10 to-orange-500/10',
-    borderColor: 'border-amber-500/20'
-  }
-];
-
-declare global {
-  interface Window {
-    hcaptcha: {
-      render: (container: string | HTMLElement, params: any) => string;
-      reset: (widgetId?: string) => void;
-      execute: (widgetId?: string) => void;
-      getResponse: (widgetId?: string) => string;
-    };
-  }
-}
+    
 
 interface ApiResponse {
   success: boolean;
@@ -98,7 +60,7 @@ export default function PricingCards() {
       // Get hCaptcha response token
       const captchaElement = captchaRefs.current[planName];
       if (!captchaElement) {
-        throw new Error('Captcha not loaded');
+        throw new Error('Captcha failed. Please try again.');
       }
 
       const token = window.hcaptcha.getResponse(captchaElement.id);
@@ -135,7 +97,7 @@ export default function PricingCards() {
         window.hcaptcha.reset(captchaElement.id);
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      setMessage({ type: 'error', text: 'An error occurred. Please try again. If this does not work, contact us at help@xrenbeats.com. If you have already paid for a plan, and you dont have it yet, we will be sure to add the plan to your account.' });
       console.error('Subscription error:', error);
     } finally {
       setIsSubmitting(false);
@@ -249,19 +211,19 @@ export default function PricingCards() {
             <div className="bg-card border rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">Can I cancel anytime?</h3>
               <p className="text-muted-foreground">
-                Yes, all plans are month-to-month with no long-term commitment. Cancel anytime from your account settings.
+                Yes, all plans are just one-time purchases but you don't have to get these, we are commited to making free and open-source resources for everybody! :D
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">What payment methods do you accept?</h3>
               <p className="text-muted-foreground">
-                We accept all major credit cards, PayPal, and various digital payment methods.
+                We accept all major credit cards, PayPal, and various payment methods.
               </p>
             </div>
             <div className="bg-card border rounded-lg p-6">
               <h3 className="font-semibold text-lg mb-2">Can I upgrade or downgrade my plan?</h3>
               <p className="text-muted-foreground">
-                Absolutely! You can change your plan at any time. Upgrades take effect immediately, and downgrades apply from your next billing cycle.
+                Absolutely! You can change your plan at any time. Upgrades take effect immediately while downgrades do not. If you would like to downgrade, you can email us! downgrading@xrenbeats.com! :)
               </p>
             </div>
           </div>
