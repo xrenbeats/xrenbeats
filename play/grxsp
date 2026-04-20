@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grxsp</title>
+
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <style>
+        :root {
+            --bg-color: #0f0f13;
+            --card-bg: #1a1a24;
+            --accent-color: #7289da;
+            --text-color: #ffffff;
+        }
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .player-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 320px;
+        }
+        .album-art {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #7289da, #99aab5);
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+            color: white;
+        }
+        .song-info h2 { color: var(--text-color); margin: 10px 0 5px; }
+        .song-info p { color: #888; font-size: 0.9em; margin-bottom: 20px; }
+        .controls { display: flex; justify-content: space-around; align-items: center; }
+        .btn { background: none; border: none; color: var(--text-color); font-size: 1.5em; cursor: pointer; transition: 0.2s; }
+        .btn:hover { color: var(--accent-color); }
+        .play-btn { font-size: 2.5em; }
+        .progress-container { width: 100%; height: 5px; background: #333; margin: 20px 0; border-radius: 5px; cursor: pointer; }
+        .progress-bar { height: 100%; background: var(--accent-color); width: 0%; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="player-card">
+    <div class="album-art"><i class="fas fa-music"></i></div>
+    <div class="song-info">
+        <h2 id="title">grxsp</h2>
+        <p id="artist">hip hop beat</p>
+    </div>
+    
+    <div class="progress-container" id="progress-container">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="prev"><i class="fas fa-backward"></i></button>
+        <button class="btn play-btn" id="play"><i class="fas fa-play"></i></button>
+        <button class="btn" id="next"><i class="fas fa-forward"></i></button>
+    </div>
+
+    <audio id="audio" src="grxsp.flac"></audio>
+</div>
+
+<script>
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('play');
+    const progress = document.getElementById('progress');
+    const progressContainer = document.getElementById('progress-container');
+
+    let isPlaying = false;
+
+    function togglePlay() {
+        if (isPlaying) {
+            audio.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        } else {
+            audio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+        isPlaying = !isPlaying;
+    }
+
+    audio.addEventListener('timeupdate', (e) => {
+        const { duration, currentTime } = e.srcElement;
+        const progressPercent = (currentTime / duration) * 100;
+        progress.style.width = `${progressPercent}%`;
+    });
+
+    progressContainer.addEventListener('click', (e) => {
+        const width = progressContainer.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+        audio.currentTime = (clickX / width) * duration;
+    });
+
+    playBtn.addEventListener('click', togglePlay);
+</script>
+</body>
+</html>
