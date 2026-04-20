@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xrenbeats | KOPLUS Coding Blog</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 750px; margin: 0 auto; padding: 2rem; background: #fff; }
+        header { border-bottom: 2px solid #eee; margin-bottom: 3rem; padding-bottom: 1rem; }
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: -1px; }
+        .about-section { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 3rem; }
+        .post { margin-bottom: 4rem; }
+        .post-date { color: #888; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .post-title { margin: 0 0 1rem 0; font-size: 2rem; color: #000; }
+        .post-content { font-size: 1.1rem; }
+        code { background: #f0f0f0; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        pre { background: #1a1a1a; color: #fff; padding: 20px; border-radius: 8px; overflow-x: auto; }
+        footer { margin-top: 5rem; font-size: 0.8rem; color: #999; text-align: center; border-top: 1px solid #eee; padding-top: 2rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>XRENBEATS / KOPLUS CODING</h1>
+</header>
+
+<div class="about-section">
+    <h2>About Us</h2>
+    <p>Welcome to the official hub for <strong>KOPLUS coding</strong> and our latest music projects. This is where we document our builds, share our songs, and track our progress.</p>
+</div>
+
+<!-- OUR KOPLUS POSTS START HERE! -->
+
+<article class="post">
+    <div class="post-date">April 20, 2026</div>
+    <h2 class="post-title"KOPLUS - Best Online Code Editor</h2>
+    <div class="post-content">
+        <p>KOPLUS CODING - Best Online Code Editor Without Ads!!
+        (more posts will probably be online at xren.dev when the domain is live)
+        
+        Hi! I am Xren, the owner of my project or so called "business" XrenBeats. I also make all sorts of things for fun!
+        One of the many things I thought of was to add a little coding engine. It's basically me coding a code! 
+        We couldn't find any relatively "good" coding engines online that support vast programming languages without ads!
+        That was when I thought to myself, what if I made my own coding engine? Yep, that idea hit me and it stuck there.
+        I wanted to code at school maybe, or I dont know, just for fun (without installing anything!)
+        
+        How It Works
+        The KOPLUS coding engine functions as a high throughput execution environment which aims to close the gap between creative music production and a technical architecture in script format.
+        Firstly, The engine is operated through a 3-stage pipeline, starting with Lexical Analysis; the traffic controller that strip raw input into a string of 'tokens' that the system can understand as logic. 
+        Such tokens are further divided based on syntactic and semantic rules into Abstract Syntax Tree (AST) creating a skeleton blueprint of what the intent of the code. That way the engine is able to boost functionality!
+        KO</p>
+        
+       
+<article class="post">
+    <div class="post-date">April 19, 2026</div>
+    <h2 class="post-title">New Songs in Production</h2>
+    <div class="post-content">
+        <p>VVEX COMING SOON SHHHH.</p>
+    </div>
+</article>
+
+
+
+<footer>
+    &copy; 2026 XrenBeats - Powered by XrenCo.
+</footer>
+
+</body>
+</html>
