@@ -1,1 +1,634 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XCamBeats — XrenBeats Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #080808;
+      --surface: #111111;
+      --surface2: #1a1a1a;
+      --border: rgba(255,255,255,0.07);
+      --white: #f5f5f5;
+      --muted: #888;
+      --accent: #c8ff00;
+      --gold: #d4a847;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+```
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 2.5rem;
+  background: rgba(8,8,8,0.9);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--accent); }
+
+.nav-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.nav-breadcrumb a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.nav-breadcrumb a:hover { color: var(--accent); }
+.nav-breadcrumb .sep { opacity: 0.4; }
+.nav-breadcrumb .current { color: var(--white); }
+
+.nav-ext {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.9rem;
+  transition: color 0.2s, border-color 0.2s;
+}
+.nav-ext:hover { color: var(--gold); border-color: rgba(212,168,71,0.3); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  padding: 0 2.5rem 5rem;
+  padding-top: 6rem;
+  position: relative;
+  overflow: hidden;
+  gap: 4rem;
+}
+
+.hero-glow {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 75% 30%, rgba(212,168,71,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 50% at 10% 80%, rgba(200,255,0,0.04) 0%, transparent 60%),
+    var(--black);
+  pointer-events: none;
+}
+
+.hero-left { position: relative; z-index: 1; }
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1.25rem;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.1s forwards;
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 10vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.3s forwards;
+}
+.hero-name .dim {
+  -webkit-text-stroke: 1.5px rgba(245,245,245,0.2);
+  color: transparent;
+}
+.hero-name .gold { color: var(--gold); }
+
+.hero-role-line {
+  margin-top: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.45s forwards;
+}
+.hero-role-line::before {
+  content: '';
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--accent);
+}
+.hero-role-text {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero-desc {
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 400px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.6s forwards;
+}
+
+.hero-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.75s forwards;
+}
+
+.btn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.8rem 1.6rem;
+  text-decoration: none;
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+  display: inline-block;
+  cursor: pointer;
+  border: none;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--accent); color: var(--black); }
+.btn-primary:hover { background: #d4ff1a; }
+.btn-gold { background: var(--gold); color: var(--black); }
+.btn-gold:hover { background: #e0b55a; }
+.btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.25); }
+
+/* right side: identity card */
+.hero-right {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.5s forwards;
+}
+
+.id-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+}
+
+.id-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+}
+
+.id-card-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.id-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.id-row:last-child { border-bottom: none; }
+
+.id-key {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.id-val {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--white);
+}
+.id-val.accent { color: var(--accent); }
+.id-val.gold   { color: var(--gold); }
+
+/* ── SECTIONS ── */
+section {
+  padding: 5.5rem 2.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  margin-bottom: 2.5rem;
+}
+
+/* ── ALBUMS ── */
+.albums-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.album-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+.album-card:hover {
+  border-color: rgba(212,168,71,0.3);
+  transform: translateY(-3px);
+}
+
+.album-art {
+  width: 100%; aspect-ratio: 1;
+  background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.album-art::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(212,168,71,0.08), transparent 60%);
+}
+.album-art-init {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  color: rgba(212,168,71,0.15);
+  letter-spacing: -0.04em;
+  position: relative; z-index: 1;
+}
+
+.album-info { padding: 1.1rem; }
+.album-title-text { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+.album-meta {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+.album-tracks-count {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+/* tracklist expand */
+.album-expand-btn {
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  width: 26px; height: 26px;
+  background: rgba(212,168,71,0.1);
+  border: 1px solid rgba(212,168,71,0.2);
+  color: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.9rem;
+  transition: background 0.2s;
+  border-radius: 2px;
+  z-index: 2;
+}
+.album-expand-btn:hover { background: rgba(212,168,71,0.22); }
+.expand-icon { transition: transform 0.3s; display: inline-block; }
+.album-card.expanded .expand-icon { transform: rotate(45deg); }
+
+.album-tracklist {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+  border-top: 0px solid var(--border);
+}
+.album-card.expanded .album-tracklist {
+  max-height: 600px;
+  border-top: 1px solid var(--border);
+  padding: 0.9rem 1.1rem;
+}
+.tracklist-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+.track-row {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.track-row:last-child { border-bottom: none; }
+.track-n { font-family: var(--font-mono); font-size: 0.55rem; color: var(--muted); min-width: 1.4rem; }
+.track-t { font-size: 0.82rem; font-weight: 500; flex: 1; }
+.track-d { font-family: var(--font-mono); font-size: 0.55rem; color: var(--muted); }
+
+/* ── EXTERNAL LINK BANNER ── */
+.ext-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.ext-banner::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--accent));
+}
+.ext-banner-text {}
+.ext-banner-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+.ext-banner-title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 0.04em;
+}
+.ext-banner-title span { color: var(--gold); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.04em;
+}
+.footer-logo span { color: var(--accent); }
+.footer-note {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+@media (max-width: 860px) {
+  #hero { grid-template-columns: 1fr; gap: 2.5rem; padding: 5rem 1.25rem 4rem; }
+  .hero-right { justify-content: flex-start; }
+  nav { padding: 1rem 1.25rem; }
+  .nav-breadcrumb { display: none; }
+  section { padding: 4rem 1.25rem; }
+  footer { justify-content: center; text-align: center; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+
+  <nav>
+    <a class="nav-logo" href="https://xrenbeats.com">Xren<span>Beats</span></a>
+    <div class="nav-breadcrumb">
+      <a href="https://xrenbeats.com">Home</a>
+      <span class="sep">/</span>
+      <a href="https://xrenbeats.com/team">Team</a>
+      <span class="sep">/</span>
+      <span class="current">XCamBeats</span>
+    </div>
+    <a class="nav-ext" href="https://xcambeats.net/about-me" target="_blank" rel="noopener">xcambeats.net ↗</a>
+  </nav>
+
+  <!-- HERO -->
+
+  <section id="hero">
+    <div class="hero-glow"></div>
+
+```
+<div class="hero-left">
+  <p class="hero-tag">// XrenBeats Team &nbsp;·&nbsp; Producer</p>
+  <h1 class="hero-name">
+    XCam<br><span class="dim">Beats</span>
+  </h1>
+  <div class="hero-role-line">
+    <span class="hero-role-text">Producer &nbsp;·&nbsp; Artist &nbsp;·&nbsp; XrenBeats</span>
+  </div>
+  <p class="hero-desc">
+    <!-- [help] Add a short bio for XCamBeats here -->
+    XCamBeats is a producer and artist on the XrenBeats team, crafting original beats and albums from the ground up.
+  </p>
+  <div class="hero-actions">
+    <a href="#albums" class="btn btn-primary">See Albums</a>
+    <a href="https://xcambeats.net/about-me" target="_blank" rel="noopener" class="btn btn-gold">About Me ↗</a>
+    <a href="https://xrenbeats.com" class="btn btn-ghost">← XrenBeats</a>
+  </div>
+</div>
+
+<div class="hero-right">
+  <div class="id-card">
+    <div class="id-card-label">// Member Profile</div>
+    <div class="id-row">
+      <span class="id-key">Name</span>
+      <span class="id-val">XCamBeats</span>
+    </div>
+    <div class="id-row">
+      <span class="id-key">Role</span>
+      <span class="id-val">Producer</span>
+    </div>
+    <div class="id-row">
+      <span class="id-key">Collective</span>
+      <span class="id-val accent">XrenBeats</span>
+    </div>
+    <div class="id-row">
+      <span class="id-key">Albums</span>
+      <span class="id-val gold" id="card-album-count">1</span>
+    </div>
+    <div class="id-row">
+      <span class="id-key">Site</span>
+      <span class="id-val gold">xcambeats.net</span>
+    </div>
+  </div>
+</div>
+```
+
+  </section>
+
+  <!-- ALBUMS -->
+
+  <section id="albums">
+    <p class="section-label reveal">// Discography</p>
+    <h2 class="section-title reveal">Albums.</h2>
+    <div class="albums-grid" id="albums-grid"></div>
+  </section>
+
+  <!-- EXTERNAL LINK BANNER -->
+
+  <section style="padding: 4rem 2.5rem; border-top: 1px solid var(--border);">
+    <div class="ext-banner reveal">
+      <div class="ext-banner-text">
+        <div class="ext-banner-label">// His personal site</div>
+        <div class="ext-banner-title">Visit <span>xcambeats.net</span></div>
+      </div>
+      <a href="https://xcambeats.net/about-me" target="_blank" rel="noopener" class="btn btn-gold">About Me ↗</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-logo">Xren<span>Beats</span></div>
+    <p class="footer-note">© 2025 XrenBeats &nbsp;·&nbsp; XCamBeats</p>
+  </footer>
+
+  <script>
+    // ──────────────────────────────────────────────────────────────────
+    // ALBUM DATA
+    // [help] Fill in real track names + durations for "Inhale the Pollon"
+    // Add more albums to the array as needed.
+    // ──────────────────────────────────────────────────────────────────
+    const ALBUMS = [
+      {
+        title: "Inhale the Pollon",
+        year: "2025",
+        art: null, // [help] Set to image path e.g. "./art/pollon.jpg"
+        tracks: [
+          // [help] Replace with real tracks:
+          { title: "Track 01", duration: "--:--" },
+          { title: "Track 02", duration: "--:--" },
+          { title: "Track 03", duration: "--:--" },
+        ]
+      },
+      // [help] Add more albums here
+    ];
+
+    const grid = document.getElementById('albums-grid');
+    ALBUMS.forEach(album => {
+      const initials = album.title.split(' ').map(w => w[0]).join('').slice(0, 3).toUpperCase();
+      const artHTML  = album.art
+        ? `<img src="${album.art}" alt="${album.title}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />`
+        : `<div class="album-art-init">${initials}</div>`;
+
+      const trackRows = album.tracks.map((t, i) => `
+        <div class="track-row">
+          <span class="track-n">${String(i + 1).padStart(2, '0')}</span>
+          <span class="track-t">${t.title}</span>
+          <span class="track-d">${t.duration}</span>
+        </div>`).join('');
+
+      const card = document.createElement('div');
+      card.className = 'album-card reveal';
+      card.innerHTML = `
+        <div class="album-art">${artHTML}</div>
+        <button class="album-expand-btn" onclick="this.closest('.album-card').classList.toggle('expanded')" aria-label="Expand">
+          <span class="expand-icon">+</span>
+        </button>
+        <div class="album-info">
+          <div class="album-title-text">${album.title}</div>
+          <div class="album-meta">${album.year}</div>
+          <div class="album-tracks-count">${album.tracks.length} Track${album.tracks.length !== 1 ? 's' : ''}</div>
+        </div>
+        <div class="album-tracklist">
+          <div class="tracklist-label">Tracklist</div>
+          ${trackRows}
+        </div>`;
+      grid.appendChild(card);
+    });
+
+    document.getElementById('card-album-count').textContent = ALBUMS.length;
+
+    // scroll reveal
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
+
+</body>
+</html>
