@@ -2,40 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>XrenBeats | Social System</title>
+    <title>XrenBeats | Global Social System</title>
     <style id="theme-style"></style>
     <style>
-        /* Base styles that never change */
-        body { margin: 0; padding: 20px; font-family: sans-serif; transition: 0.3s; }
+        body { margin: 0; padding: 20px; font-family: sans-serif; transition: 0.3s; background: #f0f0f0; }
         .hidden { display: none !important; }
-        .box { max-width: 500px; margin: auto; padding: 25px; border: 1px solid #ddd; background: #fff; border-radius: 12px; }
+        .box { max-width: 500px; margin: 40px auto; padding: 25px; border: 1px solid #ddd; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         input, textarea, select { width: 100%; margin: 10px 0; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; }
-        button { background: #2067b2; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; border-radius: 8px; font-weight: bold; }
-        .pfp { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; }
-        .nav-header { text-align: center; margin-bottom: 20px; font-weight: bold; letter-spacing: 1px; }
+        button { background: #2067b2; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .pfp { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; border: 3px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .nav-header { text-align: center; font-weight: bold; font-size: 24px; cursor: pointer; color: #2067b2; }
     </style>
 </head>
 <body>
 
-    <div class="nav-header" onclick="window.location.href='index.html'" style="cursor:pointer">XRENBEATS.COM</div>
+    <div class="nav-header" onclick="window.location.href=window.location.pathname">XRENBEATS.COM</div>
 
     <!-- Screen 1: Auth -->
     <div id="screen-auth" class="box">
         <h2 id="auth-title">Create Account</h2>
-        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="username" placeholder="Username (Unique)">
         <input type="password" id="password" placeholder="Password">
-        <button onclick="handleAuth()" id="btn-auth">Sign Up</button>
-        <p align="center"><a href="javascript:void(0)" onclick="toggleLogin()" id="auth-toggle">Already have an account? Login</a></p>
+        <button id="btn-auth">Sign Up</button>
+        <p align="center"><a href="javascript:void(0)" id="auth-toggle">Already have an account? Login</a></p>
     </div>
 
     <!-- Screen 2: Dashboard -->
     <div id="screen-dash" class="box hidden">
-        <h2>Settings</h2>
+        <h2>Profile Settings</h2>
         <input type="text" id="set-pronouns" placeholder="Pronouns (he/him, etc)">
         <textarea id="set-bio" placeholder="Tell us about yourself..."></textarea>
         <input type="text" id="set-pfp" placeholder="Profile Picture Link (URL)">
         
-        <label>Select Era Theme:</label>
+        <label>Theme Era:</label>
         <select id="set-theme">
             <option value="modern">2020s (Modern)</option>
             <option value="1990s">1990s (The Old Site)</option>
@@ -46,8 +45,8 @@
             <option value="2026">2026 (Holo-Glass)</option>
         </select>
         
-        <button onclick="saveAndGo()">Save & View My URL</button>
-        <button onclick="logout()" style="margin-top:10px; background:#666;">Logout</button>
+        <button id="btn-save">Save & Go Public</button>
+        <button id="btn-logout" style="background:#666;">Logout</button>
     </div>
 
     <!-- Screen 3: Public Profile -->
@@ -58,106 +57,112 @@
             <p id="view-pronouns" style="opacity:0.6"></p>
             <hr>
             <p id="view-bio"></p>
-            <div id="profile-controls" class="hidden">
-                <button onclick="showDash()" style="background:#444">Edit My Profile</button>
+            <div id="edit-button-container" class="hidden">
+                 <button id="btn-edit-mode" style="background:#444">Edit My Page</button>
             </div>
         </center>
     </div>
 
-<script>
-// --- THEME DEFINITIONS ---
-const themes = {
-    "1990s": "body{background:#c0c0c0;font-family:'Times New Roman'} .box{background:#dcdcdc;border:3px outset #fff;border-radius:0} button{border:2px outset #fff;background:#c0c0c0;color:#000} h2{background:#000080;color:#fff;padding:4px}",
-    "2000s": "body{background:linear-gradient(#7abcff,#4096ee)} .box{border-radius:30px; border:3px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3)}",
-    "2010s": "body{background:#e9ebee} .box{border-radius:0;border:1px solid #ddd;box-shadow:none}",
-    "2026": "body{background:#000;color:#00ffcc;font-family:monospace} .box{background:rgba(0,255,204,0.05);border:1px solid #00ffcc;box-shadow:0 0 20px #00ffcc}"
+<script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
+
+    // 1. PASTE YOUR CONFIG HERE
+    const firebaseConfig = {
+  apiKey: "AIzaSyBWydqTaTQnrTqVTGET2Mv9L7BWRUHeFrk",
+  authDomain: "xrenbeats-com.firebaseapp.com",
+  projectId: "xrenbeats-com",
+  storageBucket: "xrenbeats-com.firebasestorage.app",
+  messagingSenderId: "747965799452",
+  appId: "1:747965799452:web:baeb00a0787b18d92753d9",
+  measurementId: "G-2GSWM567W5"
 };
 
-let isLogin = false;
-let currentUser = null;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-// --- CORE LOGIC ---
-window.onload = function() {
+    // --- Themes ---
+    const themes = {
+        "1990s": "body{background:#c0c0c0;font-family:'Times New Roman'} .box{background:#dcdcdc;border:3px outset #fff;border-radius:0} button{border:2px outset #fff;background:#c0c0c0;color:#000} h2{background:#000080;color:#fff;padding:4px}",
+        "2000s": "body{background:linear-gradient(#7abcff,#4096ee)} .box{border-radius:30px; border:3px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3)}",
+        "2026": "body{background:#050505;color:#00ffcc;font-family:monospace} .box{background:rgba(0,255,204,0.05);border:1px solid #00ffcc;box-shadow:0 0 20px #00ffcc; text-shadow: 0 0 5px #00ffcc}"
+    };
+
+    let isLogin = false;
+    let currentUser = null;
+
+    // --- Start Logic ---
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get('user');
 
     if (userParam) {
         loadPublicProfile(userParam);
     }
-};
 
-function toggleLogin() {
-    isLogin = !isLogin;
-    document.getElementById('auth-title').innerText = isLogin ? "Login" : "Create Account";
-    document.getElementById('btn-auth').innerText = isLogin ? "Login" : "Sign Up";
-}
+    // --- Buttons ---
+    document.getElementById('auth-toggle').onclick = () => {
+        isLogin = !isLogin;
+        document.getElementById('auth-title').innerText = isLogin ? "Login" : "Create Account";
+        document.getElementById('btn-auth').innerText = isLogin ? "Login" : "Sign Up";
+    };
 
-function handleAuth() {
-    const u = document.getElementById('username').value.toLowerCase();
-    const p = document.getElementById('password').value;
+    document.getElementById('btn-auth').onclick = async () => {
+        const u = document.getElementById('username').value.toLowerCase().trim();
+        const p = document.getElementById('password').value;
+        if(!u || !p) return alert("Fill fields!");
 
-    if(isLogin) {
-        const data = JSON.parse(localStorage.getItem('user_' + u));
-        if(data && data.pass === p) {
-            currentUser = data;
+        const userRef = doc(db, "users", u);
+        const snap = await getDoc(userRef);
+
+        if(isLogin) {
+            if(snap.exists() && snap.data().pass === p) {
+                currentUser = snap.data();
+                showDash();
+            } else { alert("Login failed!"); }
+        } else {
+            if(snap.exists()) return alert("Name taken!");
+            currentUser = { name: u, pass: p, bio: "", pronouns: "", pfp: "", theme: "modern" };
+            await setDoc(userRef, currentUser);
             showDash();
-        } else { alert("Invalid login"); }
-    } else {
-        if(localStorage.getItem('user_' + u)) return alert("User exists!");
-        currentUser = { name: u, pass: p, bio: "", pronouns: "", pfp: "", theme: "modern" };
-        localStorage.setItem('user_' + u, JSON.stringify(currentUser));
-        showDash();
-    }
-}
+        }
+    };
 
-function showDash() {
-    hideAll();
-    document.getElementById('screen-dash').classList.remove('hidden');
-    document.getElementById('set-bio').value = currentUser.bio;
-    document.getElementById('set-pfp').value = currentUser.pfp;
-    document.getElementById('set-pronouns').value = currentUser.pronouns;
-    document.getElementById('set-theme').value = currentUser.theme;
-}
+    document.getElementById('btn-save').onclick = async () => {
+        currentUser.bio = document.getElementById('set-bio').value;
+        currentUser.pfp = document.getElementById('set-pfp').value;
+        currentUser.pronouns = document.getElementById('set-pronouns').value;
+        currentUser.theme = document.getElementById('set-theme').value;
+        
+        await setDoc(doc(db, "users", currentUser.name), currentUser);
+        window.location.href = "?user=" + currentUser.name;
+    };
 
-function saveAndGo() {
-    currentUser.bio = document.getElementById('set-bio').value;
-    currentUser.pfp = document.getElementById('set-pfp').value;
-    currentUser.pronouns = document.getElementById('set-pronouns').value;
-    currentUser.theme = document.getElementById('set-theme').value;
-    
-    localStorage.setItem('user_' + currentUser.name, JSON.stringify(currentUser));
-    
-    // Redirect to the new "URL"
-    window.location.href = "?user=" + currentUser.name;
-}
+    async function loadPublicProfile(name) {
+        const snap = await getDoc(doc(db, "users", name));
+        if(!snap.exists()) return alert("User not found!");
+        
+        const data = snap.data();
+        document.getElementById('screen-auth').classList.add('hidden');
+        document.getElementById('screen-profile').classList.remove('hidden');
+        
+        document.getElementById('view-user').innerText = name.toUpperCase();
+        document.getElementById('view-bio').innerText = data.bio;
+        document.getElementById('view-pfp').src = data.pfp || "https://placeholder.com";
+        document.getElementById('view-pronouns').innerText = data.pronouns;
 
-function loadPublicProfile(name) {
-    const data = JSON.parse(localStorage.getItem('user_' + name));
-    if(!data) {
-        alert("User not found!");
-        window.location.href = "index.html";
-        return;
+        if(themes[data.theme]) document.getElementById('theme-style').innerHTML = themes[data.theme];
     }
 
-    hideAll();
-    document.getElementById('screen-profile').classList.remove('hidden');
-    document.getElementById('view-user').innerText = name.toUpperCase();
-    document.getElementById('view-bio').innerText = data.bio || "No bio yet.";
-    document.getElementById('view-pfp').src = data.pfp || "https://placeholder.com";
-    document.getElementById('view-pronouns').innerText = data.pronouns;
-    
-    if(themes[data.theme]) {
-        document.getElementById('theme-style').innerHTML = themes[data.theme];
+    function showDash() {
+        document.getElementById('screen-auth').classList.add('hidden');
+        document.getElementById('screen-dash').classList.remove('hidden');
+        document.getElementById('set-bio').value = currentUser.bio;
+        document.getElementById('set-pfp').value = currentUser.pfp;
+        document.getElementById('set-pronouns').value = currentUser.pronouns;
     }
-}
 
-function hideAll() {
-    document.getElementById('screen-auth').classList.add('hidden');
-    document.getElementById('screen-dash').classList.add('hidden');
-    document.getElementById('screen-profile').classList.add('hidden');
-}
+    document.getElementById('btn-logout').onclick = () => window.location.href = window.location.pathname;
 
-function logout() { localStorage.removeItem('session'); window.location.href="index.html"; }
 </script>
 </body>
 </html>
