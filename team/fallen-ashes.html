@@ -5,126 +5,122 @@
     <title>*** FALLEN ASHES OFFICIAL HOMEPAGE ***</title>
     <style>
         body {
-            background-color: #000000;
-            background-image: url('https://transparenttextures.com'); /* Tiled texture */
-            color: #00FF00; /* Classic Matrix Green */
+            background-color: #c0c0c0; /* Classic 90s Grey */
+            color: #000000;
             font-family: "Times New Roman", Times, serif;
             margin: 20px;
         }
 
-        /* The glowing header effect */
         h1 {
-            color: #FF0000;
-            font-family: "Comic Sans MS", cursive, sans-serif;
+            color: #000080; /* Navy Blue */
+            font-family: Arial, Helvetica, sans-serif;
             text-align: center;
             text-decoration: underline;
-            text-shadow: 2px 2px #ffffff;
-            font-size: 50px;
+            font-size: 40px;
+            margin-top: 10px;
         }
 
-        .marquee-container {
-            background: #222;
-            border: 3px double #FF0000;
-            padding: 5px;
+        .header-container {
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            padding: 10px;
             margin-bottom: 20px;
         }
 
         table {
             width: 100%;
-            border: 5px outset #666;
-            background-color: #1a1a1a;
-            padding: 10px;
+            border: 3px solid #808080;
+            background-color: #ffffff;
         }
 
         td {
             padding: 15px;
             vertical-align: top;
-            border: 1px inset #333;
+            border: 1px solid #808080;
         }
 
         .profile-pic {
             width: 150px;
             height: 150px;
-            background: #ff3e3e;
-            border: 5px ridge #ffffff;
+            background: #808080;
+            border: 4px inset #ffffff;
             margin: 0 auto;
             display: block;
         }
 
         .stat-box {
-            border: 2px solid #FF0000;
+            border: 1px solid #000000;
             padding: 10px;
             margin: 10px 0;
             text-align: center;
-            background: #000;
+            background: #e0e0e0;
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             display: block;
-            color: #FFFF00; /* Bright Yellow */
+            color: #ff0000;
         }
 
         h2 {
-            background-color: #000080; /* Windows Blue */
-            color: white;
-            padding: 5px;
+            background-color: #000080;
+            color: #ffffff;
+            padding: 2px 10px;
             font-size: 18px;
-            border: 2px solid #fff;
-        }
-
-        .blink {
-            animation: blinker 1s linear infinite;
-            color: #FF00FF;
-            font-weight: bold;
-        }
-
-        @keyframes blinker {
-            50% { opacity: 0; }
+            font-family: Arial, sans-serif;
         }
 
         .counter {
             font-family: "Courier New", Courier, monospace;
-            background: #000;
-            color: #00FF00;
-            border: 1px solid #00FF00;
+            background: #000000;
+            color: #ff0000;
             padding: 2px 5px;
+            border: 2px inset #808080;
         }
 
         a {
-            color: #00FFFF;
+            color: #0000ff;
+            font-weight: bold;
         }
 
-        a:hover {
-            background-color: #FF0000;
-            color: #ffffff;
+        a:visited {
+            color: #800080;
+        }
+
+        hr {
+            border: 0;
+            border-bottom: 1px solid #000;
+            border-top: 1px solid #808080;
         }
     </style>
 </head>
 <body>
 
     <center>
-        <a href="../index.html">[ BACK TO HOME ]</a> | 
-        <a href="mailto:hello@thefallenashes.com">[ EMAIL ME ]</a> | 
-        <a href="/misc/guestbook">[ GUESTBOOK ]</a>
+        <font size="2">
+            <a href="../index.html">[ BACK TO HOME ]</a> | 
+            <a href="mailto:hello@thefallenashes.com">[ EMAIL ME ]</a> | 
+            <a href="#">[ GUESTBOOK ]</a>
+        </font>
     </center>
 
-    <div class="marquee-container">
-        <marquee scrollamount="10"><b>+++ WELCOME TO THE ASHES REALM +++ LATEST BEATS DROPPING SOON +++ UPCOKING GADGET 3 MUSICIAN +++</b></marquee>
+    <br>
+
+    <div class="header-container">
+        <center><b>+++ WELCOME TO THE ASHES REALM +++ LATEST BEATS DROPPING SOON +++</b></center>
     </div>
 
-    <table cellspacing="10">
+    <table border="1" cellspacing="5" cellpadding="10">
         <tr>
             <!-- Left Sidebar -->
-            <td width="30%">
+            <td width="30%" bgcolor="#dcdcdc">
                 <div class="profile-pic">
-                    <!-- Imaginary 1999 image placeholder -->
-                    <div style="text-align:center; padding-top: 60px; color: black; font-weight: bold;">IMAGE NOT FOUND</div>
+                    <center><br><br>PROFILE<br>PHOTO</center>
                 </div>
                 <p align="center">
-                    <b>FALLEN ASHES</b><br>
-                    <span class="blink">*** RANK 2 ***</span>
+                    <font size="4"><b>FALLEN ASHES</b></font><br>
+                    <font color="#ff0000"><b>*** RANK 2 ***</b></font>
                 </p>
                 
                 <div class="stat-box">
@@ -137,8 +133,8 @@
                 </div>
                 
                 <center>
-                    <p>Visitor Count:</p>
-                    <span class="counter">0000432</span>
+                    <p><font size="2">Visitor Count:</font><br>
+                    <span class="counter">0000432</span></p>
                 </center>
             </td>
 
@@ -150,8 +146,6 @@
                 <h2>MY BIOGRAPHY</h2>
                 <p>
                     Fallen ashes was a friend we found at school. They made beats too. They decided to join <b>XrenBeats</b> and make bangers with us. 
-                    <br><br>
-                    <img src="https://archive.org" alt="Construction GIF" width="40">
                 </p>
 
                 <h2>MY GEAR (LOADOUT)</h2>
@@ -163,15 +157,14 @@
                 </ul>
 
                 <h2>SIGNATURE ACHIEVEMENTS</h2>
-                <p>• Upcoming Gadget 3 Musician</p>
-                <p>• 2nd highest rated producer of 2025 in XrenBeats.</p>
-                <p>• Upcoming Pocket Operator Musician</p>
+                <p>&#149; Upcoming Gadget 3 Musician</p>
+                <p>&#149; 2nd highest rated producer of 2025 in XrenBeats.</p>
+                <p>&#149; Upcoming Pocket Operator Musician</p>
 
+                <br><br>
                 <hr>
                 <center>
-                    <img src="https://archive.org" width="40">
-                    <img src="https://archive.org" width="40">
-                    <p>&copy; 2026 Fallen Ashes Productions. All rights reserved.</p>
+                    <p><font size="1">&copy; 2026 Fallen Ashes Productions. <br> Created with Notepad. Best viewed in 800x600 resolution.</font></p>
                 </center>
             </td>
         </tr>
