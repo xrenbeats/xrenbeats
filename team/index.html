@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fallen Ashes | xrenbeats Team</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --accent: #ff4d00; /* Ember Orange */
+            --text: #e0e0e0;
+            --banned: #555;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+
+        h1 { font-size: 3rem; color: var(--accent); text-transform: uppercase; letter-spacing: 5px; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 40px;
+        }
+
+        .member-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(255, 77, 0, 0.2);
+        }
+
+        .member-card.banned { filter: grayscale(1); opacity: 0.6; }
+        .member-card.banned:hover { border-color: #ff0000; }
+
+        .status { font-size: 0.8rem; text-transform: uppercase; margin-top: 10px; color: #888; }
+        .banned-text { color: #ff4444; font-weight: bold; }
+        
+        .footer { margin-top: 100px; color: #444; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <h1>Fallen Ashes</h1>
+    <p>Official XrenBeats Roster</p>
+
+    <div class="team-grid">
+        <!-- Main Team -->
+        <a href="/xcambeats.html" class="member-card">
+            <h3>XCamBeats</h3>
+            <div class="status">Active Member</div>
+        </a>
+
+        <a href="members/plsdonthackme.html" class="member-card">
+            <h3>plsdonthackme</h3>
+            <div class="status">Active Member</div>
+        </a>
+        <!-- Others -->
+        <a href="members/theerror.html" class="member-card">
+            <h3>The Error</h3>
+            <div class="status">Left Team</div>
+        </a>
+
+        <a href="members/9liscx.html" class="member-card banned">
+            <h3>9liscx</h3>
+            <div class="status banned-text">Banned</div>
+        </a>
+    </div>
+
+    <div class="footer">XrenBeats | Fallen Ashes Archive</div>
+
+</body>
+</html>
