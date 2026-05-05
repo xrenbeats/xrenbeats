@@ -2,96 +2,114 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>XrenBeats | Global Social System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XrenBeats | Global Social Network</title>
     <style id="theme-style"></style>
     <style>
-        body { margin: 0; padding: 20px; font-family: sans-serif; transition: 0.3s; background: #f0f0f0; }
+        /* BASE SYSTEM STYLES */
+        :root { --main: #2067b2; --bg: #f0f2f5; --card: #ffffff; --text: #1c1e21; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); transition: all 0.4s ease; min-height: 100vh; }
         .hidden { display: none !important; }
-        .box { max-width: 500px; margin: 40px auto; padding: 25px; border: 1px solid #ddd; background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        input, textarea, select { width: 100%; margin: 10px 0; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; }
-        button { background: #2067b2; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
-        .pfp { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; border: 3px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .nav-header { text-align: center; font-weight: bold; font-size: 24px; cursor: pointer; color: #2067b2; }
+        .container { max-width: 550px; margin: 40px auto; padding: 30px; background: var(--card); border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
+        .nav-logo { text-align: center; font-weight: 900; font-size: 28px; cursor: pointer; color: var(--main); letter-spacing: -1px; margin-bottom: 20px; }
+        input, textarea, select { width: 100%; margin: 12px 0; padding: 14px; box-sizing: border-box; border: 2px solid #eee; border-radius: 10px; font-size: 16px; outline: none; transition: 0.2s; }
+        input:focus { border-color: var(--main); }
+        button { background: var(--main); color: white; border: none; padding: 14px; cursor: pointer; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; margin-top: 15px; transition: 0.3s; }
+        button:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .pfp-big { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; background: #ddd; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="nav-header" onclick="window.location.href=window.location.pathname">XRENBEATS.COM</div>
+    <div class="nav-logo" onclick="location.href=location.pathname">XRENBEATS</div>
 
-    <!-- Screen 1: Auth -->
-    <div id="screen-auth" class="box">
-        <h2 id="auth-title">Create Account</h2>
-        <input type="text" id="username" placeholder="Username (Unique)">
-        <input type="password" id="password" placeholder="Password">
-        <button id="btn-auth">Sign Up</button>
-        <p align="center"><a href="javascript:void(0)" id="auth-toggle">Already have an account? Login</a></p>
+    <!-- AUTH SCREEN -->
+    <div id="screen-auth" class="container">
+        <h2 id="auth-title" style="margin-top:0">Create Identity</h2>
+        <input type="text" id="username" placeholder="Choose Username">
+        <input type="password" id="password" placeholder="Secure Password">
+        <button id="btn-auth">Initialize Sign Up</button>
+        <p align="center" style="font-size:14px"><a href="javascript:void(0)" id="auth-toggle">Already a member? Login here</a></p>
     </div>
 
-    <!-- Screen 2: Dashboard -->
-    <div id="screen-dash" class="box hidden">
-        <h2>Profile Settings</h2>
-        <input type="text" id="set-pronouns" placeholder="Pronouns (he/him, etc)">
-        <textarea id="set-bio" placeholder="Tell us about yourself..."></textarea>
-        <input type="text" id="set-pfp" placeholder="Profile Picture Link (URL)">
+    <!-- DASHBOARD SCREEN -->
+    <div id="screen-dash" class="container hidden">
+        <h2 style="margin-top:0">Profile Customization</h2>
+        <input type="text" id="set-pronouns" placeholder="Pronouns (e.g. they/them)">
+        <textarea id="set-bio" rows="4" placeholder="Write your lore here..."></textarea>
+        <input type="text" id="set-pfp" placeholder="PFP Image URL">
         
-        <label>Theme Era:</label>
+        <label style="font-weight:bold; font-size: 14px;">Select Era Theme:</label>
         <select id="set-theme">
-            <option value="modern">2020s (Modern)</option>
-            <option value="1990s">1990s (The Old Site)</option>
-            <option value="2000s">2000s (Frutiger Aero)</option>
-            <option value="2010s">2010s (Flat)</option>
-            <option value="2024">2024 (Bento)</option>
-            <option value="2025">2025 (Minimal)</option>
-            <option value="2026">2026 (Holo-Glass)</option>
+            <option value="modern">2020s (Modern Day)</option>
+            <option value="1990s">1990s (Geocities / Grey)</option>
+            <option value="2000s">2000s (Frutiger Aero / Glossy)</option>
+            <option value="2010s">2010s (Flat Design / Minimal)</option>
+            <option value="vapor">1980s (Vaporwave / Neon)</option>
+            <option value="matrix">Digital (Matrix / Terminal)</option>
+            <option value="2024">2024 (Bento Box / Rounded)</option>
+            <option value="2025">2025 (Glassmorphism / Frosted)</option>
+            <option value="2026">2026 (Holo-Interface / Cyan)</option>
+            <option value="dark">Stealth (Pure Dark Mode)</option>
         </select>
         
-        <button id="btn-save">Save & Go Public</button>
-        <button id="btn-logout" style="background:#666;">Logout</button>
+        <button id="btn-save" style="background:#00c853">Save & Publish to World</button>
+        <button id="btn-logout" style="background:#ff3d00; margin-top:10px">Sign Out</button>
     </div>
 
-    <!-- Screen 3: Public Profile -->
-    <div id="screen-profile" class="box hidden">
+    <!-- PUBLIC PROFILE SCREEN -->
+    <div id="screen-profile" class="container hidden">
         <center>
-            <img id="view-pfp" class="pfp" src="">
-            <h1 id="view-user"></h1>
-            <p id="view-pronouns" style="opacity:0.6"></p>
+            <img id="view-pfp" class="pfp-big" src="">
+            <h1 id="view-user" style="margin:15px 0 5px 0; font-size: 32px;"></h1>
+            <p id="view-pronouns" style="margin:0; opacity:0.6; font-style: italic;"></p>
             <hr>
-            <p id="view-bio"></p>
-            <div id="edit-button-container" class="hidden">
-                 <button id="btn-edit-mode" style="background:#444">Edit My Page</button>
+            <p id="view-bio" style="line-height:1.6; font-size: 18px;"></p>
+            
+            <div id="owner-controls" class="hidden">
+                 <button id="btn-edit-mode" style="background:#444; border: 1px solid #666;">Settings & Themes</button>
             </div>
         </center>
     </div>
 
 <script type="module">
+    // CORRECT FIREBASE IMPORTS
     import { initializeApp } from "https://gstatic.com";
     import { getFirestore, doc, setDoc, getDoc } from "https://gstatic.com";
 
-    // 1. PASTE YOUR CONFIG HERE
     const firebaseConfig = {
-  apiKey: "AIzaSyBWydqTaTQnrTqVTGET2Mv9L7BWRUHeFrk",
-  authDomain: "xrenbeats-com.firebaseapp.com",
-  projectId: "xrenbeats-com",
-  storageBucket: "xrenbeats-com.firebasestorage.app",
-  messagingSenderId: "747965799452",
-  appId: "1:747965799452:web:baeb00a0787b18d92753d9",
-  measurementId: "G-2GSWM567W5"
-};
+        apiKey: "AIzaSyBWydqTaTQnrTqVTGET2Mv9L7BWRUHeFrk",
+        authDomain: "xrenbeats-com.firebaseapp.com",
+        projectId: "xrenbeats-com",
+        storageBucket: "xrenbeats-com.firebasestorage.app",
+        messagingSenderId: "747965799452",
+        appId: "1:747965799452:web:baeb00a0787b18d92753d9",
+        measurementId: "G-2GSWM567W5"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- Themes ---
+    // --- THE 10 THEME ENGINE ---
     const themes = {
-        "1990s": "body{background:#c0c0c0;font-family:'Times New Roman'} .box{background:#dcdcdc;border:3px outset #fff;border-radius:0} button{border:2px outset #fff;background:#c0c0c0;color:#000} h2{background:#000080;color:#fff;padding:4px}",
-        "2000s": "body{background:linear-gradient(#7abcff,#4096ee)} .box{border-radius:30px; border:3px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3)}",
-        "2026": "body{background:#050505;color:#00ffcc;font-family:monospace} .box{background:rgba(0,255,204,0.05);border:1px solid #00ffcc;box-shadow:0 0 20px #00ffcc; text-shadow: 0 0 5px #00ffcc}"
+        "1990s": "body{background:#c0c0c0;font-family:'Times New Roman',serif} .container{background:#dcdcdc;border:3px outset #fff;border-radius:0;box-shadow:none} button{border:2px outset #fff;background:#c0c0c0;color:#000;border-radius:0} h2{background:#000080;color:#fff;padding:5px;font-family:Arial} .pfp-big{border-radius:0;border:3px ridge #fff}",
+        "2000s": "body{background:linear-gradient(135deg,#7abcff 0%,#4096ee 100%)} .container{border-radius:40px; border:4px solid rgba(255,255,255,0.7); background:rgba(255,255,255,0.9); box-shadow: 0 20px 40px rgba(0,0,0,0.3)} button{border-radius:50px; background:linear-gradient(#62c462,#419641)}",
+        "2010s": "body{background:#f3f3f3; color:#333} .container{border-radius:0; border:1px solid #ddd; box-shadow:none} button{border-radius:2px}",
+        "vapor": "body{background:#2d0a31; color:#00f2ff} .container{background:#1a051d; border:2px solid #ff00ff; box-shadow: 10px 10px 0px #00f2ff} button{background:#ff00ff; font-family:cursive}",
+        "matrix": "body{background:#000; color:#00ff00; font-family:monospace} .container{background:#000; border:1px solid #00ff00; box-shadow:0 0 15px #00ff00} button{background:#000; border:1px solid #00ff00; color:#00ff00}",
+        "2024": "body{background:#f0f0f0} .container{border-radius:35px; border:8px solid #000; box-shadow: 15px 15px 0px #2067b2} button{border-radius:15px; background:#000}",
+        "2025": "body{background:linear-gradient(45deg, #e0c3fc 0%, #8ec5fc 100%)} .container{background:rgba(255,255,255,0.4); backdrop-filter:blur(15px); border:1px solid rgba(255,255,255,0.5); border-radius:30px} button{background:rgba(0,0,0,0.7)}",
+        "2026": "body{background:#050505; color:#00ffcc; font-family:monospace} .container{background:rgba(0,255,204,0.05); border:1px solid #00ffcc; box-shadow:0 0 30px rgba(0,255,204,0.2); text-shadow:0 0 10px #00ffcc} .pfp-big{border-color:#00ffcc}",
+        "dark": "body{background:#0a0a0a; color:#eee} .container{background:#151515; border:1px solid #222} button{background:#333}",
+        "modern": "" // Default
     };
 
     let isLogin = false;
     let currentUser = null;
 
-    // --- Start Logic ---
+    // --- URL LOGIC ---
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get('user');
 
@@ -99,17 +117,18 @@
         loadPublicProfile(userParam);
     }
 
-    // --- Buttons ---
+    // --- AUTH ACTIONS ---
     document.getElementById('auth-toggle').onclick = () => {
         isLogin = !isLogin;
-        document.getElementById('auth-title').innerText = isLogin ? "Login" : "Create Account";
-        document.getElementById('btn-auth').innerText = isLogin ? "Login" : "Sign Up";
+        document.getElementById('auth-title').innerText = isLogin ? "Member Login" : "Create Identity";
+        document.getElementById('btn-auth').innerText = isLogin ? "Access Account" : "Initialize Sign Up";
+        document.getElementById('auth-toggle').innerText = isLogin ? "Need a profile? Sign up" : "Already a member? Login here";
     };
 
     document.getElementById('btn-auth').onclick = async () => {
         const u = document.getElementById('username').value.toLowerCase().trim();
         const p = document.getElementById('password').value;
-        if(!u || !p) return alert("Fill fields!");
+        if(!u || !p) return alert("Missing credentials!");
 
         const userRef = doc(db, "users", u);
         const snap = await getDoc(userRef);
@@ -117,16 +136,19 @@
         if(isLogin) {
             if(snap.exists() && snap.data().pass === p) {
                 currentUser = snap.data();
+                sessionStorage.setItem('active_user', u); // Remember login for session
                 showDash();
-            } else { alert("Login failed!"); }
+            } else { alert("Authentication failed. Check name/password."); }
         } else {
-            if(snap.exists()) return alert("Name taken!");
-            currentUser = { name: u, pass: p, bio: "", pronouns: "", pfp: "", theme: "modern" };
+            if(snap.exists()) return alert("Username already exists in the database.");
+            currentUser = { name: u, pass: p, bio: "No bio yet.", pronouns: "", pfp: "", theme: "modern" };
             await setDoc(userRef, currentUser);
+            sessionStorage.setItem('active_user', u);
             showDash();
         }
     };
 
+    // --- SAVE ACTION ---
     document.getElementById('btn-save').onclick = async () => {
         currentUser.bio = document.getElementById('set-bio').value;
         currentUser.pfp = document.getElementById('set-pfp').value;
@@ -137,9 +159,14 @@
         window.location.href = "?user=" + currentUser.name;
     };
 
+    // --- LOAD PROFILE ---
     async function loadPublicProfile(name) {
-        const snap = await getDoc(doc(db, "users", name));
-        if(!snap.exists()) return alert("User not found!");
+        const snap = await getDoc(doc(db, "users", name.toLowerCase()));
+        if(!snap.exists()) {
+            alert("This user has not been found in our records.");
+            window.location.href = window.location.pathname;
+            return;
+        }
         
         const data = snap.data();
         document.getElementById('screen-auth').classList.add('hidden');
@@ -147,21 +174,36 @@
         
         document.getElementById('view-user').innerText = name.toUpperCase();
         document.getElementById('view-bio').innerText = data.bio;
-        document.getElementById('view-pfp').src = data.pfp || "https://placeholder.com";
+        document.getElementById('view-pfp').src = data.pfp || "https://dicebear.com" + name;
         document.getElementById('view-pronouns').innerText = data.pronouns;
 
+        // Apply Theme
         if(themes[data.theme]) document.getElementById('theme-style').innerHTML = themes[data.theme];
+
+        // Check if I am the owner
+        const loggedInAs = sessionStorage.getItem('active_user');
+        if(loggedInAs === name.toLowerCase()) {
+            document.getElementById('owner-controls').classList.remove('hidden');
+            currentUser = data; // Sync for edit
+        }
     }
 
+    // --- NAVIGATION ---
     function showDash() {
         document.getElementById('screen-auth').classList.add('hidden');
+        document.getElementById('screen-profile').classList.add('hidden');
         document.getElementById('screen-dash').classList.remove('hidden');
         document.getElementById('set-bio').value = currentUser.bio;
         document.getElementById('set-pfp').value = currentUser.pfp;
         document.getElementById('set-pronouns').value = currentUser.pronouns;
+        document.getElementById('set-theme').value = currentUser.theme;
     }
 
-    document.getElementById('btn-logout').onclick = () => window.location.href = window.location.pathname;
+    document.getElementById('btn-edit-mode').onclick = showDash;
+    document.getElementById('btn-logout').onclick = () => {
+        sessionStorage.clear();
+        window.location.href = window.location.pathname;
+    };
 
 </script>
 </body>
