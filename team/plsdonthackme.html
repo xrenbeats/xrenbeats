@@ -1,1 +1,235 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>plsdonthackme — XrenBeats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg: #04080c;
+  --surface: #080f14;
+  --border: #0f2030;
+  --accent: #00d4ff;
+  --accent-glow: rgba(0, 212, 255, 0.12);
+  --accent2: #ff6b35;
+  --text: #d0eeff;
+  --muted: #3a5a6e;
+  --display: 'Orbitron', sans-serif;
+  --mono: 'Share Tech Mono', monospace;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+}
+
+/* grid bg */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--accent-glow) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 52px 32px 100px; }
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 72px;
+}
+.nav-brand { font-family: var(--display); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); }
+nav a { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; font-family: var(--mono); }
+nav a:hover { color: var(--accent); }
+
+.warning-strip {
+  background: var(--accent2);
+  color: #000;
+  padding: 8px 20px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.name-area { margin-bottom: 52px; }
+.tag-line { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+h1 {
+  font-family: var(--display);
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+}
+h1 .hi { color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+
+.bio {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #5a8aa0;
+  max-width: 520px;
+  margin-bottom: 52px;
+}
+
+/* data panels */
+.panels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 48px;
+  border: 1px solid var(--border);
+}
+.panel {
+  background: var(--bg);
+  padding: 22px 20px;
+}
+.panel-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.panel-value { font-family: var(--display); font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; }
+.panel-value.warn { color: var(--accent2); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 52px; }
+.tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.tag.lit { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+.links { border: 1px solid var(--border); }
+.link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+}
+.link-row:last-child { border-bottom: none; }
+.link-row:hover { background: var(--surface); }
+.link-row:hover .lname { color: var(--accent); }
+.lname { font-family: var(--mono); font-size: 12px; }
+.larrow { color: var(--muted); }
+
+footer {
+  margin-top: 72px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+}
+footer span, footer a { font-size: 10px; color: var(--muted); letter-spacing: 0.1em; text-decoration: none; font-family: var(--mono); }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .panels { grid-template-columns: 1fr 1fr; }
+  h1 { font-size: 26px; }
+}
+```
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <span class="nav-brand">XRENBEATS</span>
+      <a href="https://xrenbeats.com/team.html">← Team</a>
+    </nav>
+
+```
+<div class="warning-strip">
+  <span>⚠ member_05 · authorized access only</span>
+  <span>status: online</span>
+</div>
+
+<div class="name-area">
+  <div class="tag-line">Producer · Member 05</div>
+  <h1><span class="hi">pls</span>dont<br/><span class="hi">hack</span>me</h1>
+</div>
+
+<p class="bio">
+  The name is a plea, not a plead. Ready or not, not a warning. plsdonthackme is someone you don't want to mess with. DO NOT hack him!! His production that feels like it knows too much. Part of XrenBeats, doing what needs to be done. (not really)
+</p>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-label">Handle</div>
+    <div class="panel-value">PDNHM</div>
+  </div>
+  <div class="panel">
+    <div class="panel-label">Role</div>
+    <div class="panel-value">Uhhhh idk</div>
+  </div>
+  <div class="panel">
+    <div class="panel-label">Collective</div>
+    <div class="panel-value">XrenBeats</div>
+  </div>
+  <div class="panel">
+    <div class="panel-label">Threat Level</div>
+    <div class="panel-value warn">Low</div>
+  </div>
+</div>
+
+<div class="tags">
+  <span class="tag lit">Idk what he does lol</span>
+  <span class="tag lit">Dont hack him</span>
+  <span class="tag">He is a huskie (mostly)</span>
+  <span class="tag">Pls dont hack him hell be makin the dough</span>
+  <span class="tag">Cuz Noli or 1x1x1 will appear under your bed or something idk</span>
+</div>
+
+<div class="links">
+  <a class="link-row" href="#" target="_blank">
+    <span class="lname">SoundCloud</span>
+    <span class="larrow">↗</span>
+  </a>
+  <a class="link-row" href="#" target="_blank">
+    <span class="lname">Instagram</span>
+    <span class="larrow">↗</span>
+  </a>
+  <a class="link-row" href="https://xrenbeats.com" target="_blank">
+    <span class="lname">XrenBeats</span>
+    <span class="larrow">↗</span>
+  </a>
+</div>
+
+<footer>
+  <span>© XrenBeats Collective</span>
+  <a href="https://xrenbeats.com">xrenbeats.com</a>
+</footer>
+```
+
+  </div>
+</body>
+</html>
