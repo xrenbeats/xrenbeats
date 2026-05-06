@@ -3,113 +3,671 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XTÉ TRANSLATE - XrenBeats</title>
+    <title>XTÉ TRANSLATE — XrenBeats</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #121212; color: #eee; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 600px; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        h1 { color: #00ffcc; margin-bottom: 5px; }
-        p.subtitle { color: #888; font-size: 0.9em; margin-bottom: 25px; }
-        textarea { width: 100%; height: 100px; padding: 12px; background: #2d2d2d; color: #fff; border: 1px solid #444; border-radius: 8px; resize: none; box-sizing: border-box; }
-        .output { margin-top: 20px; padding: 15px; background: #252525; border-left: 4px solid #00ffcc; min-height: 50px; white-space: pre-wrap; word-wrap: break-word; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #00ffcc; }
+        :root {
+            --bg: #0a0a0f;
+            --surface: #111118;
+            --surface2: #18181f;
+            --border: #2a2a38;
+            --accent: #00ffcc;
+            --accent2: #7c4dff;
+            --accent3: #ff4dac;
+            --text: #e8e8f0;
+            --muted: #666680;
+            --glow: rgba(0, 255, 204, 0.15);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Syne', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 60px;
+            overflow-x: hidden;
+        }
+
+        /* Animated background grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .brand-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7em;
+            color: var(--accent2);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-tag::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 1px;
+            background: var(--accent2);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65em;
+            color: var(--muted);
+            letter-spacing: 0.15em;
+            margin-top: 10px;
+        }
+
+        /* Translate card */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,255,204,0.05);
+        }
+
+        .panel {
+            padding: 28px;
+        }
+
+        .panel + .panel {
+            border-top: 1px solid var(--border);
+        }
+
+        .panel-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65em;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .lang-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .lang-badge.en {
+            background: rgba(124,77,255,0.15);
+            color: var(--accent2);
+            border: 1px solid rgba(124,77,255,0.3);
+        }
+
+        .lang-badge.xte {
+            background: rgba(0,255,204,0.1);
+            color: var(--accent);
+            border: 1px solid rgba(0,255,204,0.25);
+        }
+
+        textarea {
+            width: 100%;
+            height: 130px;
+            padding: 16px;
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            resize: none;
+            font-family: 'Syne', sans-serif;
+            font-size: 1em;
+            line-height: 1.6;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            border-color: rgba(0,255,204,0.4);
+            box-shadow: 0 0 0 3px rgba(0,255,204,0.06);
+        }
+
+        textarea::placeholder { color: var(--muted); }
+
+        /* Output */
+        .output-area {
+            min-height: 130px;
+            padding: 16px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95em;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--accent);
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .output-area.has-content {
+            border-color: rgba(0,255,204,0.2);
+            box-shadow: 0 0 20px rgba(0,255,204,0.04);
+        }
+
+        .output-placeholder {
+            color: var(--muted);
+            font-family: 'Syne', sans-serif;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 28px;
+            background: rgba(0,255,204,0.03);
+            border-top: 1px solid var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6em;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .stat { display: flex; align-items: center; gap: 6px; }
+        .stat-val { color: var(--accent); font-weight: 700; }
+
+        /* Copy button */
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65em;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .copy-btn.copied { border-color: var(--accent); color: var(--accent); }
+
+        /* Dictionary count badge */
+        .dict-info {
+            margin-top: 20px;
+            padding: 14px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65em;
+            color: var(--muted);
+            letter-spacing: 0.1em;
+        }
+
+        .dict-count {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>XTÉ TRANSLATE</h1>
-        <p class="subtitle">LANGUAGE OPTION FOR XRENBEATS APP: XBT FEATURE</p>
-        <label for="input">English</label>
-        <textarea id="input" placeholder="Type here..." oninput="translateText()"></textarea>
-        <label style="margin-top: 25px;">XTÉS</label>
-        <div id="output" class="output"></div>
+    <div class="wrapper">
+        <div class="header">
+            <div class="brand-tag">XrenBeats — XBT Feature</div>
+            <h1>XTÉ<br>TRANSLATE</h1>
+            <p class="subtitle">// CONLANG ENGINE v2.0 — ENGLISH → XTÉS</p>
+        </div>
+
+        <div class="card">
+            <div class="panel">
+                <div class="panel-label">
+                    Input
+                    <span class="lang-badge en">English</span>
+                </div>
+                <textarea id="input" placeholder="Type anything in English..." oninput="translateText()"></textarea>
+            </div>
+
+            <div class="panel">
+                <div class="panel-label">
+                    Output
+                    <span class="lang-badge xte">XTÉS</span>
+                </div>
+                <div id="output" class="output-area">
+                    <span class="output-placeholder">Translation will appear here...</span>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <span class="stat">WORDS TRANSLATED: <span class="stat-val" id="word-count">0</span></span>
+                <span class="stat">CHARS: <span class="stat-val" id="char-count">0</span></span>
+                <span class="stat">DICT ENTRIES: <span class="stat-val" id="dict-size">0</span></span>
+                <button class="copy-btn" id="copy-btn" onclick="copyOutput()">COPY</button>
+            </div>
+        </div>
+
+        <div class="dict-info">
+            <span>XTÉ DICTIONARY</span>
+            <span class="dict-count" id="total-entries">—</span>
+            <span>TOTAL ENTRIES LOADED</span>
+        </div>
     </div>
 
     <script>
-        // 1. Added missing commas in dictionary
         const dictionary = {
-            "hello": "veo", "hi": "ve", "bye": "calo", "vague": "gujalinga", 
-            "evasive": "evalespia", "die": "da", "stop": "shoa", "shit": "shuz", 
-            "fuck": "fulo", "bitch": "betelozi", "ass": "askolode", "funny": "poarta", 
-            "lol": "clc", "laugh": "celtae", "out": "lokis", "in": "estello", 
-            "outside": "ounvelo", "inside": "estellkave", "loud": "cenkae", 
-            "dead": "stakjalhin", "alive": "stalos", "hell": "asnatox", 
-            "trash": "atraplas", "bad": "bula", "thy": "stakhalossa", 
-            "goon": "gojaloont", "goner": "gotása", "gone": "gota", 
-            "gooner": "gojaloontá", "grooming": "gooval", "groom": "goala", 
-           
-            "groomer": "gogalas", "gooning": "gojalooga", "goofing": "haslin", 
-            "goof": "halsin", "god": "pal", "is": "sa", "will": "vol", 
-            "be": "mel", "here": "huila", "i": "i", "xren": "xreń", 
-            "xrenbeats": "xreń veesa", "beat": "veezá", "beats": "veesa", 
-            "beet": "kajahl", "betts": "koljaskal", "beets": "kolajas", 
-            "beer": "kova", "beers": "kovas", "beast": "beastà", 
-            "beasts": "belvayko", "beastie": "belvaykolas", "bestie": "belva", 
-            "girlie": "gola", "girlies": "golaş", "baddie": "golavö", 
-            "baddies": "golas", "slay": "fekaj", "slayer": "fejka", 
-            "slays": "fejkal", "slaying": "fejikaś", "slayers": "fejikal", 
-           
-           // NAMES LIST
-            "jace": "jeilo", "stacy": "staciko", "stacey": "stacika", 
-            "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo", 
-            "rebecca": "rebcal", "elijah": "eja", "cam": "camoru", 
-            "camdon": "camorudon", "camden": "camoruden", "john": "jén", 
-           
-            // OTHER WORDS
-            "his": "joles", "her": "hes", "them": "alpilsa", "when": "wallés", 
-            "where": "wales", "who": "alpis", "why": "a", "then": "tal", 
-            "a": "orá", "and": "of", "or": "ana", "of": "oro", "hey": "of", 
-            "sorry": "hetá", "so": "soki", "slop": "sloppo", "ai": "ai",
-            "how are you": "tojelaka", "cap": "capp", "best": "besta"
-            "good": "goud", "super": "superó", "cool": "coolio", 
-            "how": "to", "are": "jela", "nice": "nicei", "job": "jób"
-            "you": "ka", "yo": "yoa", "nice": "nicei", "job": "jób"
-            "bruh": "bura", "mom": "móm", "nice": "nicei", "job": "jób"
-           
-            "mommy": "mom mi", "mommies": "mom mis", "nice": "nicei", "job": "jób"
-            "messed": "meisada", "mama": "mamá", "mess": "meis", "up": "pu"
-            "ください": "plesai", "gay": "geiro", "please": "plesai", "down": "downos"
-            "putah": "betelozi", "ass": "akass", "asshole": "akassolo", "assholes": "akasloa"
-            "zion": "gáy", "zaylin": "bailzo", "fallen": "foli", "ashes": "ashisu"
-            "coly": "cotri", "adrian": "adriano", "moms": "momsa", "mama": "mamá", "mess": "meis", "up": "upo",
-            "fail": "felak", "failure": "felaksío", "mess": "meis", "up": "up"
-            "but": "coda", "butt": "codal", "booty": "bota", "it": "ito"
-            "italian": "italo", "japanese": "japato", "hiragana": "higanai", "katakana": "kanakai"
-           
-           // NUMBERS LIST
-        "one": "une", "two": "twoce", "three": "threte", "four": "sote"
-        "five": "fite", "six": "sinte", "seven": "sente", "nine": "nynce", "ten": "tenco"
-        "nine": "nynce", "eleven": "even", "twelve": "telvé", "thirteen": "thinté", "sixty seven": "sinte sente"
+            // ── GREETINGS & FAREWELLS ──────────────────────────────────────
+            "hello": "veo", "hi": "ve", "hey": "vea", "bye": "calo",
+            "goodbye": "calosa", "farewell": "calovi", "welcome": "velomi",
+            "greetings": "veosal", "howdy": "tovei", "sup": "sokip",
+            "what's up": "sokipa", "later": "talco", "see you": "veo ka",
+            "take care": "kajlosa", "peace": "paxila", "cheers": "celto",
 
+            // ── PRONOUNS ──────────────────────────────────────────────────
+            "i": "i", "me": "mi", "my": "mio", "mine": "miosa",
+            "myself": "mioself", "we": "welo", "us": "uso", "our": "oursa",
+            "ours": "oursalo", "ourselves": "ourselves",
+            "you": "ka", "your": "kalo", "yours": "kalosa", "yourself": "kaself",
+            "he": "jol", "him": "jolmi", "his": "joles", "himself": "jolself",
+            "she": "hes", "her": "helo", "hers": "helosa", "herself": "heself",
+            "they": "alpil", "them": "alpilsa", "their": "alpilko",
+            "theirs": "alpilkosa", "themselves": "alpilself",
+            "it": "ito", "its": "itoska", "itself": "itoself",
+            "who": "alpis", "whom": "alpismi", "whose": "alpislo",
 
+            // ── VERBS (COMMON) ────────────────────────────────────────────
+            "is": "sa", "are": "jela", "was": "sako", "were": "jelako",
+            "be": "mel", "been": "melo", "being": "meling",
+            "have": "havo", "has": "havsa", "had": "havko",
+            "do": "dova", "does": "dovsa", "did": "dovko",
+            "will": "vol", "would": "volko", "shall": "shalvo",
+            "should": "shalko", "can": "cano", "could": "canko",
+            "may": "maylo", "might": "maiko", "must": "musta",
+            "go": "gova", "went": "govko", "gone": "gota",
+            "come": "comevo", "came": "comeko", "coming": "comeling",
+            "get": "geto", "got": "getko", "getting": "getling",
+            "make": "makova", "made": "makko", "making": "makling",
+            "take": "takova", "took": "takko", "taking": "takling",
+            "give": "givova", "gave": "givko", "given": "givelo",
+            "know": "knova", "knew": "knovko", "known": "knovelo",
+            "think": "thinkova", "thought": "thinkko", "thinking": "thinkling",
+            "see": "seova", "saw": "seoko", "seen": "seolo",
+            "look": "lokova", "looked": "lokko", "looking": "lokling",
+            "want": "wantova", "wanted": "wantko", "wanting": "wantling",
+            "need": "nedova", "needed": "nedko", "needing": "nedling",
+            "love": "lova", "loved": "lovko", "loving": "lovling",
+            "hate": "hatova", "hated": "hatko", "hating": "hatling",
+            "like": "likova", "liked": "likko", "liking": "likling",
+            "feel": "felova", "felt": "felko", "feeling": "felling",
+            "say": "sayova", "said": "sayko", "saying": "sayling",
+            "tell": "telova", "told": "telko", "telling": "telling",
+            "ask": "askova", "asked": "askko", "asking": "askling",
+            "work": "workova", "worked": "workko", "working": "workling",
+            "run": "runova", "ran": "runko", "running": "runling",
+            "walk": "walkova", "walked": "walkko", "walking": "walkling",
+            "sit": "sitova", "sat": "sitko", "sitting": "sitling",
+            "stand": "standova", "stood": "standko", "standing": "standling",
+            "eat": "eatova", "ate": "eatko", "eating": "eatling",
+            "drink": "drinkova", "drank": "drinkko", "drinking": "drinkling",
+            "sleep": "sleepova", "slept": "sleepko", "sleeping": "sleepling",
+            "wake": "wakeova", "woke": "wakeko", "waking": "wakelink",
+            "try": "tryova", "tried": "tryko", "trying": "tryling",
+            "use": "usova", "used": "usko", "using": "usling",
+            "find": "findova", "found": "findko", "finding": "findling",
+            "lose": "lozova", "lost": "lozko", "losing": "lozling",
+            "win": "winova", "won": "winko", "winning": "winling",
+            "fight": "fightova", "fought": "fightko", "fighting": "fightling",
+            "kill": "killova", "killed": "killko", "killing": "killong",
+            "die": "da", "died": "dako", "dying": "daling",
+            "live": "livova", "lived": "livko", "living": "livling",
+            "play": "playova", "played": "playko", "playing": "playling",
+            "sing": "singova", "sang": "singko", "singing": "singling",
+            "dance": "danceova", "danced": "danceko", "dancing": "danceling",
+            "write": "writeova", "wrote": "writeko", "writing": "writeling",
+            "read": "redova", "reads": "redsa", "reading": "redling",
+            "speak": "speakova", "spoke": "speakko", "speaking": "speaking",
+            "listen": "listova", "listened": "listko", "listening": "listling",
+            "help": "helpova", "helped": "helpko", "helping": "helpling",
+            "move": "movova", "moved": "movko", "moving": "movling",
+            "change": "changova", "changed": "changko", "changing": "changling",
+            "start": "startova", "started": "startko", "starting": "startling",
+            "stop": "shoa", "stopped": "shoako", "stopping": "shoaling",
+            "wait": "waitova", "waited": "waitko", "waiting": "waitling",
+            "open": "openova", "opened": "openko", "opening": "openling",
+            "close": "closeova", "closed": "closeko", "closing": "closeling",
+            "create": "creatova", "created": "creatko", "creating": "creatling",
+            "destroy": "destroyova", "destroyed": "destroyko",
+            "build": "buildova", "built": "buildko", "building": "buildling",
+            "break": "breakova", "broke": "breakko", "breaking": "breakling",
+            "fix": "fixova", "fixed": "fixko", "fixing": "fixling",
 
-     
+            // ── ADJECTIVES ────────────────────────────────────────────────
+            "good": "goud", "great": "greto", "amazing": "amaziko",
+            "awesome": "awesomi", "fantastic": "fantiko", "wonderful": "wondrilo",
+            "beautiful": "beltuvia", "pretty": "prettola", "cute": "cutilo",
+            "handsome": "handomi", "ugly": "uglio", "gross": "grosso",
+            "bad": "bula", "terrible": "terrilo", "horrible": "horriblo",
+            "awful": "awfulo", "worst": "worstin", "best": "besta",
+            "better": "bettra", "worse": "worsa", "super": "superó",
+            "cool": "coolio", "nice": "nicei", "sweet": "sweetilo",
+            "soft": "softola", "hard": "hardol", "tough": "tuffol",
+            "easy": "easilo", "simple": "simpilo", "complex": "komplexo",
+            "big": "bigo", "large": "largol", "huge": "hugol", "giant": "giantol",
+            "small": "smallo", "tiny": "tiniol", "little": "littol",
+            "tall": "tallov", "short": "shortov", "long": "longov",
+            "fast": "fastov", "slow": "slowov", "quick": "quickov",
+            "old": "oldov", "new": "newov", "young": "youngov",
+            "hot": "hotov", "cold": "coldov", "warm": "warmov", "cool": "coolov",
+            "bright": "brightov", "dark": "darkov", "light": "lightov",
+            "loud": "cenkae", "quiet": "quietov", "silent": "silentov",
+            "happy": "happiol", "sad": "sadiol", "angry": "angriol",
+            "scared": "skariol", "brave": "braviol", "strong": "strongiol",
+            "weak": "weakiol", "smart": "smartiol", "dumb": "dumbiol",
+            "crazy": "crazyiol", "normal": "normaliol", "weird": "weirdiol",
+            "strange": "straniol", "funny": "poarta", "serious": "seriol",
+            "kind": "kindiol", "mean": "meaniol", "rude": "rudiol",
+            "polite": "politiol", "wild": "wildiol", "tame": "tameiol",
+            "free": "freeiol", "trapped": "trapiol", "lost": "lostiol",
+            "found": "foundiol", "alive": "stalos", "dead": "stakjalhin",
+            "true": "trueiol", "false": "falseiol", "real": "realiol",
+            "fake": "fakeiol", "pure": "pureiol", "corrupt": "corruptiol",
+            "whole": "wholiol", "broken": "brokiol", "perfect": "perfiol",
+            "rich": "richiol", "poor": "pooriol", "lucky": "luckiol",
+            "vague": "gujalinga", "evasive": "evalespia",
+
+            // ── NOUNS (GENERAL) ───────────────────────────────────────────
+            "god": "pal", "hell": "asnatox", "heaven": "hevanol",
+            "world": "worldol", "earth": "earthol", "sky": "skyol",
+            "sun": "sunol", "moon": "moonol", "star": "starol",
+            "water": "waterol", "fire": "fireol", "air": "airol",
+            "land": "landol", "sea": "seaol", "ocean": "oceanol",
+            "river": "riverol", "mountain": "mountol", "forest": "forestol",
+            "city": "cityol", "town": "townol", "home": "homeol",
+            "house": "houseol", "room": "roomol", "door": "doorol",
+            "window": "windowol", "wall": "wallol", "floor": "floorol",
+            "road": "roadol", "street": "streetol", "path": "pathol",
+            "time": "timeol", "day": "dayol", "night": "nightol",
+            "morning": "morningol", "evening": "eveningol",
+            "week": "weekol", "month": "monthol", "year": "yearol",
+            "life": "lifeol", "death": "deathol", "soul": "soulol",
+            "heart": "heartol", "mind": "mindol", "body": "bodyol",
+            "blood": "bloodol", "bone": "boneol", "eye": "eyeol",
+            "hand": "handol", "head": "headol", "face": "faceol",
+            "voice": "voiceol", "song": "songol", "music": "musicol",
+            "beat": "veezá", "beats": "veesa", "sound": "soundol",
+            "word": "wordol", "name": "nameol", "story": "storol",
+            "power": "powerol", "light": "lightol", "shadow": "shadowol",
+            "dream": "dreamol", "hope": "hopeol", "fear": "fearol",
+            "love": "lova", "hate": "hato", "pain": "painol",
+            "joy": "joyol", "peace": "paxila", "war": "warol",
+            "truth": "truthol", "lie": "lieol", "secret": "secretol",
+            "money": "moneyol", "work": "workol", "food": "foodol",
+            "art": "artol", "game": "gameol", "friend": "friendol",
+            "enemy": "enemyol", "family": "familyol", "brother": "brothol",
+            "sister": "sistol", "mother": "mothol", "father": "fathol",
+            "son": "sonol", "daughter": "daughol", "baby": "babyol",
+            "kid": "kidol", "child": "childol", "man": "manol",
+            "woman": "womanol", "person": "personol", "people": "peopol",
+            "king": "kingol", "queen": "queensol", "hero": "herol",
+            "villain": "vilanol", "ghost": "ghostol", "demon": "demonol",
+            "angel": "angelol", "monster": "monstol",
+
+            // ── SLANG / EXPLETIVES ────────────────────────────────────────
+            "shit": "shuz", "fuck": "fulo", "bitch": "betelozi",
+            "ass": "akass", "asshole": "akassolo", "assholes": "akasloa",
+            "damn": "damnol", "hell": "asnatox", "crap": "crapol",
+            "idiot": "idiotol", "loser": "lozerol", "freak": "freakolz",
+            "lol": "clc", "omg": "ovpal", "wtf": "wafulov",
+            "bruh": "bura", "bro": "brova", "sis": "sisova",
+            "cap": "capp", "no cap": "no capp", "slay": "fekaj",
+            "slayer": "fejka", "slays": "fejkal", "slaying": "fejikaś",
+            "slayers": "fejikal", "gooning": "gojalooga", "goon": "gojaloont",
+            "goner": "gotása", "gooner": "gojaloontá", "grooming": "gooval",
+            "groom": "goala", "groomer": "gogalas", "goofing": "haslin",
+            "goof": "halsin", "trash": "atraplas", "slop": "sloppo",
+            "bussin": "bussino", "lowkey": "lowkeyo", "highkey": "highkeyo",
+            "vibe": "vibolo", "vibes": "vibolos", "mood": "moodo",
+            "energy": "energol", "drip": "dripol", "fit": "fitol",
+            "clout": "cloutol", "flex": "flexol", "sus": "susol",
+            "based": "basedol", "cringe": "cringol", "ratio": "ratiol",
+            "rent free": "renfre", "understood": "underol",
+
+            // ── MUSIC / BEATS / XRENBEATS ─────────────────────────────────
+            "xren": "xreń", "xrenbeats": "xreń veesa",
+            "beat": "veezá", "beats": "veesa", "beet": "kajahl",
+            "bass": "bassol", "treble": "treblo", "melody": "melodol",
+            "harmony": "harmonol", "chord": "chordol", "note": "notol",
+            "rhythm": "rhythmol", "tempo": "tempol", "drop": "dropol",
+            "hook": "hookol", "verse": "versol", "chorus": "choruso",
+            "bridge": "bridgol", "intro": "introl", "outro": "outrol",
+            "sample": "sampol", "loop": "loopol", "track": "trackol",
+            "album": "albumol", "playlist": "playlistol", "stream": "streamol",
+            "producer": "producol", "artist": "artistol", "vocalist": "vocalistol",
+            "rapper": "rappol", "singer": "singol", "DJ": "djeelo",
+            "bpm": "bpmo", "mix": "mixol", "master": "mastol",
+            "reverb": "reverbola", "delay": "delayol", "filter": "filtol",
+            "synth": "synthol", "drum": "drumol", "kick": "kickol",
+            "snare": "snarol", "hi-hat": "hihatol", "808": "eitézero",
+            "vocal": "vocalo", "lyric": "lyricol", "rap": "rapol",
+            "flow": "flowol", "bar": "barol", "sixteen": "sinte-even",
+
+            // ── VOCALOID / TECH ───────────────────────────────────────────
+            "vocaloid": "vocaloida", "miku": "mikulo", "hatsune": "hatsuno",
+            "flower": "floweló", "yukari": "yukário", "haai": "haalo",
+            "yuki": "yukilo", "synthesizer": "synthizol", "tuning": "tunol",
+            "pitch": "pitchol", "vibrato": "vibratol", "portamento": "portolo",
+            "ai": "ai", "robot": "robotol", "digital": "digitol",
+            "code": "codov", "tech": "techol", "cyber": "cyberol",
+            "glitch": "glitchol", "pixel": "pixolv", "data": "datol",
+            "system": "systemol", "program": "programol", "game": "gameol",
+            "online": "onlineol", "internet": "netol", "wifi": "wifiol",
+            "phone": "phonol", "screen": "screenol", "app": "appol",
+
+            // ── PLACES ────────────────────────────────────────────────────
+            "here": "huila", "there": "therelo", "where": "wales",
+            "everywhere": "everywale", "nowhere": "nowale", "somewhere": "somewale",
+            "inside": "estellkave", "outside": "ounvelo",
+            "in": "estello", "out": "lokis", "up": "upo", "down": "downos",
+            "left": "leftol", "right": "rightol", "north": "northol",
+            "south": "southol", "east": "eastol", "west": "westol",
+            "japan": "japanol", "japanese": "japato", "italy": "italol",
+            "italian": "italo", "korea": "koranol", "korean": "korato",
+            "america": "americol", "american": "americato",
+            "hiragana": "higanai", "katakana": "kanakai", "kanji": "kanjilo",
+
+            // ── CONJUNCTIONS / PREPOSITIONS / PARTICLES ───────────────────
+            "and": "of", "or": "ana", "but": "coda", "so": "soki",
+            "because": "becasoki", "if": "ifol", "when": "wallés",
+            "then": "tal", "while": "whileol", "until": "untilol",
+            "after": "afterol", "before": "beforeol", "during": "duringol",
+            "for": "forol", "to": "tov", "from": "fromol", "with": "withol",
+            "without": "withoutol", "about": "aboutol", "above": "abovol",
+            "below": "belowol", "between": "betwol", "through": "througol",
+            "against": "againtol", "along": "alongol", "around": "aroundol",
+            "by": "byol", "at": "atol", "on": "onol", "off": "offol",
+            "over": "overol", "under": "underol", "into": "intool",
+            "onto": "ontool", "upon": "uponol", "within": "withinol",
+            "of": "oro", "a": "orá", "the": "telo", "an": "anlo",
+            "this": "thisol", "that": "thatol", "these": "theseol",
+            "those": "thoseol", "all": "allol", "some": "someol",
+            "any": "anyol", "no": "nolo", "not": "notto",
+            "never": "nevolca", "always": "alwavol", "sometimes": "somtimol",
+            "often": "oftenol", "usually": "usuallol", "rarely": "rarelol",
+            "yes": "yesol", "yeah": "yealo", "yep": "yepol", "nope": "nopol",
+            "okay": "okalo", "ok": "okol", "sure": "surol", "right": "rigol",
+
+            // ── QUESTIONS ─────────────────────────────────────────────────
+            "what": "wato", "why": "a", "how": "to", "which": "whicol",
+            "how are you": "tojelaka", "what is this": "wato sa thisol",
+
+            // ── EMOTIONS / STATES ─────────────────────────────────────────
+            "sorry": "hetá", "please": "plesai", "thank you": "thankalo",
+            "thanks": "thankol", "welcome": "velomi", "excuse me": "excusolmi",
+            "help": "helpova", "hurry": "hurryol", "wait": "waitol",
+            "calm": "calmol", "stress": "stressol", "tired": "tirodol",
+            "bored": "boredol", "excited": "excitol", "nervous": "nervol",
+            "confused": "confusol", "lost": "lostiol", "ready": "readol",
+            "done": "donol", "finished": "finishol", "over": "overol",
+            "sick": "sickol", "healthy": "healthol", "hurt": "hurtol",
+            "pain": "painol", "numb": "numbiol", "empty": "emptol",
+            "full": "fullol", "hungry": "hungriol", "thirsty": "thirstol",
+
+            // ── FAMILY / PEOPLE ───────────────────────────────────────────
+            "mom": "móm", "mommy": "mom mi", "mommies": "mom mis",
+            "mama": "mamá", "moms": "momsa", "dad": "dadol",
+            "daddy": "dadilo", "papa": "papol", "brother": "brothol",
+            "sister": "sistol", "aunt": "auntol", "uncle": "unclol",
+            "cousin": "cousinol", "grandma": "grandmol", "grandpa": "grandpol",
+            "baby": "babyol", "bro": "brova", "sis": "sisova",
+            "bestie": "belva", "girlie": "gola", "girlies": "golaş",
+            "baddie": "golavö", "baddies": "golas",
+
+            // ── NAMES ─────────────────────────────────────────────────────
+            "jace": "jeilo", "stacy": "staciko", "stacey": "stacika",
+            "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo",
+            "rebecca": "rebcal", "elijah": "eja", "cam": "camoru",
+            "camdon": "camorudon", "camden": "camoruden", "john": "jén",
+            "zion": "gáy", "zaylin": "bailzo", "coly": "cotri",
+            "adrian": "adriano", "alex": "alexilo", "jordan": "jordanol",
+            "maya": "mayalo", "luna": "lunalo", "nova": "novalo",
+            "phoenix": "phoenixol", "sage": "sagelo", "saige": "saigelo", "river": "riverol",
+            "blake": "blakelo", "drew": "drewlo", "quinn": "quinnol",
+            "riley": "rileylo", "skyler": "skylerlo", "morgan": "morganlo",
+            "avery": "averylo", "charlie": "charlilo", "dakota": "dakotalo",
+
+            // ── SPECIAL TERMS ─────────────────────────────────────────────
+            "thy": "stakhalossa", "fallen": "foli", "ashes": "ashisu",
+            "fail": "felak", "failure": "felaksío", "messed": "meisada",
+            "mess": "meis", "goof": "halsin", "goofing": "haslin",
+            "butt": "codal", "booty": "bota", "butt": "codal",
+            "putah": "betelozi", "ください": "plesai", "gay": "geiro",
+            "beast": "beastà", "beasts": "belvayko", "beastie": "belvaykolas",
+            "beer": "kova", "beers": "kovas", "beets": "kolajas",
+            "betts": "koljaskal",
+
+            // ── NUMBERS ───────────────────────────────────────────────────
+            "zero": "zerco", "one": "une", "two": "twoce", "three": "threte",
+            "four": "sote", "five": "fite", "six": "sinte", "seven": "sente",
+            "eight": "eito", "nine": "nynce", "ten": "tenco",
+            "eleven": "even", "twelve": "telvé", "thirteen": "thinté",
+            "fourteen": "sote-tenco", "fifteen": "fite-tenco",
+            "sixteen": "sinte-tenco", "seventeen": "sente-tenco",
+            "eighteen": "eito-tenco", "nineteen": "nynce-tenco",
+            "twenty": "twocenten", "thirty": "threteten",
+            "forty": "soteten", "fifty": "fiteten", "sixty": "sinten",
+            "seventy": "senten", "eighty": "eiton", "ninety": "nyncen",
+            "hundred": "hundco", "thousand": "thousco", "million": "millco",
+            "billion": "biliko", "first": "festi", "second": "twocesti",
+            "third": "thretesti", "fourth": "sotesti", "fifth": "feseti",
+            "last": "lastol", "next": "nextol", "sixty seven": "sinte sente"
         };
 
+        // Sort keys by length descending so phrases match before single words
+        const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
+
+        // Update dict count on load
+        document.getElementById('total-entries').textContent = Object.keys(dictionary).length;
+        document.getElementById('dict-size').textContent = Object.keys(dictionary).length;
+
         function translateText() {
-            let input = document.getElementById('input').value;
+            const input = document.getElementById('input').value;
             const outputDiv = document.getElementById('output');
-            
-            // 2. Sort dictionary keys by length descending to match phrases before words
-            const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
-            
+            const charCountEl = document.getElementById('char-count');
+            const wordCountEl = document.getElementById('word-count');
+
+            charCountEl.textContent = input.length;
+
+            if (!input.trim()) {
+                outputDiv.innerHTML = '<span class="output-placeholder">Translation will appear here...</span>';
+                outputDiv.classList.remove('has-content');
+                wordCountEl.textContent = 0;
+                return;
+            }
+
             let translated = input;
-            
-            // 3. Replace phrases and words
+            let matchCount = 0;
+
             sortedKeys.forEach(key => {
-                // Regex to find whole words/phrases case-insensitively
-                const regex = new RegExp(`\\b${key}\\b`, 'gi');
+                const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
                 translated = translated.replace(regex, (match) => {
+                    matchCount++;
                     const translation = dictionary[key];
-                    // Maintain capitalization
-                    if (match[0] === match[0].toUpperCase()) {
+                    if (match[0] === match[0].toUpperCase() && match[0].toLowerCase() !== match[0].toUpperCase()) {
                         return translation.charAt(0).toUpperCase() + translation.slice(1);
                     }
                     return translation;
                 });
             });
 
-            outputDiv.innerText = translated;
+            outputDiv.textContent = translated;
+            outputDiv.classList.add('has-content');
+            wordCountEl.textContent = matchCount;
+        }
+
+        function copyOutput() {
+            const text = document.getElementById('output').textContent;
+            if (!text || text === 'Translation will appear here...') return;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.textContent = 'COPIED!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'COPY';
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
         }
     </script>
 </body>
-</html>
