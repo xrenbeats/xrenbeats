@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hCaptcha Example</title>
+    <!-- Load hCaptcha SDK -->
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+<body>
+    <form method="POST" action="/your-server-endpoint">
+        <!-- Replace with your actual site key -->
+        <div class="h-captcha" data-sitekey="78a61300-27a0-4e92-8a8e-97ecc0567854"></div>
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+your ai slop bores me
