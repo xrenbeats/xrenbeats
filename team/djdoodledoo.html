@@ -1,1 +1,228 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>djdoodledoo — XrenBeats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Inconsolata:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg: #0e0e0c;
+  --surface: #161612;
+  --border: #262620;
+  --accent: #f7c548;
+  --accent2: #e8854a;
+  --text: #f0ede4;
+  --muted: #5a5840;
+  --marker: 'Permanent Marker', cursive;
+  --mono: 'Inconsolata', monospace;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+}
+
+/* paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 840px; margin: 0 auto; padding: 52px 32px 100px; }
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 72px;
+}
+.nav-brand { font-family: var(--marker); font-size: 18px; color: var(--text); }
+nav a { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); text-decoration: none; }
+nav a:hover { color: var(--accent); }
+
+/* doodle header */
+.header { margin-bottom: 56px; }
+.scribble-tag {
+  display: inline-block;
+  font-family: var(--marker);
+  font-size: 14px;
+  color: var(--accent);
+  margin-bottom: 16px;
+  transform: rotate(-1deg);
+}
+h1 {
+  font-family: var(--marker);
+  font-size: clamp(52px, 10vw, 88px);
+  line-height: 0.95;
+  color: var(--text);
+}
+.h1-accent { color: var(--accent); }
+.h1-sub { color: var(--accent2); }
+
+/* squiggle divider */
+.squiggle {
+  width: 120px;
+  height: 8px;
+  margin: 28px 0 40px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='8'%3E%3Cpath d='M0 4 Q10 0 20 4 Q30 8 40 4 Q50 0 60 4 Q70 8 80 4 Q90 0 100 4 Q110 8 120 4' fill='none' stroke='%23f7c548' stroke-width='2'/%3E%3C/svg%3E") no-repeat;
+}
+
+.bio {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #9a9070;
+  max-width: 520px;
+  margin-bottom: 52px;
+  font-weight: 300;
+}
+
+/* notepad cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 52px;
+}
+.card {
+  border: 2px solid var(--border);
+  padding: 24px 20px;
+  background: var(--surface);
+  position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+}
+.card:nth-child(2)::before { background: var(--accent2); }
+.card:nth-child(3)::before { background: #a8e060; }
+.card-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.card-value { font-family: var(--marker); font-size: 22px; color: var(--text); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 52px; }
+.tag {
+  font-family: var(--marker);
+  font-size: 14px;
+  padding: 4px 14px;
+  border: 2px solid var(--border);
+  color: var(--muted);
+  transform: rotate(-0.5deg);
+}
+.tag:nth-child(even) { transform: rotate(0.5deg); }
+.tag.doodle { border-color: var(--accent); color: var(--accent); }
+.tag.doodle2 { border-color: var(--accent2); color: var(--accent2); }
+
+.links { border: 2px solid var(--border); }
+.link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+}
+.link-row:last-child { border-bottom: none; }
+.link-row:hover { background: var(--surface); }
+.link-row:hover .lname { color: var(--accent); }
+.lname { font-size: 13px; letter-spacing: 0.04em; }
+.larrow { color: var(--muted); font-size: 16px; }
+
+footer {
+  margin-top: 72px;
+  padding-top: 24px;
+  border-top: 2px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+footer span { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+footer a { font-size: 11px; color: var(--muted); text-decoration: none; letter-spacing: 0.08em; }
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .cards { grid-template-columns: 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <span class="nav-brand">XrenBeats</span>
+      <a href="https://xrenbeats.com/team.html">← Team</a>
+    </nav>
+
+```
+<div class="header">
+  <div class="scribble-tag">member no. 07 (not 67)✦</div>
+  <h1><span class="h1-accent">dj</span><span class="h1-sub">doodle</span>doo</h1>
+  <div class="squiggle"></div>
+</div>
+
+<p class="bio">
+  djdoodledoo sketches sounds in real time. loose, spontaneous, and always with a personality. It's called amazing btw. he's like fully committed to making something that is good and stuff
+</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-label">Role</div>
+    <div class="card-value">DJ / Banger Beats Producer</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Collective</div>
+    <div class="card-value">XrenBeats</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Energy</div>
+    <div class="card-value">Trippy Latin Music for Babies to go To Sleep for.</div>
+  </div>
+</div>
+
+<div class="tags">
+  <span class="tag doodle">Best Ever</span>
+  <span class="tag doodle2">Amazing</span>
+  <span class="tag">DJ Sets</span>
+  <span class="tag doodle">Very Trippy</span>
+  <span class="tag">Freestyle</span>
+</div>
+
+<div class="links">
+  <a class="link-row" href="#" target="_blank">
+    <span class="lname">SoundCloud</span>
+    <span class="larrow">↗</span>
+  </a>
+  <a class="link-row" href="#" target="_blank">
+    <span class="lname">Instagram</span>
+    <span class="larrow">↗</span>
+  </a>
+  <a class="link-row" href="https://xrenbeats.com" target="_blank">
+    <span class="lname">XrenBeats</span>
+    <span class="larrow">↗</span>
+  </a>
+</div>
+
+<footer>
+  <span>© XrenBeats Collective</span>
+  <a href="https://xrenbeats.com">xrenbeats.com</a>
+</footer>
+```
+
+  </div>
+</body>
+</html>
