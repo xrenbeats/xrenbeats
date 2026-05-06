@@ -10,70 +10,80 @@
         h1 { color: #00ffcc; margin-bottom: 5px; }
         p.subtitle { color: #888; font-size: 0.9em; margin-bottom: 25px; }
         textarea { width: 100%; height: 100px; padding: 12px; background: #2d2d2d; color: #fff; border: 1px solid #444; border-radius: 8px; resize: none; box-sizing: border-box; }
-        .output { margin-top: 20px; padding: 15px; background: #252525; border-left: 4px solid #00ffcc; min-height: 50px; white-space: pre-wrap; }
+        .output { margin-top: 20px; padding: 15px; background: #252525; border-left: 4px solid #00ffcc; min-height: 50px; white-space: pre-wrap; word-wrap: break-word; }
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #00ffcc; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>XTÉ TRANSLATE</h1>
+        <p class="subtitle">LANGUAGE OPTION FOR XRENBEATS APP: XBT FEATURE</p>
+        <label for="input">English</label>
+        <textarea id="input" placeholder="Type here..." oninput="translateText()"></textarea>
+        <label style="margin-top: 25px;">XTÉS</label>
+        <div id="output" class="output"></div>
+    </div>
 
-<div class="container">
-    <h1>XTÉ TRANSLATE</h1>
-    <p class="subtitle">LANGUAGE OPTION FOR XRENBEATS APP: XBT FEATURE</p>
-    
-    <label for="input">English</label>
-    <textarea id="input" placeholder="Type here..." oninput="translateText()"></textarea>
+    <script>
+        // 1. Added missing commas in dictionary
+        const dictionary = {
+            "hello": "veo", "hi": "ve", "bye": "calo", "vague": "gujalinga", 
+            "evasive": "evalespia", "die": "da", "stop": "shoa", "shit": "shuz", 
+            "fuck": "fulo", "bitch": "betelozi", "ass": "askolode", "funny": "poarta", 
+            "lol": "clc", "laugh": "celtae", "out": "lokis", "in": "estello", 
+            "outside": "ounvelo", "inside": "estellkave", "loud": "cenkae", 
+            "dead": "stakjalhin", "alive": "stalos", "hell": "asnatox", 
+            "trash": "atraplas", "bad": "bula", "thy": "stakhalossa", 
+            "goon": "gojaloont", "goner": "gotása", "gone": "gota", 
+            "gooner": "gojaloontá", "grooming": "gooval", "groom": "goala", 
+            "groomer": "gogalas", "gooning": "gojalooga", "goofing": "haslin", 
+            "goof": "halsin", "god": "pal", "is": "sa", "will": "vol", 
+            "be": "mel", "here": "huila", "i": "i", "xren": "xreń", 
+            "xrenbeats": "xreń veesa", "beat": "veezá", "beats": "veesa", 
+            "beet": "kajahl", "betts": "koljaskal", "beets": "kolajas", 
+            "beer": "kova", "beers": "kovas", "beast": "beastà", 
+            "beasts": "belvayko", "beastie": "belvaykolas", "bestie": "belva", 
+            "girlie": "gola", "girlies": "golaş", "baddie": "golavö", 
+            "baddies": "golas", "slay": "fekaj", "slayer": "fejka", 
+            "slays": "fejkal", "slaying": "fejikaś", "slayers": "fejikal", 
+            "jace": "jeilo", "stacy": "staciko", "stacey": "stacika", 
+            "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo", 
+            "rebecca": "rebcal", "elijah": "eja", "cam": "camoru", 
+            "camdon": "camorudon", "camden": "camoruden", "john": "jén", 
+            "his": "joles", "her": "hes", "them": "alpilsa", "when": "wallés", 
+            "where": "wales", "who": "alpis", "why": "a", "then": "tal", 
+            "a": "orá", "and": "of", "or": "ana", "of": "oro", "hey": "of", 
+            "sorry": "hetá", // Added comma
+            "how are you": "tojelaka", // Phrase works now
+            "good": "goud", "super": "superó", "cool": "coolio", 
+            "nice": "nicei", "job": "jób"
+        };
 
-    <label style="margin-top: 25px;">XTÉS</label>
-    <div id="output" class="output">veo...</div>
-</div>
-
-<script>
-    const dictionary = {
-        "hello": "veo", "hi": "ve", "bye": "calo", "vague": "gujalinga", "evasive": "evalespia", 
-        "die": "da", "stop": "shoa", "shit": "shuz", "fuck": "fulo", "bitch": "betelozi", 
-        "ass": "askolode", "funny": "poarta", "lol": "clc", "laugh": "celtae", "out": "lokis", 
-        "in": "estello", "outside": "ounvelo", "inside": "estellkave", "loud": "cenkae", 
-        "dead": "stakjalhin", "alive": "stalos", "hell": "asnatox", "trash": "atraplas", 
-        "bad": "bula", "thy": "stakhalossa", "goon": "gojaloont", "goner": "gotása", 
-        "gone": "gota", "gooner": "gojaloontá", "grooming": "gooval", "groom": "goala", 
-        "groomer": "gogalas", "gooning": "gojalooga", "goofing": "haslin", "goof": "halsin", 
-        "god": "pal", "is": "sa", "will": "vol", "be": "mel", "here": "huila", "i": "i", 
-        "xren": "xreń", "xrenbeats": "xreń veesa", "beat": "veezá", "beats": "veesa", 
-        "beet": "kajahl", "betts": "koljaskal", "beets": "kolajas", "beer": "kova", 
-        "beers": "kovas", "beast": "beastà", "beasts": "belvayko", "beastie": "belvaykolas", 
-        "bestie": "belva", "girlie": "gola", "girlies": "golaş", "baddie": "golavö", 
-        "baddies": "golas", "slay": "fekaj", "slayer": "fejka", "slays": "fejkal", 
-        "slaying": "fejikaś", "slayers": "fejikal", "jace": "jeilo", "stacy": "staciko", 
-        "stacey": "stacika", "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo", 
-        "rebecca": "rebcal", "elijah": "eja", "cam": "camoru", "camdon": "camorudon", 
-        "camden": "camoruden", "john": "jén", "his": "joles", "her": "hes", "them": "alpilsa",
-        "when": "wallés", "where": "wales", "who": "alpis", "why": "a", "then": "tal",
-        "a": "orá", "and": "of", "or": "ana", "of": "oro", "hey": "of", "sorry": "hetá"
-        "how are you": "tojelaka", "good": "goud", "super": "superó", "cool": "coolio", "nice": "nicei", "job": "jób",
-    };
-
-    function translateText() {
-        const input = document.getElementById('input').value;
-        const outputDiv = document.getElementById('output');
-        
-        const words = input.split(/\s+/);
-        const translated = words.map(word => {
-            const cleanWord = word.toLowerCase().replace(/[^a-z']/g, '');
-            const translation = dictionary[cleanWord];
+        function translateText() {
+            let input = document.getElementById('input').value;
+            const outputDiv = document.getElementById('output');
             
-            if (translation) {
-                // Match original capitalization
-                if (word[0] === word[0].toUpperCase()) {
-                    return translation.charAt(0).toUpperCase() + translation.slice(1);
-                }
-                return translation;
-            }
-            return word;
-        });
+            // 2. Sort dictionary keys by length descending to match phrases before words
+            const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
+            
+            let translated = input;
+            
+            // 3. Replace phrases and words
+            sortedKeys.forEach(key => {
+                // Regex to find whole words/phrases case-insensitively
+                const regex = new RegExp(`\\b${key}\\b`, 'gi');
+                translated = translated.replace(regex, (match) => {
+                    const translation = dictionary[key];
+                    // Maintain capitalization
+                    if (match[0] === match[0].toUpperCase()) {
+                        return translation.charAt(0).toUpperCase() + translation.slice(1);
+                    }
+                    return translation;
+                });
+            });
 
-        outputDiv.innerText = translated.join(' ');
-    }
-</script>
-
+            outputDiv.innerText = translated;
+        }
+    </script>
 </body>
 </html>
