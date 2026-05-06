@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XTÉ TRANSLATE - XrenBeats</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: #eee; display: flex; justify-content: center; padding: 20px; }
+        .container { width: 100%; max-width: 600px; background: #1e1e1e; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        h1 { color: #00ffcc; margin-bottom: 5px; }
+        p.subtitle { color: #888; font-size: 0.9em; margin-bottom: 25px; }
+        textarea { width: 100%; height: 100px; padding: 12px; background: #2d2d2d; color: #fff; border: 1px solid #444; border-radius: 8px; resize: none; box-sizing: border-box; }
+        .output { margin-top: 20px; padding: 15px; background: #252525; border-left: 4px solid #00ffcc; min-height: 50px; white-space: pre-wrap; word-wrap: break-word; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #00ffcc; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>XTÉ TRANSLATE</h1>
+        <p class="subtitle">LANGUAGE OPTION FOR XRENBEATS APP: XBT FEATURE</p>
+        <label for="input">English</label>
+        <textarea id="input" placeholder="Type here..." oninput="translateText()"></textarea>
+        <label style="margin-top: 25px;">XTÉS</label>
+        <div id="output" class="output"></div>
+    </div>
 
+    <script>
+        // 1. Added missing commas in dictionary
+        const dictionary = {
+            "hello": "veo", "hi": "ve", "bye": "calo", "vague": "gujalinga", 
+            "evasive": "evalespia", "die": "da", "stop": "shoa", "shit": "shuz", 
+            "fuck": "fulo", "bitch": "betelozi", "ass": "askolode", "funny": "poarta", 
+            "lol": "clc", "laugh": "celtae", "out": "lokis", "in": "estello", 
+            "outside": "ounvelo", "inside": "estellkave", "loud": "cenkae", 
+            "dead": "stakjalhin", "alive": "stalos", "hell": "asnatox", 
+            "trash": "atraplas", "bad": "bula", "thy": "stakhalossa", 
+            "goon": "gojaloont", "goner": "gotása", "gone": "gota", 
+            "gooner": "gojaloontá", "grooming": "gooval", "groom": "goala", 
+           
+            "groomer": "gogalas", "gooning": "gojalooga", "goofing": "haslin", 
+            "goof": "halsin", "god": "pal", "is": "sa", "will": "vol", 
+            "be": "mel", "here": "huila", "i": "i", "xren": "xreń", 
+            "xrenbeats": "xreń veesa", "beat": "veezá", "beats": "veesa", 
+            "beet": "kajahl", "betts": "koljaskal", "beets": "kolajas", 
+            "beer": "kova", "beers": "kovas", "beast": "beastà", 
+            "beasts": "belvayko", "beastie": "belvaykolas", "bestie": "belva", 
+            "girlie": "gola", "girlies": "golaş", "baddie": "golavö", 
+            "baddies": "golas", "slay": "fekaj", "slayer": "fejka", 
+            "slays": "fejkal", "slaying": "fejikaś", "slayers": "fejikal", 
+           
+           // NAMES LIST
+            "jace": "jeilo", "stacy": "staciko", "stacey": "stacika", 
+            "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo", 
+            "rebecca": "rebcal", "elijah": "eja", "cam": "camoru", 
+            "camdon": "camorudon", "camden": "camoruden", "john": "jén", 
+           
+            // OTHER WORDS
+            "his": "joles", "her": "hes", "them": "alpilsa", "when": "wallés", 
+            "where": "wales", "who": "alpis", "why": "a", "then": "tal", 
+            "a": "orá", "and": "of", "or": "ana", "of": "oro", "hey": "of", 
+            "sorry": "hetá", "so": "soki", "slop": "sloppo", "ai": "ai",
+            "how are you": "tojelaka", "cap": "capp", "best": "besta"
+            "good": "goud", "super": "superó", "cool": "coolio", 
+            "how": "to", "are": "jela", "nice": "nicei", "job": "jób"
+            "you": "ka", "yo": "yoa", "nice": "nicei", "job": "jób"
+            "bruh": "bura", "mom": "móm", "nice": "nicei", "job": "jób"
+           
+            "mommy": "mom mi", "mommies": "mom mis", "nice": "nicei", "job": "jób"
+            "messed": "meisada", "mama": "mamá", "mess": "meis", "up": "pu"
+            "ください": "plesai", "gay": "geiro", "please": "plesai", "down": "downos"
+            "putah": "betelozi", "ass": "akass", "asshole": "akassolo", "assholes": "akasloa"
+            "zion": "gáy", "zaylin": "bailzo", "fallen": "foli", "ashes": "ashisu"
+            "coly": "cotri", "adrian": "adriano", "moms": "momsa", "mama": "mamá", "mess": "meis", "up": "upo",
+            "fail": "felak", "failure": "felaksío", "mess": "meis", "up": "up"
+            "but": "coda", "butt": "codal", "booty": "bota", "it": "ito"
+            "italian": "italo", "japanese": "japato", "hiragana": "higanai", "katakana": "kanakai"
+           
+           // NUMBERS LIST
+        "one": "une", "two": "twoce", "three": "threte", "four": "sote"
+        "five": "fite", "six": "sinte", "seven": "sente", "nine": "nynce", "ten": "tenco"
+        "nine": "nynce", "eleven": "even", "twelve": "telvé", "thirteen": "thinté", "sixty seven": "sinte sente"
+
+
+
+     
+        };
+
+        function translateText() {
+            let input = document.getElementById('input').value;
+            const outputDiv = document.getElementById('output');
+            
+            // 2. Sort dictionary keys by length descending to match phrases before words
+            const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
+            
+            let translated = input;
+            
+            // 3. Replace phrases and words
+            sortedKeys.forEach(key => {
+                // Regex to find whole words/phrases case-insensitively
+                const regex = new RegExp(`\\b${key}\\b`, 'gi');
+                translated = translated.replace(regex, (match) => {
+                    const translation = dictionary[key];
+                    // Maintain capitalization
+                    if (match[0] === match[0].toUpperCase()) {
+                        return translation.charAt(0).toUpperCase() + translation.slice(1);
+                    }
+                    return translation;
+                });
+            });
+
+            outputDiv.innerText = translated;
+        }
+    </script>
+</body>
+</html>
