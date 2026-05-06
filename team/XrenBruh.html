@@ -1,1 +1,270 @@
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XrenBruh — XrenBeats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg: #080810;
+  --surface: #10101c;
+  --border: #1e1e2e;
+  --accent: #ff4d6d;
+  --accent2: #ff8fa3;
+  --text: #f0eeff;
+  --muted: #5a5a6e;
+  --display: 'Bebas Neue', sans-serif;
+  --mono: 'Space Mono', monospace;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  z-index: 100;
+}
+
+/* scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.012) 2px,
+    rgba(255,255,255,0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 48px 32px 100px; }
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 72px;
+}
+.nav-brand {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+nav a {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+}
+nav a:hover { color: var(--accent); }
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border);
+  margin-bottom: 48px;
+}
+.hero-left {
+  padding: 48px;
+  border-right: 1px solid var(--border);
+}
+.hero-right {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.member-id {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+h1 {
+  font-family: var(--display);
+  font-size: clamp(64px, 10vw, 96px);
+  line-height: 0.9;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+.hero-desc {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #9090a8;
+  font-weight: 400;
+}
+
+.red-block {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 28px 48px;
+  margin-bottom: 48px;
+}
+.red-block p {
+  font-size: 13px;
+  line-height: 1.7;
+  font-family: var(--mono);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  margin-bottom: 48px;
+}
+.cell {
+  background: var(--bg);
+  padding: 28px 32px;
+}
+.cell-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.cell-value { font-family: var(--display); font-size: 32px; color: var(--accent); letter-spacing: 0.05em; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 48px; }
+.tag {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.tag.hot { border-color: var(--accent); color: var(--accent); }
+
+.links { border: 1px solid var(--border); }
+.link-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+}
+.link-row:last-child { border-bottom: none; }
+.link-row:hover { background: var(--surface); }
+.link-row:hover .ln { color: var(--accent); }
+.ln { font-size: 12px; letter-spacing: 0.08em; }
+.la { color: var(--muted); }
+
+footer {
+  margin-top: 64px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+footer span, footer a {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+footer a:hover { color: var(--accent); }
+
+@media (max-width: 600px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-left { border-right: none; border-bottom: 1px solid var(--border); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+```
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav>
+      <span class="nav-brand">XRENBEATS</span>
+      <a href="https://xrenbeats.com/team.html">← Team</a>
+    </nav>
+
+```
+<div class="hero">
+  <div class="hero-left">
+    <div class="member-id">Member · 02</div>
+    <h1>XREN<br/>BRUH</h1>
+  </div>
+  <div class="hero-right">
+    <p class="hero-desc">
+      The name says it all. Bruh, it's melodic. Soundtrap for the mix. XrenBruh is part of heavy-hitting production and melodic energy, grasping the sound somewhere unexpectedly amazing.
+    </p>
+  </div>
+</div>
+
+<div class="red-block">
+  <p>Part of the XrenBeats collective. Contributing production, and the #1 best vibes on our playlist.</p>
+</div>
+
+<div class="grid-2">
+  <div class="cell">
+    <div class="cell-label">Role</div>
+    <div class="cell-value">Producer</div>
+  </div>
+  <div class="cell">
+    <div class="cell-label">Collective</div>
+    <div class="cell-value">XrenBeats</div>
+  </div>
+  <div class="cell">
+    <div class="cell-label">Energy</div>
+    <div class="cell-value">Sad/Upbeat</div>
+  </div>
+  <div class="cell">
+    <div class="cell-label">Status</div>
+    <div class="cell-value">Active</div>
+  </div>
+</div>
+
+<div class="tags">
+  <span class="tag hot">Trap</span>
+  <span class="tag hot">Melodic</span>
+  <span class="tag">Experimental</span>
+  <span class="tag">Bass</span>
+  <span class="tag">Soundtrap</span>
+</div>
+
+<div class="links">
+  <a class="link-row" href="#" target="_blank">
+    <span class="ln">SoundCloud</span>
+    <span class="la">↗</span>
+  </a>
+  <a class="link-row" href="#" target="_blank">
+    <span class="ln">Instagram</span>
+    <span class="la">↗</span>
+  </a>
+  <a class="link-row" href="https://xrenbeats.com" target="_blank">
+    <span class="ln">XrenBeats</span>
+    <span class="la">↗</span>
+  </a>
+</div>
+
+<footer>
+  <span>© XrenBeats Collective</span>
+  <a href="https://xrenbeats.com">xrenbeats.com</a>
+</footer>
+```
+
+  </div>
+</body>
+</html>
