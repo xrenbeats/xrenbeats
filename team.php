@@ -1,4 +1,4 @@
 <?php
-header("Location: https://www.xrenbeats.com/team.html", true, 301);
+header("Location: https://www.xrenbeats.com/team", true, 301);
 exit();
 ?>
