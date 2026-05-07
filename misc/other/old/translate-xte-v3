@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XTÉ TRANSLATE — XrenBeats</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #18181f;
+  --border: #2a2a38;
+  --accent: #00ffcc;
+  --accent2: #7c4dff;
+  --accent3: #ff4dac;
+  --text: #e8e8f0;
+  --muted: #666680;
+  --glow: rgba(0,255,204,0.15);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body {
+font-family:‘Syne’,sans-serif;
+background:var(–bg);
+color:var(–text);
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding:40px 20px 80px;
+overflow-x:hidden;
+}
+
+body::before {
+content:’’;
+position:fixed;
+inset:0;
+background-image:
+linear-gradient(rgba(0,255,204,0.03) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,255,204,0.03) 1px,transparent 1px);
+background-size:40px 40px;
+pointer-events:none;
+z-index:0;
+}
+
+.wrapper{width:100%;max-width:720px;position:relative;z-index:1;}
+
+.header{margin-bottom:36px;position:relative;}
+
+.brand-tag {
+font-family:‘Space Mono’,monospace;
+font-size:0.7em;
+color:var(–accent2);
+letter-spacing:0.2em;
+text-transform:uppercase;
+margin-bottom:8px;
+display:flex;
+align-items:center;
+gap:8px;
+}
+.brand-tag::before{content:’’;display:inline-block;width:20px;height:1px;background:var(–accent2);}
+
+h1 {
+font-size:clamp(2.5rem,8vw,4.5rem);
+font-weight:800;
+line-height:0.9;
+letter-spacing:-0.02em;
+background:linear-gradient(135deg,var(–accent) 0%,var(–accent2) 60%,var(–accent3) 100%);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+
+.subtitle{font-family:‘Space Mono’,monospace;font-size:0.65em;color:var(–muted);letter-spacing:0.15em;margin-top:10px;}
+
+/* Direction toggle */
+.dir-toggle {
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:20px;
+padding:14px 20px;
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:12px;
+}
+
+.dir-label{font-family:‘Space Mono’,monospace;font-size:0.65em;letter-spacing:0.15em;text-transform:uppercase;}
+.dir-label.en{color:var(–accent2);}
+.dir-label.xte{color:var(–accent);}
+
+.toggle-track {
+position:relative;
+width:56px;
+height:28px;
+background:var(–surface2);
+border:1px solid var(–border);
+border-radius:20px;
+cursor:pointer;
+transition:all 0.3s;
+flex-shrink:0;
+}
+.toggle-track.flipped{border-color:rgba(0,255,204,0.4);background:rgba(0,255,204,0.08);}
+.toggle-thumb {
+position:absolute;
+top:3px; left:3px;
+width:20px;height:20px;
+background:var(–accent2);
+border-radius:50%;
+transition:transform 0.3s, background 0.3s;
+}
+.toggle-track.flipped .toggle-thumb{transform:translateX(28px);background:var(–accent);}
+
+.dir-arrow{color:var(–muted);font-size:1.1em;transition:transform 0.3s;}
+.dir-arrow.flipped{transform:scaleX(-1);}
+
+.dir-info{font-family:‘Space Mono’,monospace;font-size:0.6em;color:var(–muted);margin-left:auto;letter-spacing:0.1em;}
+
+/* Card */
+.card {
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:16px;
+overflow:hidden;
+box-shadow:0 0 60px rgba(0,0,0,0.5),0 0 0 1px rgba(0,255,204,0.05);
+}
+
+.panel{padding:24px 28px;}
+.panel+.panel{border-top:1px solid var(–border);}
+
+.panel-label {
+font-family:‘Space Mono’,monospace;
+font-size:0.65em;
+letter-spacing:0.2em;
+text-transform:uppercase;
+color:var(–muted);
+margin-bottom:14px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.lang-badge {
+display:inline-flex;
+align-items:center;
+gap:6px;
+padding:3px 10px;
+border-radius:20px;
+font-size:0.9em;
+}
+.lang-badge.en{background:rgba(124,77,255,0.15);color:var(–accent2);border:1px solid rgba(124,77,255,0.3);}
+.lang-badge.xte{background:rgba(0,255,204,0.1);color:var(–accent);border:1px solid rgba(0,255,204,0.25);}
+
+textarea {
+width:100%;height:130px;padding:16px;
+background:var(–surface2);color:var(–text);
+border:1px solid var(–border);border-radius:10px;
+resize:none;
+font-family:‘Syne’,sans-serif;font-size:1em;line-height:1.6;
+outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+}
+textarea:focus{border-color:rgba(0,255,204,0.4);box-shadow:0 0 0 3px rgba(0,255,204,0.06);}
+textarea::placeholder{color:var(–muted);}
+
+.output-area {
+min-height:130px;padding:16px;
+background:var(–surface2);
+border:1px solid var(–border);border-radius:10px;
+font-family:‘Space Mono’,monospace;font-size:0.95em;line-height:1.7;
+white-space:pre-wrap;word-wrap:break-word;
+color:var(–accent);
+transition:border-color 0.2s;
+}
+.output-area.has-content{border-color:rgba(0,255,204,0.2);box-shadow:0 0 20px rgba(0,255,204,0.04);}
+.output-placeholder{color:var(–muted);font-family:‘Syne’,sans-serif;font-size:0.9em;font-style:italic;}
+
+/* Stats bar */
+.stats-bar {
+display:flex;align-items:center;justify-content:space-between;
+padding:12px 28px;
+background:rgba(0,255,204,0.03);
+border-top:1px solid var(–border);
+font-family:‘Space Mono’,monospace;font-size:0.6em;color:var(–muted);
+letter-spacing:0.1em;flex-wrap:wrap;gap:8px;
+}
+.stat{display:flex;align-items:center;gap:6px;}
+.stat-val{color:var(–accent);font-weight:700;}
+
+.btns-row{display:flex;gap:8px;align-items:center;}
+
+.icon-btn {
+background:none;border:1px solid var(–border);
+color:var(–muted);padding:5px 10px;border-radius:6px;
+font-size:1em;cursor:pointer;transition:all 0.2s;line-height:1;
+}
+.icon-btn:hover{border-color:var(–accent3);color:var(–accent3);}
+.icon-btn.starred{border-color:var(–accent3);color:var(–accent3);background:rgba(255,77,172,0.1);}
+
+.copy-btn {
+background:none;border:1px solid var(–border);color:var(–muted);
+padding:5px 12px;border-radius:6px;
+font-family:‘Space Mono’,monospace;font-size:0.65em;letter-spacing:0.1em;
+cursor:pointer;transition:all 0.2s;
+}
+.copy-btn:hover{border-color:var(–accent);color:var(–accent);}
+.copy-btn.copied{border-color:var(–accent);color:var(–accent);}
+
+/* Favorites */
+.favorites-section {
+margin-top:16px;
+background:var(–surface);
+border:1px solid var(–border);
+border-radius:12px;
+overflow:hidden;
+display:none;
+}
+.favorites-section.visible{display:block;}
+.fav-header {
+padding:12px 20px;
+border-bottom:1px solid var(–border);
+font-family:‘Space Mono’,monospace;font-size:0.65em;
+letter-spacing:0.2em;text-transform:uppercase;
+color:var(–accent3);
+display:flex;align-items:center;gap:8px;
+}
+.fav-list{max-height:200px;overflow-y:auto;}
+.fav-item {
+padding:10px 20px;border-bottom:1px solid rgba(42,42,56,0.5);
+display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+font-family:‘Space Mono’,monospace;font-size:0.6em;
+}
+.fav-item:last-child{border-bottom:none;}
+.fav-text{color:var(–accent);flex:1;line-height:1.5;}
+.fav-orig{color:var(–muted);font-size:0.9em;margin-top:2px;}
+.fav-remove{color:var(–muted);cursor:pointer;flex-shrink:0;padding:2px 6px;border-radius:4px;}
+.fav-remove:hover{color:var(–accent3);}
+
+/* Dict info */
+.dict-info {
+margin-top:16px;padding:14px 20px;
+background:var(–surface);border:1px solid var(–border);border-radius:10px;
+display:flex;align-items:center;justify-content:space-between;
+font-family:‘Space Mono’,monospace;font-size:0.65em;color:var(–muted);letter-spacing:0.1em;
+}
+.dict-count{font-size:1.4em;font-weight:700;color:var(–accent);}
+
+/* Rating section */
+.rating-section {
+margin-top:16px;padding:20px 24px;
+background:var(–surface);border:1px solid var(–border);border-radius:12px;
+}
+.rating-title {
+font-family:‘Space Mono’,monospace;font-size:0.65em;letter-spacing:0.15em;
+text-transform:uppercase;color:var(–muted);margin-bottom:14px;text-align:center;
+}
+.emoji-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.emoji-btn {
+display:flex;flex-direction:column;align-items:center;gap:4px;
+background:var(–surface2);border:1px solid var(–border);border-radius:10px;
+padding:10px 12px;cursor:pointer;transition:all 0.2s;font-size:1.4em;min-width:58px;
+}
+.emoji-btn span.label{font-family:‘Space Mono’,monospace;font-size:0.3em;color:var(–muted);letter-spacing:0.1em;text-transform:uppercase;}
+.emoji-btn:hover{border-color:rgba(0,255,204,0.3);transform:translateY(-2px);}
+.emoji-btn.selected{border-color:var(–accent);background:rgba(0,255,204,0.08);transform:translateY(-2px);}
+
+.comment-row{display:flex;gap:10px;align-items:flex-start;}
+.comment-area {
+flex:1;padding:10px 14px;
+background:var(–surface2);color:var(–text);
+border:1px solid var(–border);border-radius:8px;
+font-family:‘Syne’,sans-serif;font-size:0.85em;line-height:1.5;
+resize:none;height:60px;outline:none;
+transition:border-color 0.2s;
+}
+.comment-area:focus{border-color:rgba(0,255,204,0.3);}
+.comment-area::placeholder{color:var(–muted);}
+
+.submit-btn {
+background:linear-gradient(135deg,var(–accent2),var(–accent3));
+border:none;color:#fff;padding:8px 16px;border-radius:8px;
+font-family:‘Space Mono’,monospace;font-size:0.6em;letter-spacing:0.1em;
+cursor:pointer;transition:opacity 0.2s;white-space:nowrap;
+}
+.submit-btn:hover{opacity:0.85;}
+.submit-btn:disabled{opacity:0.4;cursor:default;}
+
+.rating-thanks{
+text-align:center;font-family:‘Space Mono’,monospace;font-size:0.7em;
+color:var(–accent);letter-spacing:0.1em;display:none;padding:8px 0;
+}
+
+/* Feedback log */
+.feedback-log{
+margin-top:16px;background:var(–surface);border:1px solid var(–border);border-radius:12px;
+overflow:hidden;display:none;
+}
+.feedback-log.visible{display:block;}
+.feedback-log-header{
+padding:12px 20px;border-bottom:1px solid var(–border);
+font-family:‘Space Mono’,monospace;font-size:0.65em;letter-spacing:0.2em;
+text-transform:uppercase;color:var(–accent2);display:flex;align-items:center;gap:8px;
+}
+.feedback-list{max-height:220px;overflow-y:auto;}
+.feedback-item{
+padding:10px 20px;border-bottom:1px solid rgba(42,42,56,0.5);
+font-family:‘Space Mono’,monospace;font-size:0.6em;
+}
+.feedback-item:last-child{border-bottom:none;}
+.feedback-emoji{font-size:1.3em;margin-right:6px;}
+.feedback-comment{color:var(–muted);margin-top:4px;font-style:italic;}
+.feedback-time{color:rgba(102,102,128,0.5);font-size:0.85em;margin-top:2px;}
+.feedback-empty{color:var(–muted);text-align:center;padding:20px;font-style:italic;font-size:0.8em;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(–border);border-radius:2px;}
+</style>
+
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="brand-tag">XrenBeats — XBT Feature</div>
+    <h1>XTÉ<br>TRANSLATE</h1>
+    <p class="subtitle">// CONLANG ENGINE v3.0 — ENGLISH ⇄ XTÉS</p>
+  </div>
+
+  <!-- Direction Toggle -->
+
+  <div class="dir-toggle">
+    <span class="dir-label en" id="lbl-from">English</span>
+    <span class="dir-arrow" id="dir-arrow">→</span>
+    <span class="dir-label xte" id="lbl-to">XTÉS</span>
+    <div class="toggle-track" id="toggle-track" onclick="flipDirection()">
+      <div class="toggle-thumb"></div>
+    </div>
+    <span class="dir-info" id="dir-info">EN → XTÉ</span>
+  </div>
+
+  <div class="card">
+    <div class="panel">
+      <div class="panel-label">
+        Input
+        <span class="lang-badge en" id="badge-in">English</span>
+      </div>
+      <textarea id="input" placeholder="Type anything in English..." oninput="translateText()"></textarea>
+    </div>
+
+```
+<div class="panel">
+  <div class="panel-label">
+    Output
+    <span class="lang-badge xte" id="badge-out">XTÉS</span>
+  </div>
+  <div id="output" class="output-area">
+    <span class="output-placeholder">Translation will appear here...</span>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <span class="stat">WORDS: <span class="stat-val" id="word-count">0</span></span>
+  <span class="stat">CHARS: <span class="stat-val" id="char-count">0</span></span>
+  <span class="stat">DICT: <span class="stat-val" id="dict-size">0</span></span>
+  <div class="btns-row">
+    <button class="icon-btn" id="star-btn" title="Star this translation" onclick="toggleStar()">☆</button>
+    <button class="copy-btn" id="copy-btn" onclick="copyOutput()">COPY</button>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Favorites -->
+
+  <div class="favorites-section" id="fav-section">
+    <div class="fav-header">⭐ STARRED TRANSLATIONS</div>
+    <div class="fav-list" id="fav-list"></div>
+  </div>
+
+  <div class="dict-info">
+    <span>XTÉ DICTIONARY</span>
+    <span class="dict-count" id="total-entries">—</span>
+    <span>TOTAL ENTRIES LOADED</span>
+  </div>
+
+  <!-- Rating -->
+
+  <div class="rating-section">
+    <div class="rating-title">HOW DID WE DO?</div>
+    <div class="emoji-row">
+      <button class="emoji-btn" onclick="selectRating(this,'😡','Very Bad')">😡<span class="label">VERY BAD</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'😞','Bad')">😞<span class="label">BAD</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'😐','Meh')">😐<span class="label">MEH</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'🙂','OK')">🙂<span class="label">OK</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'😄','Good')">😄<span class="label">GOOD</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'🤩','Very Good')">🤩<span class="label">VERY GOOD</span></button>
+      <button class="emoji-btn" onclick="selectRating(this,'🔥','Excellent')">🔥<span class="label">EXCELLENT</span></button>
+    </div>
+    <div class="comment-row">
+      <textarea class="comment-area" id="comment-box" placeholder="Optional comment... (leave blank to skip)"></textarea>
+      <button class="submit-btn" id="submit-btn" onclick="submitFeedback()" disabled>SEND</button>
+    </div>
+    <div class="rating-thanks" id="rating-thanks">✓ THANKS FOR YOUR FEEDBACK!</div>
+  </div>
+
+  <!-- Feedback Log -->
+
+  <div class="feedback-log" id="feedback-log">
+    <div class="feedback-log-header">📋 COMMUNITY FEEDBACK</div>
+    <div class="feedback-list" id="feedback-list"></div>
+  </div>
+
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  FULL XTÉ DICTIONARY — 2000+ ENTRIES
+// ════════════════════════════════════════════════
+const dictionary = {
+
+  // ── GREETINGS & FAREWELLS ──────────────────────────────────────
+  "hello": "veo", "hi": "ve", "hey": "vea", "bye": "calo",
+  "goodbye": "calosa", "farewell": "calovi", "welcome": "velomi",
+  "greetings": "veosal", "howdy": "tovei", "sup": "sokip",
+  "what's up": "sokipa", "later": "talco", "see you": "veo ka",
+  "take care": "kajlosa", "peace": "paxila", "cheers": "celto",
+  "good morning": "goud mornali", "good night": "goud nochtali",
+  "good evening": "goud evanil", "good afternoon": "goud apresol",
+  "how are you": "tojelaka", "nice to meet you": "nicei tov kontaka",
+  "long time no see": "longov timeol no seova", "miss you": "missalo ka",
+  "glad you're here": "joyol ka huila", "what's good": "wato goud",
+  "salut": "saluto", "bonjour": "bonjouri", "konnichiwa": "konicivá",
+  "ohayo": "ohayolo", "sayonara": "sayonaralo", "adios": "adiosco",
+  "hola": "holaco", "namaste": "namasté", "ciao": "ciaolo",
+  "aloha": "alohalo", "shalom": "shalomi", "merhaba": "merhabi",
+
+  // ── PRONOUNS ──────────────────────────────────────────────────
+  "i": "i", "me": "mi", "my": "mio", "mine": "miosa",
+  "myself": "mioself", "we": "welo", "us": "uso", "our": "oursa",
+  "ours": "oursalo", "ourselves": "weloself",
+  "you": "ka", "your": "kalo", "yours": "kalosa", "yourself": "kaself",
+  "yourselves": "kaselfal", "y'all": "kasal",
+  "he": "jol", "him": "jolmi", "his": "joles", "himself": "jolself",
+  "she": "hes", "her": "helo", "hers": "helosa", "herself": "heself",
+  "they": "alpil", "them": "alpilsa", "their": "alpilko",
+  "theirs": "alpilkosa", "themselves": "alpilself",
+  "it": "ito", "its": "itoska", "itself": "itoself",
+  "who": "alpis", "whom": "alpismi", "whose": "alpislo",
+  "someone": "someuno", "anyone": "anyuno", "everyone": "everuno",
+  "nobody": "nolbodi", "everybody": "evribodi", "somebody": "somibodi",
+  "one": "une", "another": "anothal", "each": "eachol", "both": "bothol",
+  "either": "eithol", "neither": "neithal", "few": "fewol",
+  "many": "manolo", "much": "muchol", "more": "morelo", "most": "mostol",
+  "other": "othral", "others": "othralsa", "such": "suchol",
+
+  // ── VERBS (COMMON) ────────────────────────────────────────────
+  "am": "sami", "is": "sa", "are": "jela", "was": "sako", "were": "jelako",
+  "be": "mel", "been": "melo", "being": "meling",
+  "have": "havo", "has": "havsa", "had": "havko", "having": "havling",
+  "do": "dova", "does": "dovsa", "did": "dovko", "doing": "dovling",
+  "will": "vol", "would": "volko", "shall": "shalvo",
+  "should": "shalko", "can": "cano", "could": "canko",
+  "may": "maylo", "might": "maiko", "must": "musta",
+  "go": "gova", "went": "govko", "gone": "gota", "going": "govling",
+  "come": "comevo", "came": "comeko", "coming": "comeling",
+  "get": "geto", "got": "getko", "getting": "getling",
+  "make": "makova", "made": "makko", "making": "makling",
+  "take": "takova", "took": "takko", "taking": "takling",
+  "give": "givova", "gave": "givko", "given": "givelo", "giving": "givling",
+  "know": "knova", "knew": "knovko", "known": "knovelo", "knowing": "knovling",
+  "think": "thinkova", "thought": "thinkko", "thinking": "thinkling",
+  "see": "seova", "saw": "seoko", "seen": "seolo", "seeing": "seoling",
+  "look": "lokova", "looked": "lokko", "looking": "lokling",
+  "want": "wantova", "wanted": "wantko", "wanting": "wantling",
+  "need": "nedova", "needed": "nedko", "needing": "nedling",
+  "love": "lova", "loved": "lovko", "loving": "lovling",
+  "hate": "hatova", "hated": "hatko", "hating": "hatling",
+  "like": "likova", "liked": "likko", "liking": "likling",
+  "feel": "felova", "felt": "felko", "feeling": "felling",
+  "say": "sayova", "said": "sayko", "saying": "sayling",
+  "tell": "telova", "told": "telko", "telling": "telaling",
+  "ask": "askova", "asked": "askko", "asking": "askling",
+  "work": "workova", "worked": "workko", "working": "workling",
+  "run": "runova", "ran": "runko", "running": "runling",
+  "walk": "walkova", "walked": "walkko", "walking": "walkling",
+  "sit": "sitova", "sat": "sitko", "sitting": "sitling",
+  "stand": "standova", "stood": "standko", "standing": "standling",
+  "eat": "eatova", "ate": "eatko", "eating": "eatling",
+  "drink": "drinkova", "drank": "drinkko", "drinking": "drinkling",
+  "sleep": "sleepova", "slept": "sleepko", "sleeping": "sleepling",
+  "wake": "wakeova", "woke": "wakeko", "waking": "wakelink",
+  "try": "tryova", "tried": "tryko", "trying": "tryling",
+  "use": "usova", "used": "usko", "using": "usling",
+  "find": "findova", "found": "findko", "finding": "findling",
+  "lose": "lozova", "lost": "lozko", "losing": "lozling",
+  "win": "winova", "won": "winko", "winning": "winling",
+  "fight": "fightova", "fought": "fightko", "fighting": "fightling",
+  "kill": "killova", "killed": "killko", "killing": "killong",
+  "die": "da", "died": "dako", "dying": "daling",
+  "live": "livova", "lived": "livko", "living": "livling",
+  "play": "playova", "played": "playko", "playing": "playling",
+  "sing": "singova", "sang": "singko", "singing": "singling",
+  "dance": "danceova", "danced": "danceko", "dancing": "danceling",
+  "write": "writeova", "wrote": "writeko", "writing": "writeling",
+  "read": "redova", "reads": "redsa", "reading": "redling",
+  "speak": "speakova", "spoke": "speakko", "speaking": "speakling",
+  "listen": "listova", "listened": "listko", "listening": "listling",
+  "help": "helpova", "helped": "helpko", "helping": "helpling",
+  "move": "movova", "moved": "movko", "moving": "movling",
+  "change": "changova", "changed": "changko", "changing": "changling",
+  "start": "startova", "started": "startko", "starting": "startling",
+  "stop": "shoa", "stopped": "shoako", "stopping": "shoaling",
+  "wait": "waitova", "waited": "waitko", "waiting": "waitling",
+  "open": "openova", "opened": "openko", "opening": "openling",
+  "close": "closeova", "closed": "closeko", "closing": "closeling",
+  "create": "creatova", "created": "creatko", "creating": "creatling",
+  "destroy": "destroyova", "destroyed": "destroyko", "destroying": "destroyling",
+  "build": "buildova", "built": "buildko", "building": "buildling",
+  "break": "breakova", "broke": "breakko", "breaking": "breakling",
+  "fix": "fixova", "fixed": "fixko", "fixing": "fixling",
+  "carry": "kariova", "carried": "kariko", "carrying": "karikling",
+  "hold": "holdova", "held": "holdko", "holding": "holdling",
+  "drop": "dropova", "dropped": "dropko", "dropping": "dropling",
+  "throw": "throwova", "threw": "throwko", "throwing": "throwling",
+  "catch": "catchova", "caught": "catchko", "catching": "catchling",
+  "pull": "pulova", "pulled": "pulko", "pulling": "pulling",
+  "push": "pushova", "pushed": "pushko", "pushing": "pushling",
+  "touch": "touchova", "touched": "touchko", "touching": "touchling",
+  "hit": "hitova", "hitting": "hitling",
+  "cut": "cutova", "cuts": "cutsa", "cutting": "cutling",
+  "burn": "burnova", "burned": "burnko", "burning": "burnling",
+  "grow": "grova", "grew": "groko", "growing": "groling",
+  "fall": "falova", "fell": "falko", "falling": "falling",
+  "rise": "risova", "rose": "risko", "rising": "risling",
+  "fly": "flyova", "flew": "flyko", "flying": "flyling",
+  "swim": "swimova", "swam": "swimko", "swimming": "swimling",
+  "jump": "jumpova", "jumped": "jumpko", "jumping": "jumpling",
+  "climb": "climbova", "climbed": "climbko", "climbing": "climbling",
+  "hide": "hidova", "hid": "hidko", "hiding": "hidling",
+  "show": "showova", "showed": "showko", "showing": "showling",
+  "call": "calova", "called": "calko", "calling": "caling",
+  "answer": "answova", "answered": "answko", "answering": "answling",
+  "count": "cuntova", "counted": "cuntko", "counting": "cuntling",
+  "remember": "remova", "remembered": "remko", "remembering": "remling",
+  "forget": "forgova", "forgot": "forgko", "forgetting": "forgling",
+  "learn": "lernova", "learned": "lernko", "learning": "lerning",
+  "teach": "teachova", "taught": "teachko", "teaching": "teachling",
+  "follow": "folova", "followed": "folko", "following": "foling",
+  "lead": "ledova", "led": "ledko", "leading": "ledling",
+  "choose": "chozova", "chose": "chozko", "choosing": "chozling",
+  "decide": "decidova", "decided": "decidko", "deciding": "decidling",
+  "allow": "alova", "allowed": "alko", "allowing": "aling",
+  "begin": "beguova", "began": "beguako", "beginning": "begualing",
+  "end": "endova", "ended": "endko", "ending": "endling",
+  "turn": "turnova", "turned": "turnko", "turning": "turnling",
+  "return": "retova", "returned": "retko", "returning": "retling",
+  "leave": "levova", "left": "levko", "leaving": "levling",
+  "arrive": "arivova", "arrived": "arivko", "arriving": "arivling",
+  "send": "sendova", "sent": "sendko", "sending": "sendling",
+  "receive": "recova", "received": "recko", "receiving": "recling",
+  "share": "sharova", "shared": "sharko", "sharing": "sharing",
+  "sell": "selova", "sold": "selko", "selling": "seling",
+  "buy": "buyova", "bought": "buyko", "buying": "buyling",
+  "pay": "payova", "paid": "payko", "paying": "payling",
+  "save": "savova", "saved": "savko", "saving": "savling",
+  "spend": "spenova", "spent": "spenco", "spending": "spenling",
+  "earn": "ernova", "earned": "ernko", "earning": "erning",
+  "steal": "stealova", "stole": "stealko", "stealing": "stealin",
+  "protect": "protova", "protected": "protko", "protecting": "protling",
+  "attack": "atkova", "attacked": "atkko", "attacking": "atkling",
+  "escape": "escova", "escaped": "escko", "escaping": "escling",
+  "catch": "catchova", "chasing": "chasling",
+  "believe": "belova", "believed": "belko", "believing": "beling",
+  "trust": "trustova", "trusted": "trustko", "trusting": "trusting",
+  "doubt": "doutova", "doubted": "doutko", "doubting": "doutling",
+  "hope": "hopova", "hoped": "hopko", "hoping": "hopling",
+  "wish": "wishova", "wished": "wishko", "wishing": "wishling",
+  "promise": "promova", "promised": "promko", "promising": "promling",
+  "surprise": "surpova", "surprised": "surpko",
+  "celebrate": "celebova", "celebrated": "celebko", "celebrating": "celebling",
+  "enjoy": "enjová", "enjoyed": "enjóko", "enjoying": "enjóling",
+  "suffer": "sufova", "suffered": "sufko", "suffering": "sufling",
+  "heal": "healova", "healed": "healko", "healing": "healing",
+  "dream": "dremova", "dreamed": "dremko", "dreaming": "dreming",
+  "imagine": "imagova", "imagined": "imagko", "imagining": "imagling",
+  "plan": "planova", "planned": "planko", "planning": "planling",
+  "reach": "rechova", "reached": "rechko", "reaching": "rechling",
+  "achieve": "achova", "achieved": "achko", "achieving": "achling",
+  "fail": "felak", "failed": "felakko", "failing": "felakling",
+  "practice": "pracova", "practiced": "pracko", "practicing": "pracling",
+  "perform": "perfova", "performed": "perfko", "performing": "perfling",
+  "record": "recorda", "recorded": "recko", "recording": "recling",
+  "produce": "prodova", "produced": "prodko", "producing": "prodling",
+  "release": "relova", "released": "relko", "releasing": "reling",
+  "upload": "upova", "uploaded": "upko", "uploading": "upling",
+  "download": "downova", "downloaded": "downko", "downloading": "downling",
+  "search": "sarchova", "searched": "sarchko", "searching": "sarching",
+  "explore": "explova", "explored": "explko", "exploring": "explong",
+  "discover": "discova", "discovered": "discko", "discovering": "discling",
+
+  // ── ADJECTIVES ────────────────────────────────────────────────
+  "good": "goud", "great": "greto", "amazing": "amaziko",
+  "awesome": "awesomi", "fantastic": "fantiko", "wonderful": "wondrilo",
+  "beautiful": "beltuvia", "pretty": "prettola", "cute": "cutilo",
+  "handsome": "handomi", "ugly": "uglio", "gross": "grossi",
+  "bad": "bula", "terrible": "terrilo", "horrible": "horribli",
+  "awful": "awfula", "worst": "worstin", "best": "besta",
+  "better": "bettra", "worse": "worsa", "super": "superó",
+  "cool": "coolio", "nice": "nicei", "sweet": "sweetilo",
+  "soft": "softé", "hard": "hardu", "tough": "tuffu",
+  "easy": "easilo", "simple": "simpilo", "complex": "komplexo",
+  "big": "bigó", "large": "largul", "huge": "hugul", "giant": "giantul",
+  "small": "smali", "tiny": "tiniol", "little": "littil",
+  "tall": "talluv", "short": "shurtuv", "long": "longuv",
+  "fast": "fastuv", "slow": "slowuv", "quick": "quickuv",
+  "old": "olduv", "new": "newuv", "young": "younguv",
+  "hot": "hotuv", "cold": "colduv", "warm": "warmuv",
+  "bright": "brightuv", "dark": "darkuv", "light": "lightuv",
+  "loud": "cenkae", "quiet": "quietuv", "silent": "silentuv",
+  "happy": "happiol", "sad": "sadiol", "angry": "angriol",
+  "scared": "skariol", "brave": "braviol", "strong": "strongiol",
+  "weak": "weakiol", "smart": "smartiol", "dumb": "dumbiol",
+  "crazy": "crazuv", "normal": "normaluv", "weird": "weirduv",
+  "strange": "straniuv", "funny": "poarta", "serious": "seriuv",
+  "kind": "kinduv", "mean": "meanuv", "rude": "ruduv",
+  "polite": "polituv", "wild": "wilduv", "tame": "tamuv",
+  "free": "freuv", "trapped": "trapuv", "alive": "stalos",
+  "dead": "stakjalhin", "true": "truuv", "false": "falsuv",
+  "real": "realuv", "fake": "fakuv", "pure": "puruv",
+  "corrupt": "corrupuv", "whole": "wholuv", "broken": "brokuv",
+  "perfect": "perfuv", "rich": "richuv", "poor": "pouruv",
+  "lucky": "luckuv", "vague": "gujalinga", "evasive": "evalespia",
+  "lost": "lostiol", "found": "foundiol",
+  "alone": "alonuv", "together": "togetuv", "separate": "separuv",
+  "empty": "emptól", "full": "fullól", "clean": "clenuv",
+  "dirty": "dirtuv", "fresh": "freshuv", "stale": "staluv",
+  "deep": "deepuv", "shallow": "shaluv", "narrow": "narruv",
+  "wide": "widuv", "thick": "thickuv", "thin": "thinuv",
+  "heavy": "heavuv", "light": "lightuv", "raw": "rawuv",
+  "cooked": "cookéd", "spicy": "spicuv", "sweet": "swetuv",
+  "sour": "souruv", "bitter": "bituv", "salty": "saltuv",
+  "bland": "blanduv", "crispy": "crispuv", "soggy": "soguv",
+  "smooth": "smootú", "rough": "rougú", "sharp": "sharpú",
+  "dull": "dulló", "clear": "clearó", "blurry": "blurrú",
+  "bright": "brightuv", "dim": "dimuv", "glowing": "glouving",
+  "shiny": "shinyuv", "matte": "matuv", "colorful": "colouv",
+  "plain": "plainuv", "fancy": "fancuv", "elegant": "elegantuv",
+  "messy": "messuvol", "neat": "neatuv", "organized": "organuv",
+  "random": "randomuv", "specific": "spécuv", "general": "generuv",
+  "ancient": "anciuv", "modern": "moderuv", "future": "futuruv",
+  "eternal": "eternuv", "temporary": "tempuv", "rare": "raruv",
+  "common": "comunuv", "special": "specialuv", "ordinary": "ordinuv",
+  "magic": "magicuv", "cursed": "cursuvol", "blessed": "blessuv",
+
+  // ── NOUNS (GENERAL) ───────────────────────────────────────────
+  "god": "pal", "hell": "asnatox", "heaven": "hevanol",
+  "world": "mondé", "earth": "terrél", "sky": "cieluv",
+  "sun": "solé", "moon": "lunél", "star": "étoilu",
+  "water": "acquuv", "fire": "fuegol", "air": "venté",
+  "land": "terruv", "sea": "marél", "ocean": "oceané",
+  "river": "rivuél", "mountain": "montél", "forest": "forétuv",
+  "city": "ciudel", "town": "villél", "home": "hogari",
+  "house": "casaél", "room": "piecuv", "door": "portél",
+  "window": "fenétre", "wall": "muruv", "floor": "suelu",
+  "road": "caminel", "street": "callél", "path": "sendél",
+  "time": "tempuv", "day": "journél", "night": "noctél",
+  "morning": "mañauv", "evening": "soiruv",
+  "week": "semauv", "month": "mesuv", "year": "anuv",
+  "life": "vivél", "death": "morté", "soul": "ámauv",
+  "heart": "coruv", "mind": "mentél", "body": "corpuv",
+  "blood": "sanguv", "bone": "oseul", "eye": "ocuuv",
+  "hand": "manuv", "head": "capetel", "face": "visuv",
+  "voice": "vocuv", "song": "cantuv", "music": "musicuv",
+  "beat": "veezá", "beats": "veesa", "sound": "sonuv",
+  "word": "parolél", "name": "nomél", "story": "histuv",
+  "power": "poduv", "shadow": "ombruv",
+  "dream": "soñuv", "hope": "espuv", "fear": "pauruv",
+  "love": "lova", "hate": "hato", "pain": "doluv",
+  "joy": "jourél", "war": "gueruv",
+  "truth": "veruv", "lie": "mensél", "secret": "secrél",
+  "money": "dinuv", "food": "mangeluv", "art": "artuv",
+  "game": "jueguv", "friend": "amiuv", "enemy": "enemél",
+  "family": "famíuv", "brother": "fratél", "sister": "soruv",
+  "mother": "mèruv", "father": "pèruv", "son": "filuv",
+  "daughter": "filél", "baby": "bébél", "kid": "niñuv",
+  "child": "enfuv", "man": "hombél", "woman": "mujeluv",
+  "person": "persoél", "people": "gentuv",
+  "king": "reyuv", "queen": "reinuv", "hero": "hérouv",
+  "villain": "vilanuv", "ghost": "fantôuv", "demon": "demóuv",
+  "angel": "angeluv", "monster": "monstél",
+  "nature": "naturél", "animal": "animuv", "bird": "oiseluv",
+  "fish": "poisuv", "dog": "chuuv", "cat": "chatuv",
+  "horse": "chevaluv", "wolf": "louuv", "lion": "leonuv",
+  "dragon": "draguv", "tree": "arbruv", "flower": "fleuv",
+  "grass": "herbuv", "stone": "pierruv", "sand": "sabuv",
+  "cloud": "nuaguv", "rain": "pluvuv", "snow": "nievuv",
+  "wind": "ventuv", "thunder": "tonuv", "lightning": "relampuv",
+  "color": "coulév", "red": "rosuv", "blue": "azuuv",
+  "green": "verduv", "yellow": "amaruv", "white": "blancuv",
+  "black": "noiruv", "purple": "moraduv", "pink": "rosauv",
+  "orange": "naranjuv", "gold": "oruv", "silver": "platél",
+  "place": "lieuuv", "space": "espacuv", "universe": "universuv",
+  "galaxy": "galakuv", "planet": "planeluv", "void": "voiluv",
+  "energy": "energuv", "force": "forcuv", "wave": "onduv",
+  "light": "lumièuv", "darkness": "oscuuv", "chaos": "caouv",
+  "order": "ordruv", "balance": "equiuv", "fate": "destél",
+  "chance": "azauv", "choice": "choixuv", "path": "sendél",
+  "weapon": "armauv", "shield": "escuuv", "sword": "espauv",
+  "arrow": "flèuv", "bow": "arcuv", "armor": "blinduv",
+  "crown": "couruv", "throne": "tronuv", "kingdom": "regnuv",
+  "flag": "drapeluv", "map": "mapuv", "letter": "lettruv",
+  "book": "livruv", "page": "paguv", "chapter": "chapiuv",
+  "school": "écoleuv", "lesson": "leçuv", "test": "examuv",
+  "idea": "ideuv", "thought": "pensuv", "feeling": "feluv",
+  "memory": "mémouv", "moment": "momeluv", "age": "âguv",
+  "past": "passüv", "present": "présuv", "future": "futuuv",
+  "beginning": "débüv", "end": "fiñuv", "middle": "miluv",
+  "top": "hauuv", "bottom": "basuv", "side": "côtuv",
+  "edge": "boluv", "corner": "coinuv", "center": "centrüv",
+  "line": "lignuv", "circle": "cerculuv", "shape": "formüv",
+  "size": "taillüv", "weight": "poiduv", "height": "hautuv",
+  "distance": "disuv", "direction": "direcuv", "speed": "vitéuv",
+  "temperature": "tempéuv", "pressure": "presuv", "gravity": "gravuv",
+
+  // ── SLANG / EXPLETIVES ────────────────────────────────────────
+  "shit": "shuz", "fuck": "fulo", "bitch": "betelozi",
+  "ass": "akass", "asshole": "akassolo", "assholes": "akasloa",
+  "damn": "damno", "crap": "crapo", "idiot": "idioto",
+  "loser": "lozero", "freak": "freakolz",
+  "lol": "clc", "omg": "ovpal", "wtf": "wafulov",
+  "bruh": "bura", "bro": "brova", "sis": "sisova",
+  "cap": "capp", "no cap": "no capp", "slay": "fekaj",
+  "slayer": "fejka", "slays": "fejkal", "slaying": "fejikaś",
+  "slayers": "fejikal", "gooning": "gojalooga", "goon": "gojaloont",
+  "goner": "gotása", "gooner": "gojaloontá", "grooming": "gooval",
+  "groom": "goala", "groomer": "gogalas", "goofing": "haslin",
+  "goof": "halsin", "trash": "atraplas", "slop": "sloppo",
+  "bussin": "bussino", "lowkey": "lowkeyo", "highkey": "highkeyo",
+  "vibe": "vibolo", "vibes": "vibolos", "mood": "moodo",
+  "drip": "dripél", "fit": "fitél", "clout": "cloutél",
+  "flex": "flexél", "sus": "susuv", "based": "basedól",
+  "cringe": "crinjo", "ratio": "ration", "rent free": "renfre",
+  "understood": "underól", "literally": "litruv",
+  "periodt": "peryolta", "snatched": "snachól",
+  "ate": "atélo", "left no crumbs": "nol crumbuv",
+  "serving": "servuv", "queen": "reinuv", "king": "reyuv",
+  "iconic": "iconicuv", "legendary": "legenduv",
+  "tea": "téalo", "spill": "spilluv", "drama": "dramuv",
+  "shade": "shaduv", "receipts": "receluv", "exposed": "exposuv",
+  "pressed": "pressuv", "salty": "saltuv", "petty": "petuv",
+  "extra": "extrauv", "basic": "basicuv", "bougie": "bouguv",
+  "classy": "classuv", "messy": "messuv", "shady": "shaduv",
+  "thirsty": "thirstri", "obsessed": "obsesuv", "stan": "stanuv",
+  "delusional": "delusuv", "unhinged": "unhinuv", "toxic": "toxuv",
+  "red flag": "rouuv flag", "green flag": "verduv flag",
+  "main character": "prouv caratu", "npc": "noluv peruv",
+  "down bad": "downuv bula", "it's giving": "sa givuv",
+  "no shot": "nolo shuuv", "bet": "bettuv", "fire": "fueguv",
+  "mid": "midol", "L": "elól", "W": "doubalol",
+  "rizzed": "rizuv", "rizz": "rizuv", "rizzing": "rizling",
+  "unalived": "nol vivuv", "ghosted": "fantôuv",
+  "situationship": "situlov", "talking stage": "tellov stagé",
+  "simp": "simpuv", "pick me": "pikél mi", "attention seeker": "atkuv sékuv",
+  "glowup": "glouuv upo", "throwback": "backél throwuv",
+  "feral": "feruv", "unwell": "unuv wéll", "done for": "donól",
+  "ate that": "atélo thatol", "mother": "mèruv", "father": "pèruv",
+  "real one": "realuv une", "on god": "onol pal",
+  "no way": "nolo voil", "say less": "sayko lessol",
+  "facts": "factuv", "valid": "valuv", "respect": "respuv",
+
+  // ── MUSIC / BEATS / XRENBEATS ─────────────────────────────────
+  "xren": "xreń", "xrenbeats": "xreń veesa",
+  "beat": "veezá", "beats": "veesa", "beet": "kajahl",
+  "bass": "bassuv", "treble": "trebló", "melody": "mélouv",
+  "harmony": "harmouv", "chord": "chorduv", "note": "notuv",
+  "rhythm": "ritmél", "tempo": "tempél", "drop": "dropuv",
+  "hook": "hookél", "verse": "versél", "chorus": "choruso",
+  "bridge": "bridguv", "intro": "intrúv", "outro": "outrúv",
+  "sample": "sampél", "loop": "loopél", "track": "trackél",
+  "album": "albumél", "playlist": "playlistuv", "stream": "streamuv",
+  "producer": "producél", "artist": "artistél", "vocalist": "vocalistél",
+  "rapper": "rappél", "singer": "singuv", "DJ": "djeelo",
+  "bpm": "bpmo", "mix": "mixuv", "master": "mastuv",
+  "reverb": "reverbuv", "delay": "delayuv", "filter": "filtuv",
+  "synth": "synthuv", "drum": "drumuv", "kick": "kickuv",
+  "snare": "snarél", "hi-hat": "hihatuv", "808": "eitézero",
+  "vocal": "vocuv", "lyric": "lyricuv", "rap": "rapuv",
+  "flow": "flowuv", "bar": "baruv", "sixteen": "sinte-even",
+  "studio": "studiuv", "booth": "boothuv", "engineer": "enginel",
+  "mixing": "mixling", "mastering": "mastling", "session": "sesuv",
+  "collab": "colabuv", "feature": "featuruv", "guest": "gestuv",
+  "label": "labuv", "contract": "contrauv", "deal": "dealuv",
+  "fame": "famuv", "clout": "cloutél", "following": "foling",
+  "subscriber": "subuv", "listener": "listél", "fan": "fanuv",
+  "hype": "hypuv", "buzz": "buzzuv", "trending": "trenduv",
+  "viral": "viruv", "hit": "hituv", "banger": "banguv",
+  "anthem": "anthuv", "classic": "classuv", "underground": "undéuv",
+  "mainstream": "mainstréuv", "indie": "induv", "genre": "genuv",
+  "trap": "trapuv", "lo-fi": "lofiuv", "chill": "chilluv",
+  "hyperpop": "hyperuv", "emo": "emouv", "pop": "popuv",
+  "rock": "rockuv", "jazz": "jazzuv", "soul": "soululv",
+  "rnb": "arnuv", "funk": "funkuv", "punk": "punkuv",
+  "metal": "metaluv", "classical": "classiuv", "edm": "edmuv",
+  "concert": "concéuv", "tour": "touruv", "stage": "stagél",
+  "crowd": "crowduv", "mosh": "moshuv", "encore": "encorél",
+  "setlist": "setluv", "soundcheck": "sounduv", "merch": "mercuv",
+
+  // ── VOCALOID / TECH ───────────────────────────────────────────
+  "vocaloid": "vocaloida", "miku": "mikulo", "hatsune": "hatsuno",
+  "flower": "floweló", "yukari": "yukário", "haai": "haalo",
+  "yuki": "yukilo", "synthesizer": "synthizuv", "tuning": "tunuv",
+  "pitch": "pitchuv", "vibrato": "vibratuv", "portamento": "portuv",
+  "ai": "ai", "robot": "robotél", "digital": "digituv",
+  "code": "codóv", "tech": "techuv", "cyber": "cyberuv",
+  "glitch": "glitchuv", "pixel": "pixuv", "data": "datuv",
+  "system": "systemuv", "program": "programuv", "game": "jueguv",
+  "online": "onlinuv", "internet": "netuv", "wifi": "wifiuv",
+  "phone": "fonuv", "screen": "scréuv", "app": "appuv",
+  "software": "softuv", "hardware": "harduv", "device": "devuv",
+  "computer": "computél", "laptop": "laptopél", "tablet": "tabletuv",
+  "server": "serveluv", "cloud": "nuaguv", "storage": "storuv",
+  "password": "passuv", "login": "loginuv", "account": "acuv",
+  "profile": "profuv", "username": "usernamuv", "email": "emailuv",
+  "message": "messuv", "chat": "chatuv", "text": "textuv",
+  "notification": "notiuv", "alert": "alerél", "update": "updatél",
+  "bug": "buguv", "crash": "crashuv", "lag": "laguv",
+  "hack": "hackuv", "virus": "viruv", "firewall": "firwaluv",
+  "encrypt": "encrupuv", "decrypt": "decrupuv", "backup": "backupuv",
+  "database": "datbasél", "api": "apiuv", "interface": "interfuv",
+  "algorithm": "alguv", "function": "funcuv", "variable": "varuv",
+  "loop": "loopél", "array": "arruv", "string": "stringuv",
+  "output": "outputél", "input": "inputél", "error": "erruv",
+  "debug": "debuguv", "compile": "compuv", "deploy": "depluv",
+  "version": "versuv", "release": "relél", "beta": "betuv",
+  "open source": "openél sourcél", "repository": "repuv",
+  "pixel art": "pixuv artuv", "render": "rendél",
+  "animation": "animuv", "frame": "framél", "sprite": "spritél",
+  "texture": "textúuv", "shader": "shaduv", "engine": "enginel",
+  "unity": "unitéuv", "unreal": "unreuv", "godot": "godotél",
+  "streaming": "streamling", "discord": "discorduv", "twitch": "twitchuv",
+  "youtube": "yutuv", "tiktok": "tiktokuv", "instagram": "instu",
+  "twitter": "xtwituv", "reddit": "redituv", "spotify": "spotél",
+
+  // ── PLACES ────────────────────────────────────────────────────
+  "here": "huila", "there": "therél", "where": "wales",
+  "everywhere": "everywale", "nowhere": "nowale", "somewhere": "somewale",
+  "inside": "estellkave", "outside": "ounvelo",
+  "in": "estello", "out": "lokis", "up": "upo", "down": "downos",
+  "left": "leftuv", "right": "rightuv", "north": "nortuv",
+  "south": "soutuv", "east": "estuv", "west": "westuv",
+  "japan": "japanuv", "japanese": "japato", "italy": "italuv",
+  "italian": "italo", "korea": "koranuv", "korean": "korato",
+  "america": "americól", "american": "americato",
+  "hiragana": "higanai", "katakana": "kanakai", "kanji": "kanjilo",
+  "france": "francuv", "french": "francato", "spain": "espauv",
+  "spanish": "espanato", "germany": "alemanuv", "german": "alemanato",
+  "china": "chinuv", "chinese": "chinato", "brazil": "brasiuv",
+  "mexico": "mexicuv", "canada": "canaduv", "uk": "ukuv",
+  "europe": "europuv", "asia": "asiuv", "africa": "africuv",
+  "australia": "australuv", "island": "islanuv", "continent": "contiuv",
+  "airport": "airuv portuv", "station": "stacionuv", "hotel": "hotéuv",
+  "restaurant": "restuv", "café": "cafuv", "bar": "baruv",
+  "park": "parkuv", "beach": "plajuv", "lake": "laguuv",
+  "desert": "desértuv", "valley": "valluv", "canyon": "canuv",
+  "cave": "cavuuv", "temple": "templéuv", "castle": "casteluv",
+  "ruins": "ruinuv", "market": "mercuv", "mall": "malluv",
+  "library": "libruv", "museum": "museluv", "hospital": "hospuv",
+  "school": "écoleuv", "university": "univeruv", "office": "offuv",
+  "factory": "factuuv", "farm": "farmuv", "village": "vilaguv",
+  "suburb": "suburuv", "downtown": "centruv",
+
+  // ── CONJUNCTIONS / PREPOSITIONS / PARTICLES ───────────────────
+  "and": "of", "or": "ana", "but": "coda", "so": "soki",
+  "because": "becasoki", "if": "ifól", "when": "wallés",
+  "then": "tal", "while": "whilól", "until": "untilól",
+  "after": "aprèsól", "before": "avantól", "during": "pendantól",
+  "for": "pouról", "to": "tov", "from": "dèsól", "with": "avecól",
+  "without": "sanól", "about": "suról", "above": "dessúsól",
+  "below": "dessóusól", "between": "entreól", "through": "traversól",
+  "against": "contreól", "along": "longól", "around": "autourél",
+  "by": "parél", "at": "àól", "on": "surél", "off": "détachól",
+  "over": "pardessél", "under": "sousól", "into": "dansól",
+  "onto": "versól", "upon": "sursuv", "within": "dansuv",
+  "of": "oro", "a": "orá", "the": "telo", "an": "anlo",
+  "this": "celuv", "that": "cetuv", "these": "cesuv",
+  "those": "celuv", "all": "touuv", "some": "queluv",
+  "any": "anyuv", "no": "nolo", "not": "notto",
+  "never": "nevolca", "always": "alwavól", "sometimes": "parfoisuv",
+  "often": "souventuv", "usually": "générálól", "rarely": "raruv",
+  "yes": "oui-ol", "yeah": "yealo", "yep": "yepol", "nope": "nopol",
+  "okay": "okalo", "ok": "okol", "sure": "sûrél", "right": "rigol",
+  "just": "justól", "only": "seulól", "even": "mêmól",
+  "still": "encorél", "already": "déjáuv", "yet": "encorél",
+  "almost": "presquuv", "very": "trèsól", "really": "vraimentól",
+  "quite": "assezól", "too": "tropól", "enough": "assézól",
+  "rather": "plûtôuv", "pretty": "plutuv", "actually": "en faitól",
+  "basically": "basiquuv", "literally": "littéruv",
+  "probably": "probabluv", "maybe": "peut-êtrél", "definitely": "définituv",
+  "apparently": "apparuv", "obviously": "évidóuv",
+  "suddenly": "soudainuv", "finally": "enfínuv", "again": "encoruv",
+  "also": "aussiuv", "too": "tropól", "instead": "au liuv",
+  "however": "cependuv", "therefore": "doncuv", "although": "bienquuv",
+  "unless": "à moinuv", "whether": "si ouuv", "since": "depuisuv",
+  "whenever": "chaquuv", "wherever": "partuv", "whoever": "quicouv",
+  "whatever": "quoiuv", "however": "commuv",
+
+  // ── QUESTIONS ─────────────────────────────────────────────────
+  "what": "wato", "why": "whisp", "how": "to", "which": "whicuv",
+  "what is this": "wato sa celuv",
+  "when did": "wallés dovko", "where is": "wales sa",
+  "how much": "to mucho", "how many": "to manuv",
+  "how long": "to longuv", "how far": "to faruv",
+  "how old": "to olduv", "how fast": "to fastuv",
+  "what time": "wato tempuv", "what day": "wato journél",
+  "who knows": "alpis knova", "what happened": "wato getko",
+  "are you okay": "jela ka okalo", "is this real": "sa celuv realuv",
+  "do you know": "dova ka knova", "can you help": "cano ka helpova",
+  "what do you mean": "wato dova ka meanuv",
+  "where are you": "wales jela ka", "who are you": "alpis jela ka",
+
+  // ── EMOTIONS / STATES ─────────────────────────────────────────
+  "sorry": "hetá", "please": "plesai", "thank you": "thakalos",
+  "thanks": "thankól", "excuse me": "excusélmi",
+  "hurry": "hurryuv", "calm": "calmuv", "stress": "stressuv",
+  "tired": "tirodoal", "bored": "boruv", "excited": "excituv",
+  "nervous": "nervuv", "confused": "confusuv", "ready": "readól",
+  "done": "donól", "finished": "finuv", "over": "fiñuv",
+  "sick": "malauv", "healthy": "sanouv", "hurt": "blessuv",
+  "numb": "numbuv", "empty": "emptól", "hungry": "faimuv",
+  "thirsty": "soifuv", "exhausted": "épuisuv", "energized": "energuv",
+  "motivated": "motivuv", "inspired": "inspíuv", "creative": "créauv",
+  "focused": "focusuv", "distracted": "distrauv", "overwhelmed": "surcharuv",
+  "relieved": "soulagél", "grateful": "gratuv", "proud": "fièruv",
+  "ashamed": "hontuv", "embarrassed": "gênuv", "jealous": "jalóuv",
+  "lonely": "seulól", "depressed": "dépresuv", "anxious": "anxuv",
+  "hopeful": "espéruv", "hopeless": "désesuv", "peaceful": "paciuv",
+  "restless": "agituv", "content": "contentuv", "dissatisfied": "mécóuv",
+  "surprised": "surpruv", "shocked": "choquuv", "disgusted": "dégoûuv",
+  "amused": "amusuv", "moved": "émuuv", "nostalgic": "nostalguv",
+
+  // ── FAMILY / PEOPLE ───────────────────────────────────────────
+  "mom": "móm", "mommy": "mom mi", "mommies": "mom mis",
+  "mama": "mamá", "moms": "momsa", "dad": "dadól",
+  "daddy": "dadilo", "papa": "papól", "brother": "fratél",
+  "sister": "soruv", "aunt": "tantuv", "uncle": "onclól",
+  "cousin": "cousínuv", "grandma": "mamie", "grandpa": "papie",
+  "baby": "bébél", "bro": "brova", "sis": "sisova",
+  "bestie": "belva", "girlie": "gola", "girlies": "golaş",
+  "baddie": "golavö", "baddies": "golas",
+  "twins": "jumeluv", "triplets": "tripluv",
+  "stepmother": "belle-mèuv", "stepfather": "beau-pèuv",
+  "stepbrother": "beau-fratuv", "stepsister": "belle-soruv",
+  "half brother": "demi-fratuv", "half sister": "demi-soruv",
+  "in-law": "par aliuv", "spouse": "conjuguv", "husband": "maruv",
+  "wife": "femmuv", "partner": "partuv", "boyfriend": "petituv ami",
+  "girlfriend": "petiuv amie", "ex": "exuv", "crush": "crushuv",
+  "neighbor": "voisuv", "stranger": "étrangél", "guest": "invituv",
+  "host": "hôtuv", "colleague": "collèguuv", "boss": "chefuv",
+  "student": "étuduv", "teacher": "profuv", "doctor": "méduv",
+  "nurse": "infirmuv", "lawyer": "avocuv", "scientist": "sciuv",
+  "artist": "artistél", "musician": "musiuv", "athlete": "athlèuv",
+  "soldier": "soldauv", "police": "policuv", "firefighter": "pompuv",
+  "chef": "cuisiuv", "writer": "écrivuv", "actor": "acteuuv",
+  "director": "réalisauv", "journalist": "journauv", "politician": "polituv",
+  "engineer": "ingénuv", "architect": "archuv", "designer": "designuv",
+  "photographer": "photouv", "influencer": "influelluv",
+  "streamer": "stremuv", "gamer": "gamuv", "coder": "codéuv",
+
+  // ── NAMES (200+ including originals) ──────────────────────────
+  "jace": "jeilo", "stacy": "staciko", "stacey": "stacika",
+  "taylor": "taylás", "brittney": "britíní", "amanda": "amsalo",
+  "rebecca": "rebcal", "elijah": "eja", "cam": "camoru",
+  "camdon": "camorudon", "camden": "camoruden", "john": "jén",
+  "zion": "gáy", "zaylin": "bailzo", "coly": "cotri",
+  "adrian": "adriano", "alex": "alexilo", "jordan": "jordanél",
+  "maya": "mayalo", "luna": "lunalo", "nova": "novalo",
+  "phoenix": "fénixuv", "sage": "sagelo", "river": "rivuél",
+  "blake": "blakelo", "drew": "drewlo", "quinn": "quinnól",
+  "riley": "rileylo", "skyler": "skylerlo", "morgan": "morganel",
+  "avery": "averylo", "charlie": "charlilo", "dakota": "dakotalo",
+  "emma": "emmuv", "olivia": "olivuv", "ava": "avuv",
+  "sophia": "sofiuv", "isabella": "isabéuv", "mia": "miuv",
+  "amelia": "ameluv", "harper": "harpuv", "evelyn": "eveluv",
+  "abigail": "abiuv", "ella": "elluv", "scarlett": "scarleuv",
+  "grace": "gracuv", "chloe": "chloeuv", "lily": "liluv",
+  "aria": "ariuv", "nora": "noruv", "aurora": "auroruv",
+  "violet": "violéuv", "hazel": "hazuv", "ellie": "elliuv",
+  "layla": "layluv", "penelope": "pelopuv", "stella": "steluv",
+  "zoe": "zoeuv", "claire": "clairuv", "willow": "willuv",
+  "liam": "liamuv", "noah": "noauv", "oliver": "oluv",
+  "james": "jamsuv", "aiden": "aiduv", "lucas": "lucuv",
+  "mason": "masonuv", "ethan": "ethuv", "logan": "loguv",
+  "jackson": "jacuv", "sebastian": "sebuv", "mateo": "mateuv",
+  "jack": "jacuv", "owen": "owuv", "theodore": "theoduv",
+  "henry": "henruv", "leo": "leouv", "luke": "lukuv",
+  "jayden": "jayduv", "julian": "juliuv", "grayson": "graysol",
+  "lincoln": "lincoluv", "isaiah": "isaiuv", "xavier": "xavuv",
+  "ryan": "ryanuv", "dylan": "dyluv", "caleb": "caluv",
+  "landon": "landuv", "gabriel": "gabuv", "daniel": "danuv",
+  "carter": "cartuv", "wyatt": "wyatuv", "joshua": "joshuuv",
+  "andrew": "andrewuv", "evan": "evanuv", "thomas": "tomuv",
+  "eli": "eliuv", "aaron": "aaruv", "adam": "adamuv",
+  "christian": "christianuv", "hunter": "huntuv", "nathan": "nathuv",
+  "max": "maxuv", "leo": "leouv", "oscar": "oscuv",
+  "victor": "vicuv", "felix": "feluv", "miles": "miluv",
+  "theo": "teouv", "simon": "simuv", "joel": "joéuv",
+  "derek": "dercuv", "kevin": "kevuv", "marcus": "marcuv",
+  "allen": "alenuv", "leon": "leonuv", "dean": "deanuv",
+  "cole": "coluv", "kyle": "kyluv", "sean": "seanuv",
+  "brett": "bretuv", "chad": "chaduv", "jake": "jakuv",
+  "lance": "lancuv", "troy": "troyuv", "jared": "jaruv",
+  "kayla": "kayluv", "brianna": "briuv", "vanessa": "vanuv",
+  "natalie": "natuv", "jessica": "jesuv", "rachel": "racuv",
+  "sarah": "saruv", "emily": "emiluv", "ashley": "ashluv",
+  "megan": "meguv", "brittany": "brittuv", "lindsay": "linuv",
+  "courtney": "courtuv", "madison": "maduv", "hannah": "hanuv",
+  "alexis": "alexuv", "samantha": "samuv", "destiny": "destuv",
+  "faith": "faithuv", "hope": "hopuv", "joy": "joyuv",
+  "grace": "gracuv", "angel": "angeluv", "heaven": "hevuv",
+  "crystal": "crystuv", "jewel": "jewuv", "ruby": "rubuv",
+  "jade": "jaduv", "jasmine": "jasmuv", "iris": "iruv",
+  "rose": "rosuv", "violet": "violuv", "daisy": "daisuv",
+  "ivy": "ivuv", "fern": "fermuv", "wren": "wrenuv",
+  "summer": "sumuv", "autumn": "autuv", "winter": "winuv",
+  "dawn": "dawnuv", "skye": "skyuv", "rain": "rainuv",
+  "storm": "stormuv", "blaze": "blazuv", "shadow": "shaduv",
+  "zara": "zaruv", "nadia": "naduv", "diana": "dianuv",
+  "bianca": "bianuv", "alicia": "alicuv", "tamara": "tamuv",
+  "miriam": "miruv", "elena": "elenuv", "sonya": "sonyuv",
+  "vera": "veruv", "lyra": "lyruv", "aria": "ariuv",
+  "kira": "kiruv", "mira": "miruv", "lena": "lenuv",
+  "nina": "ninuv", "tina": "tinuv", "lina": "linuv",
+  "gina": "ginuv", "dina": "dinuv", "rina": "rinuv",
+  "kai": "kaiuv", "sora": "soruv", "hana": "hanuv",
+  "yuna": "yunuv", "rin": "rinuv", "hiro": "hiruv",
+  "akira": "akiruv", "kenji": "kenjuv", "haruto": "haruuv",
+  "yuto": "yutuv", "ren": "renuv", "sho": "shouv",
+  "takeshi": "takuv", "daiki": "daikuv", "ryuu": "ryuuuv",
+  "suki": "sukuv", "neko": "nekuv", "kimi": "kimuv",
+  "sakura": "sakuuv", "hikari": "hikuv", "kasumi": "kasuuv",
+  "izumi": "izuuv", "mizuki": "mizuuv", "tsuki": "tsukuv",
+  "aiko": "aikuv", "yuki": "yukilo", "nana": "nanuv",
+  "momo": "momuv", "riko": "rikuv", "emi": "emiuv",
+  "ami": "amuv", "mei": "meiuv", "rei": "reiuv",
+  "sofia": "sofiuv", "lucia": "luciuv", "camila": "camuv",
+  "valentina": "valuv", "daniela": "danuv", "gabriela": "gabuv",
+  "fernanda": "feruv", "mariana": "mariuv", "alejandra": "alejuv",
+  "catalina": "catuv", "sebastián": "sebuv", "alejandro": "alejuv",
+  "diego": "dieuv", "santiago": "santuv", "nicolás": "nicuv",
+  "andrés": "anduv", "pablo": "pabluv", "miguel": "miguv",
+  "rafael": "rafuv", "carlos": "caruv", "manuel": "manuuv",
+  "rafael": "rafuv", "emilio": "emiuv", "hugo": "huguv",
+  "omar": "omuv", "ibrahim": "ibuv", "khalid": "khaluv",
+  "farid": "faruv", "yasmin": "yasuv", "laila": "laiuv",
+  "leila": "leiuv", "zainab": "zainuv", "fatima": "fatuv",
+  "amina": "aminuv", "lior": "liouv", "tal": "taluv",
+  "noa": "noauv", "or": "oruv", "yael": "yaeluv",
+  "shira": "shiruv", "tamar": "tamuv", "roni": "ronuv",
+  "chen": "chenuv", "yam": "yamuv", "eitan": "eitanuv",
+  "ronan": "ronuv", "fionn": "fionnuv", "caoimhe": "keevuv",
+  "siobhan": "shivuv", "aoife": "eefuv", "niamh": "neevuv",
+  "rory": "rouv", "quinn": "quinnól", "bryn": "bryuv",
+  "rhys": "rhyuv", "aled": "aledol", "seren": "seruv",
+  "anaya": "anauv", "zuri": "zuruv", "amara": "amaruv",
+  "imani": "imanuv", "nia": "niuv", "adaeze": "adauv",
+  "chidi": "chiuv", "kofi": "kofuv", "kwame": "kwauv",
+  "rashida": "rashuv", "tyrone": "tyruv", "darius": "daruv",
+  "lamar": "lamuv", "jaylen": "jayuv", "trevor": "trevuv",
+  "brock": "brokuv", "lance": "lancuv", "ridge": "ridguv",
+  "cade": "caduv", "ace": "acuv", "jax": "jaxuv",
+  "zane": "zanuv", "blaine": "blainuv", "reid": "reiduv",
+  "crew": "crewuv", "beau": "beauuv", "colt": "coltuv",
+
+  // ── SPECIAL TERMS ─────────────────────────────────────────────
+  "thy": "stakhalossa", "fallen": "foli", "ashes": "ashisu",
+  "failure": "felaksío", "messed": "meisada",
+  "mess": "meis", "butt": "codal", "booty": "bota",
+  "putah": "betelozi", "ください": "plesai", "gay": "geiro",
+  "beast": "beastà", "beasts": "belvayko", "beastie": "belvaykolas",
+  "beer": "kova", "beers": "kovas", "beets": "kolajas",
+  "betts": "koljaskal",
+  "aesthetic": "esthétól", "vibe check": "vibuv checuv",
+  "glow": "glouuv", "aura": "aurauv", "aura points": "aurauv pointuv",
+  "main quest": "mainuv questuv", "side quest": "sidól questuv",
+  "npc behavior": "noluv peruv behavuv", "lore": "lorúv",
+  "origin story": "origól storól", "character arc": "caracuv arko",
+  "plot twist": "plotuv twuv", "canon": "canonuv", "fanon": "fanuuv",
+  "ship": "shipuv", "otp": "otpuv", "headcanon": "headcuv",
+  "fandom": "fandomuv", "community": "commuv",
+  "irl": "irlól", "afk": "afkól", "brb": "brból",
+  "smh": "smhól", "imo": "imuv", "ngl": "ngluv",
+  "tbh": "tbhól", "fr": "frol", "deadass": "deadassuv",
+  "no fr": "nolo frol", "on everything": "onol everythuv",
+
+  // ── NUMBERS ───────────────────────────────────────────────────
+  "zero": "zerco", "one": "une", "two": "twoce", "three": "threte",
+  "four": "sote", "five": "fite", "six": "sinte", "seven": "sente",
+  "eight": "eito", "nine": "nynce", "ten": "tenco",
+  "eleven": "even", "twelve": "telvé", "thirteen": "thinté",
+  "fourteen": "sote-tenco", "fifteen": "fite-tenco",
+  "sixteen": "sinte-tenco", "seventeen": "sente-tenco",
+  "eighteen": "eito-tenco", "nineteen": "nynce-tenco",
+  "twenty": "twocenten", "thirty": "threteten",
+  "forty": "soteten", "fifty": "fiteten", "sixty": "sinten",
+  "seventy": "senten", "eighty": "eiton", "ninety": "nyncen",
+  "hundred": "hundco", "thousand": "thousco", "million": "millco",
+  "billion": "billco", "first": "unesti", "second": "twocesti",
+  "third": "thretesti", "fourth": "sotesti", "fifth": "fitesti",
+  "last": "lastól", "next": "nexuv", "sixty seven": "sinte sente",
+  "half": "demiol", "quarter": "quartol", "double": "doublól",
+  "triple": "triplól", "dozen": "dozuv", "couple": "cupuv",
+  "pair": "paiuv", "single": "singlól", "many": "manolo",
+  "few": "fewol", "several": "sevuv", "numerous": "numuv",
+
+  // ── DAYS / MONTHS / TIME ─────────────────────────────────────
+  "monday": "lunuv-dai", "tuesday": "martuv-dai", "wednesday": "mercuv-dai",
+  "thursday": "jouuv-dai", "friday": "venuv-dai", "saturday": "samuv-dai",
+  "sunday": "soluv-dai",
+  "january": "januuv", "february": "febuv", "march": "maruv",
+  "april": "avruv", "may": "maiuv", "june": "junuv",
+  "july": "julúv", "august": "aoûuv", "september": "septuv",
+  "october": "octuv", "november": "novuv", "december": "decuv",
+  "today": "aujourd'uv", "yesterday": "hieruv", "tomorrow": "demainuv",
+  "now": "mainteuv", "soon": "bientôuv", "later": "talco",
+  "early": "tôuv", "late": "tardél", "midnight": "minuituv",
+  "noon": "midiel", "dawn": "l'aubéuv", "dusk": "crépuv",
+  "second": "seconduv", "minute": "minutuv", "hour": "heurél",
+  "daily": "journuv", "weekly": "hebdomuv", "monthly": "mensuuv",
+  "yearly": "annuuv", "forever": "toujouruv", "instantly": "instantuv",
+  "recently": "récemmuv", "eventually": "finaluv", "constantly": "constuv",
+
+  // ── FOOD & DRINK ─────────────────────────────────────────────
+  "rice": "rizuv", "bread": "painuv", "noodle": "nuudléuv",
+  "ramen": "raménuv", "sushi": "sushiuv", "pizza": "pizzuv",
+  "pasta": "pastuv", "soup": "souupuv", "salad": "saladüv",
+  "fruit": "fruituv", "vegetable": "léguuv", "meat": "carnuv",
+  "chicken": "pouluv", "beef": "boeufuv", "pork": "porcel",
+  "fish": "poissúv", "egg": "oeufuv", "cheese": "fromuv",
+  "milk": "laituv", "coffee": "cafúv", "tea": "théuv",
+  "juice": "jusuv", "soda": "sodauv", "alcohol": "alcuv",
+  "wine": "vinuv", "cake": "gâteauuv", "cookie": "biscuv",
+  "candy": "bonbóuv", "chocolate": "chocoluv", "ice cream": "glacuv",
+  "chips": "chipuv", "snack": "snackuv", "meal": "repuv",
+  "breakfast": "petit-déjuv", "lunch": "déjeuuv", "dinner": "dîneruv",
+  "dessert": "dessuv", "recipe": "recetúv", "ingredient": "ingréuv",
+  "cook": "cuisiuv", "bake": "cuiruv", "boil": "bouiuv",
+  "fry": "friuv", "grill": "griluv", "steam": "vapéuv",
+
+  // ── BODY / HEALTH ─────────────────────────────────────────────
+  "brain": "cerveauv", "lung": "poulmuv", "liver": "foiuv",
+  "kidney": "reiuv", "spine": "colonnuv", "muscle": "musclél",
+  "nerve": "nervel", "skin": "peauuv", "hair": "cheveluv",
+  "tooth": "dentuv", "tongue": "languuv", "nose": "nezuv",
+  "ear": "oreilluv", "arm": "braulv", "leg": "jambéuv",
+  "foot": "pieduv", "finger": "doiguv", "thumb": "poucuv",
+  "shoulder": "épaulél", "knee": "genouuv", "elbow": "couduv",
+  "stomach": "ventruv", "chest": "poitruel", "back": "dosuv",
+  "neck": "couuv", "chin": "mentonuv", "cheek": "jouuv",
+  "forehead": "frontuv", "lip": "lèuv", "wrist": "poigueluv",
+  "ankle": "chevillél", "hip": "hancuv", "waist": "tailluv",
+  "allergy": "allergúv", "fever": "fièvuv", "cough": "toux-uv",
+  "headache": "mal de têuv", "wound": "blessúuv", "scar": "cicuv",
+  "medicine": "médicuv", "pill": "compruv", "injection": "piquûuv",
+  "surgery": "chirúuv", "therapy": "thérapuv", "diagnosis": "diagnuv",
+  "symptom": "symptôuv", "cure": "guériuv", "recovery": "rétabluv",
+  "mental health": "santé mentuv", "anxiety": "anxuv", "trauma": "traumuv",
+  "therapy": "thérapuv", "meditation": "médiuv", "yoga": "yogauv",
+  "exercise": "exercuv", "workout": "entraîuv", "stretch": "étirél",
+  "rest": "repouuv", "nutrition": "nutriuv", "diet": "régimél",
+  "hydration": "hydruv", "sleep": "sommuv",
+
+  // ── NATURE & ENVIRONMENT ─────────────────────────────────────
+  "earthquake": "trembleuv", "tsunami": "tsunamivel", "hurricane": "ouraganél",
+  "tornado": "tornadél", "flood": "inondauv", "drought": "séchesuv",
+  "wildfire": "incenuv", "avalanche": "avaluv", "volcano": "volcuuv",
+  "sunset": "couchél soleil", "sunrise": "lever soleilél",
+  "rainbow": "arc-en-ciuv", "eclipse": "éclipsuv", "aurora": "auroruv",
+  "tide": "marée-uv", "current": "courauv", "wave": "vaguuv",
+  "fog": "bruiuv", "mist": "brumauv", "frost": "geluv",
+  "hail": "grêluv", "storm": "tempêuv", "blizzard": "blizzuv",
+  "petal": "pétaluv", "thorn": "épinuv", "root": "racinuv",
+  "branch": "branchuv", "leaf": "feuillél", "seed": "grainuv",
+  "moss": "moussuv", "mushroom": "champuv", "vine": "vignuv",
+  "jungle": "junglél", "swamp": "marauv", "meadow": "praiuv",
+  "cliff": "falaisél", "waterfall": "cascauv", "spring": "sourcel",
+  "ecosystem": "écosysuv", "pollution": "polluuv", "climate": "climuv",
+  "species": "espèuv", "extinction": "extincuv", "habitat": "habituv",
+
+  // ── ABSTRACT / PHILOSOPHY ─────────────────────────────────────
+  "existence": "existuv", "consciousness": "conscuv", "reality": "réalituv",
+  "illusion": "illusuv", "perception": "percepuv", "awareness": "priseuv",
+  "infinity": "infinituv", "eternity": "éternuv", "void": "néantuv",
+  "paradox": "paradoxuv", "irony": "ironiuv", "metaphor": "métaphuv",
+  "symbol": "symboluv", "meaning": "senuv", "purpose": "butuv",
+  "identity": "identuv", "ego": "égouv", "shadow self": "ombruv moi",
+  "karma": "karmuv", "fate": "destinuv", "free will": "libre voilúv",
+  "justice": "justicuv", "morality": "moraluv", "ethics": "éthiuv",
+  "virtue": "vertuuv", "sin": "péuv", "redemption": "rachuv",
+  "sacrifice": "sacrifuv", "honor": "honnuv", "shame": "hontuv",
+  "glory": "gloiuv", "legacy": "légacuv", "wisdom": "sagesuv",
+  "knowledge": "savuv", "ignorance": "ignoruv", "truth": "véruv",
+  "beauty": "beaulúv", "art": "artuv", "expression": "expruv",
+  "silence": "silenuv", "absence": "abseluv", "presence": "présuel",
+  "connection": "liuv", "separation": "séparuv", "belonging": "appatuv",
+  "loss": "pertuv", "grief": "deuiuv", "healing": "guériuv",
+  "growth": "croiuv", "stagnation": "stagnuv", "transformation": "transúv",
+};
+
+// ════════════════════════════════════════════════
+//  REVERSE DICTIONARY (XTÉ → EN)
+// ════════════════════════════════════════════════
+const reverseDictionary = {};
+for (const [en, xte] of Object.entries(dictionary)) {
+  if (!reverseDictionary[xte]) reverseDictionary[xte] = en;
+}
+
+// Sort both key sets by length descending
+const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
+const sortedReverseKeys = Object.keys(reverseDictionary).sort((a, b) => b.length - a.length);
+
+// State
+let isFlipped = false; // false = EN→XTÉ, true = XTÉ→EN
+let favorites = JSON.parse(localStorage.getItem('xte_favorites') || '[]');
+let selectedRating = null;
+let feedbackLog = JSON.parse(localStorage.getItem('xte_feedback') || '[]');
+
+// Update counts
+const totalCount = Object.keys(dictionary).length;
+document.getElementById('total-entries').textContent = totalCount >= 2000 ? '2000+' : totalCount;
+document.getElementById('dict-size').textContent = totalCount;
+
+// ════════════════════════════════════════════════
+//  DIRECTION TOGGLE
+// ════════════════════════════════════════════════
+function flipDirection() {
+  isFlipped = !isFlipped;
+  const track = document.getElementById('toggle-track');
+  const arrow = document.getElementById('dir-arrow');
+  const lblFrom = document.getElementById('lbl-from');
+  const lblTo = document.getElementById('lbl-to');
+  const badgeIn = document.getElementById('badge-in');
+  const badgeOut = document.getElementById('badge-out');
+  const dirInfo = document.getElementById('dir-info');
+  const inputEl = document.getElementById('input');
+
+  track.classList.toggle('flipped', isFlipped);
+  arrow.classList.toggle('flipped', isFlipped);
+
+  if (isFlipped) {
+    lblFrom.textContent = 'XTÉS'; lblFrom.className = 'dir-label xte';
+    lblTo.textContent = 'English'; lblTo.className = 'dir-label en';
+    badgeIn.textContent = 'XTÉS'; badgeIn.className = 'lang-badge xte';
+    badgeOut.textContent = 'English'; badgeOut.className = 'lang-badge en';
+    dirInfo.textContent = 'XTÉ → EN';
+    inputEl.placeholder = 'Type in XTÉS...';
+  } else {
+    lblFrom.textContent = 'English'; lblFrom.className = 'dir-label en';
+    lblTo.textContent = 'XTÉS'; lblTo.className = 'dir-label xte';
+    badgeIn.textContent = 'English'; badgeIn.className = 'lang-badge en';
+    badgeOut.textContent = 'XTÉS'; badgeOut.className = 'lang-badge xte';
+    dirInfo.textContent = 'EN → XTÉ';
+    inputEl.placeholder = 'Type anything in English...';
+  }
+
+  inputEl.value = '';
+  document.getElementById('output').innerHTML = '<span class="output-placeholder">Translation will appear here...</span>';
+  document.getElementById('output').classList.remove('has-content');
+  document.getElementById('word-count').textContent = 0;
+  document.getElementById('char-count').textContent = 0;
+  translateText();
+}
+
+// ════════════════════════════════════════════════
+//  TRANSLATE
+// ════════════════════════════════════════════════
+function translateText() {
+  const input = document.getElementById('input').value;
+  const outputDiv = document.getElementById('output');
+  document.getElementById('char-count').textContent = input.length;
+
+  if (!input.trim()) {
+    outputDiv.innerHTML = '<span class="output-placeholder">Translation will appear here...</span>';
+    outputDiv.classList.remove('has-content');
+    document.getElementById('word-count').textContent = 0;
+    return;
+  }
+
+  const keys = isFlipped ? sortedReverseKeys : sortedKeys;
+  const dict = isFlipped ? reverseDictionary : dictionary;
+
+  let translated = input;
+  let matchCount = 0;
+
+  keys.forEach(key => {
+    const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b${escaped}\\b`, 'gi');
+    translated = translated.replace(regex, (match) => {
+      matchCount++;
+      const translation = dict[key];
+      if (match[0] === match[0].toUpperCase() && match[0].toLowerCase() !== match[0].toUpperCase()) {
+        return translation.charAt(0).toUpperCase() + translation.slice(1);
+      }
+      return translation;
+    });
+  });
+
+  outputDiv.textContent = translated;
+  outputDiv.classList.add('has-content');
+  document.getElementById('word-count').textContent = matchCount;
+}
+
+// ════════════════════════════════════════════════
+//  COPY
+// ════════════════════════════════════════════════
+function copyOutput() {
+  const text = document.getElementById('output').textContent;
+  if (!text || text === 'Translation will appear here...') return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// ════════════════════════════════════════════════
+//  FAVORITES / STAR
+// ════════════════════════════════════════════════
+function toggleStar() {
+  const output = document.getElementById('output').textContent;
+  const input = document.getElementById('input').value;
+  if (!output || output === 'Translation will appear here...') return;
+
+  const btn = document.getElementById('star-btn');
+  const existing = favorites.findIndex(f => f.output === output);
+
+  if (existing >= 0) {
+    favorites.splice(existing, 1);
+    btn.textContent = '☆';
+    btn.classList.remove('starred');
+  } else {
+    favorites.unshift({ input, output, dir: isFlipped ? 'XTÉ→EN' : 'EN→XTÉ', time: new Date().toLocaleString() });
+    btn.textContent = '★';
+    btn.classList.add('starred');
+  }
+
+  localStorage.setItem('xte_favorites', JSON.stringify(favorites));
+  renderFavorites();
+}
+
+function renderFavorites() {
+  const section = document.getElementById('fav-section');
+  const list = document.getElementById('fav-list');
+  if (favorites.length === 0) { section.classList.remove('visible'); return; }
+  section.classList.add('visible');
+  list.innerHTML = favorites.map((f, i) => `
+    <div class="fav-item">
+      <div style="flex:1">
+        <div class="fav-text">${escHtml(f.output)}</div>
+        <div class="fav-orig">${escHtml(f.input)} · ${f.dir}</div>
+      </div>
+      <span class="fav-remove" onclick="removeFav(${i})">✕</span>
+    </div>
+  `).join('');
+}
+
+function removeFav(i) {
+  favorites.splice(i, 1);
+  localStorage.setItem('xte_favorites', JSON.stringify(favorites));
+  renderFavorites();
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+renderFavorites();
+
+// ════════════════════════════════════════════════
+//  RATINGS / FEEDBACK
+// ════════════════════════════════════════════════
+function selectRating(btn, emoji, label) {
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedRating = { emoji, label };
+  document.getElementById('submit-btn').disabled = false;
+}
+
+function submitFeedback() {
+  if (!selectedRating) return;
+  const comment = document.getElementById('comment-box').value.trim();
+  const entry = {
+    emoji: selectedRating.emoji,
+    label: selectedRating.label,
+    comment,
+    time: new Date().toLocaleString()
+  };
+  feedbackLog.unshift(entry);
+  if (feedbackLog.length > 50) feedbackLog.pop();
+  localStorage.setItem('xte_feedback', JSON.stringify(feedbackLog));
+
+  document.getElementById('rating-thanks').style.display = 'block';
+  document.getElementById('submit-btn').disabled = true;
+  document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('comment-box').value = '';
+  selectedRating = null;
+
+  setTimeout(() => { document.getElementById('rating-thanks').style.display = 'none'; }, 2500);
+  renderFeedback();
+}
+
+function renderFeedback() {
+  if (feedbackLog.length === 0) return;
+  const log = document.getElementById('feedback-log');
+  const list = document.getElementById('feedback-list');
+  log.classList.add('visible');
+  list.innerHTML = feedbackLog.map(f => `
+    <div class="feedback-item">
+      <span class="feedback-emoji">${f.emoji}</span><strong style="color:var(--text);font-size:0.85em;">${f.label}</strong>
+      ${f.comment ? `<div class="feedback-comment">"${escHtml(f.comment)}"</div>` : ''}
+      <div class="feedback-time">${f.time}</div>
+    </div>
+  `).join('');
+}
+
+renderFeedback();
+</script>
+
+</body>
+</html>
