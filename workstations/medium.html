@@ -1,1 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Music Workstation</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; }
+        
+        /* Tabs Styling */
+        .tabs { display: flex; background: #eee; border-bottom: 1px solid #ccc; }
+        .tab-btn { flex: 1; padding: 10px; border: none; cursor: pointer; background: #ddd; }
+        .tab-btn.active { background: white; font-weight: bold; border-bottom: 2px solid #007bff; }
+        .tab-content { display: none; padding: 20px; }
+        .tab-content.active { display: block; }
 
+        /* UI Elements */
+        select, button, select { width: 100%; padding: 8px; margin: 5px 0; }
+        .list-box { border: 1px solid #aaa; height: 100px; overflow-y: auto; margin: 10px 0; background: #fafafa; padding: 5px; font-family: monospace; }
+        .label { font-size: 0.9em; color: #555; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'melody-tab')">Melody</button>
+        <button class="tab-btn" onclick="openTab(event, 'drum-tab')">Drums</button>
+        <button class="tab-btn" onclick="openTab(event, 'playlist-tab')">Playlist</button>
+    </div>
+
+    <!-- Melody Tab -->
+    <div id="melody-tab" class="tab-content active">
+        <div class="label">Scale</div>
+        <select id="scale-select">
+            <option value="C Major">C Major</option>
+            <option value="A Minor">A Minor</option>
+        </select>
+
+        <div id="melody-box" class="list-box"></div>
+        <button onclick="generateMelody()">Generate Melody</button>
+        <button onclick="aiMelody()">AI Melody</button>
+
+        <div id="chord-box" class="list-box"></div>
+        <button onclick="generateChords()">Generate Chords</button>
+
+        <div id="scale-box" class="list-box"></div>
+        <button onclick="showScale()">Show Scale</button>
+
+        <hr>
+        <button onclick="addToPlaylist()" style="background: #e1f5fe;">Add To Playlist</button>
+        <button onclick="clearAll()" style="background: #ffebee;">Clear</button>
+    </div>
+
+    <!-- Drums Tab -->
+    <div id="drum-tab" class="tab-content">
+        <div id="drum-box" class="list-box" style="height: 250px;"></div>
+        <button onclick="generateDrums()">Generate Drum Pattern</button>
+    </div>
+
+    <!-- Playlist Tab -->
+    <div id="playlist-tab" class="tab-content">
+        <div id="playlist-box" class="list-box" style="height: 300px;"></div>
+    </div>
+</div>
+
+<script>
+    // DATA
+    const scales = {
+        "C Major": ['C','D','E','F','G','A','B'],
+        "A Minor": ['A','B','C','D','E','F','G']
+    };
+    const chords = {
+        "C": ["C","E","G"], "Dm": ["D","F","A"], "Em": ["E","G","B"],
+        "F": ["F","A","C"], "G": ["G","B","D"], "Am": ["A","C","E"]
+    };
+    let playlist = [];
+
+    // HELPERS
+    function updateBox(id, items) {
+        const box = document.getElementById(id);
+        box.innerHTML = items.map(item => `<div>${item}</div>`).join('');
+    }
+
+    // MELODY GENERATOR
+    function generateMelody() {
+        const scaleName = document.getElementById('scale-select').value;
+        const scale = scales[scaleName];
+        let melody = [];
+        for(let i=0; i<8; i++) {
+            melody.push(scale[Math.floor(Math.random() * scale.length)]);
+        }
+        updateBox('melody-box', melody);
+    }
+
+    // AI MELODY
+    function aiMelody() {
+        const scaleName = document.getElementById('scale-select').value;
+        const scale = scales[scaleName];
+        let melody = [];
+        let note = scale[Math.floor(Math.random() * scale.length)];
+        
+        for(let i=0; i<12; i++) {
+            const steps = [-1, 0, 1];
+            const step = steps[Math.floor(Math.random() * steps.length)];
+            let idx = (scale.indexOf(note) + step) % scale.length;
+            if (idx < 0) idx = scale.length - 1; // Handle negative modulo
+            note = scale[idx];
+            melody.push(note);
+        }
+        updateBox('melody-box', melody);
+    }
+
+    // CHORDS
+    function generateChords() {
+        const keys = Object.keys(chords);
+        let result = [];
+        for(let i=0; i<4; i++) {
+            result.push(keys[Math.floor(Math.random() * keys.length)]);
+        }
+        updateBox('chord-box', result);
+    }
+
+    // SHOW SCALE
+    function showScale() {
+        const scaleName = document.getElementById('scale-select').value;
+        updateBox('scale-box', scales[scaleName]);
+    }
+
+    // DRUMS
+    function generateDrums() {
+        const sounds = ["Kick", "Snare", "Hat", "-"];
+        let pattern = [];
+        for(let i=0; i<16; i++) {
+            pattern.push(sounds[Math.floor(Math.random() * sounds.length)]);
+        }
+        updateBox('drum-box', pattern);
+    }
+
+    // PLAYLIST
+    function addToPlaylist() {
+        const melodyDivs = document.getElementById('melody-box').innerText.split('\n').filter(x => x);
+        const playlistBox = document.getElementById('playlist-box');
+        melodyDivs.forEach(note => {
+            playlist.push(note);
+            const div = document.createElement('div');
+            div.textContent = note;
+            playlistBox.appendChild(div);
+        });
+    }
+
+    // CLEAR
+    function clearAll() {
+        ['melody-box', 'chord-box', 'scale-box', 'drum-box'].forEach(id => {
+            document.getElementById(id).innerHTML = '';
+        });
+    }
+
+    // TAB LOGIC
+    function openTab(evt, tabName) {
+        let contents = document.getElementsByClassName("tab-content");
+        for (let content of contents) content.classList.remove("active");
+        
+        let buttons = document.getElementsByClassName("tab-btn");
+        for (let btn of buttons) btn.classList.remove("active");
+
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+</script>
+
+</body>
+</html>
