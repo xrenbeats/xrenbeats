@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XTÉ TRANSLATE — XrenBeats</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --surface2: #18181f;
+  --border: #2a2a38;
+  --accent: #00ffcc;
+  --accent2: #7c4dff;
+  --accent3: #ff4dac;
+  --text: #e8e8f0;
+  --muted: #666680;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px 80px;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,204,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,204,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+.wrapper{width:100%;max-width:720px;position:relative;z-index:1;}
+.header{margin-bottom:28px;}
+.brand-tag{font-family:'Space Mono',monospace;font-size:0.7em;color:var(--accent2);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.brand-tag::before{content:'';display:inline-block;width:20px;height:1px;background:var(--accent2);}
+h1{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:800;line-height:0.9;letter-spacing:-0.02em;background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 60%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.subtitle{font-family:'Space Mono',monospace;font-size:0.65em;color:var(--muted);letter-spacing:0.15em;margin-top:10px;}
+
+/* TOP BAR */
+.dir-toggle{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:12px;flex-wrap:wrap;}
+.lang-selector{position:relative;}
+.lang-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-family:'Space Mono',monospace;font-size:0.68em;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;color:var(--text);transition:all 0.2s;user-select:none;display:block;}
+.lang-btn.src-style{color:var(--accent2);border-color:rgba(124,77,255,0.4);}
+.lang-btn.tgt-style{color:var(--accent);border-color:rgba(0,255,204,0.35);}
+.lang-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.tap-hint{font-size:0.65em;color:var(--muted);display:block;text-align:center;margin-top:2px;letter-spacing:0.08em;}
+.lang-dd{position:absolute;top:calc(100% + 6px);left:0;z-index:999;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden auto;min-width:210px;max-height:320px;box-shadow:0 8px 32px rgba(0,0,0,0.7);display:none;}
+.lang-dd.open{display:block;}
+.dd-item{padding:9px 16px;font-family:'Space Mono',monospace;font-size:0.6em;letter-spacing:0.1em;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(42,42,56,0.5);white-space:nowrap;}
+.dd-item:last-child{border-bottom:none;}
+.dd-item:hover{background:rgba(0,255,204,0.07);color:var(--accent);}
+.dd-item.active{color:var(--accent);background:rgba(0,255,204,0.05);}
+.dd-item.wip{color:var(--muted);opacity:0.5;cursor:default;}
+.swap-btn{background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:1em;transition:all 0.2s;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.swap-btn:hover{border-color:var(--accent3);color:var(--accent3);transform:rotate(180deg);}
+.dir-info{font-family:'Space Mono',monospace;font-size:0.58em;color:var(--muted);margin-left:auto;letter-spacing:0.1em;}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,0.5),0 0 0 1px rgba(0,255,204,0.05);}
+.panel{padding:20px 24px;}
+.panel+.panel{border-top:1px solid var(--border);}
+.panel-label{font-family:'Space Mono',monospace;font-size:0.65em;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+
+/* INLINE BADGE (double-tap) */
+.badge-wrap{position:relative;display:inline-block;}
+.panel-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:0.9em;cursor:pointer;user-select:none;transition:all 0.2s;}
+.panel-badge.src-style{background:rgba(124,77,255,0.15);color:var(--accent2);border:1px solid rgba(124,77,255,0.3);}
+.panel-badge.tgt-style{background:rgba(0,255,204,0.1);color:var(--accent);border:1px solid rgba(0,255,204,0.25);}
+.panel-badge:hover{transform:scale(1.04);}
+.panel-badge .dtap{font-size:0.65em;color:var(--muted);margin-left:2px;}
+.badge-dd{position:absolute;top:calc(100% + 6px);right:0;z-index:999;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden auto;min-width:210px;max-height:280px;box-shadow:0 8px 32px rgba(0,0,0,0.7);display:none;}
+.badge-dd.open{display:block;}
+
+textarea{width:100%;height:120px;padding:14px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:10px;resize:none;font-family:'Syne',sans-serif;font-size:1em;line-height:1.6;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+textarea:focus{border-color:rgba(0,255,204,0.4);box-shadow:0 0 0 3px rgba(0,255,204,0.06);}
+textarea::placeholder{color:var(--muted);}
+.output-area{min-height:120px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;font-family:'Space Mono',monospace;font-size:0.95em;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;color:var(--accent);transition:border-color 0.2s;}
+.output-area.has-content{border-color:rgba(0,255,204,0.2);box-shadow:0 0 20px rgba(0,255,204,0.04);}
+.output-placeholder{color:var(--muted);font-family:'Syne',sans-serif;font-size:0.9em;font-style:italic;}
+.translating-msg{color:var(--muted);font-family:'Space Mono',monospace;font-size:0.8em;font-style:italic;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* STATS */
+.stats-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:rgba(0,255,204,0.03);border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:0.6em;color:var(--muted);letter-spacing:0.1em;flex-wrap:wrap;gap:8px;}
+.stat{display:flex;align-items:center;gap:5px;}
+.stat-val{color:var(--accent);font-weight:700;}
+.btns-row{display:flex;gap:5px;align-items:center;}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 9px;border-radius:6px;font-size:1em;cursor:pointer;transition:all 0.2s;line-height:1;}
+.icon-btn:hover{border-color:var(--accent3);color:var(--accent3);}
+.icon-btn.starred{border-color:var(--accent3);color:var(--accent3);background:rgba(255,77,172,0.1);}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 9px;border-radius:6px;font-family:'Space Mono',monospace;font-size:0.62em;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+.copy-btn.copied{border-color:var(--accent);color:var(--accent);}
+.save-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 8px;border-radius:6px;font-family:'Space Mono',monospace;font-size:0.58em;letter-spacing:0.07em;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.save-btn:hover{border-color:rgba(0,255,204,0.5);color:var(--accent);}
+.save-btn.saved{border-color:var(--accent);color:var(--accent);background:rgba(0,255,204,0.05);}
+
+/* FAVORITES */
+.fav-section{margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:none;}
+.fav-section.visible{display:block;}
+.fav-header{padding:10px 18px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:0.65em;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent3);}
+.fav-list{max-height:200px;overflow-y:auto;}
+.fav-item{padding:9px 18px;border-bottom:1px solid rgba(42,42,56,0.5);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;font-family:'Space Mono',monospace;font-size:0.6em;}
+.fav-item:last-child{border-bottom:none;}
+.fav-text{color:var(--accent);flex:1;line-height:1.5;}
+.fav-orig{color:var(--muted);font-size:0.9em;margin-top:2px;}
+.fav-rm{color:var(--muted);cursor:pointer;flex-shrink:0;padding:2px 6px;border-radius:4px;}
+.fav-rm:hover{color:var(--accent3);}
+
+/* DICT INFO */
+.dict-info{margin-top:14px;padding:12px 18px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:space-between;font-family:'Space Mono',monospace;font-size:0.65em;color:var(--muted);letter-spacing:0.1em;}
+.dict-count{font-size:1.4em;font-weight:700;color:var(--accent);}
+
+/* RATING (compact) */
+.rating-section{margin-top:14px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.rating-label{font-family:'Space Mono',monospace;font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.emoji-row{display:flex;gap:3px;flex:1;}
+.emoji-btn{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:4px 5px;cursor:pointer;font-size:1em;transition:all 0.15s;line-height:1;flex:1;text-align:center;}
+.emoji-btn:hover{border-color:rgba(0,255,204,0.3);transform:translateY(-2px);}
+.emoji-btn.selected{border-color:var(--accent);background:rgba(0,255,204,0.08);transform:translateY(-2px);}
+.rating-actions{display:flex;align-items:center;gap:5px;}
+.rating-comment{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:5px 8px;font-family:'Space Mono',monospace;font-size:0.58em;color:var(--text);outline:none;width:100px;transition:border-color 0.2s;}
+.rating-comment:focus{border-color:rgba(0,255,204,0.3);}
+.rating-comment::placeholder{color:var(--muted);}
+.submit-btn{background:linear-gradient(135deg,var(--accent2),var(--accent3));border:none;color:#fff;padding:6px 10px;border-radius:7px;font-family:'Space Mono',monospace;font-size:0.56em;letter-spacing:0.06em;cursor:pointer;transition:opacity 0.2s;white-space:nowrap;}
+.submit-btn:hover{opacity:0.85;}
+.submit-btn:disabled{opacity:0.35;cursor:default;}
+.rating-thanks{font-family:'Space Mono',monospace;font-size:0.56em;color:var(--accent);letter-spacing:0.1em;display:none;}
+
+/* FEEDBACK LOG */
+.feedback-log{margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:none;}
+.feedback-log.visible{display:block;}
+.feedback-log-header{padding:10px 18px;border-bottom:1px solid var(--border);font-family:'Space Mono',monospace;font-size:0.65em;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent2);}
+.feedback-list{max-height:180px;overflow-y:auto;}
+.feedback-item{padding:9px 18px;border-bottom:1px solid rgba(42,42,56,0.5);font-family:'Space Mono',monospace;font-size:0.6em;}
+.feedback-item:last-child{border-bottom:none;}
+.feedback-emoji{font-size:1.2em;margin-right:6px;}
+.feedback-comment{color:var(--muted);margin-top:3px;font-style:italic;}
+.feedback-time{color:rgba(102,102,128,0.5);font-size:0.85em;margin-top:2px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-family:'Space Mono',monospace;font-size:0.68em;letter-spacing:0.12em;padding:8px 18px;border-radius:8px;box-shadow:0 4px 20px rgba(0,255,204,0.2);opacity:0;pointer-events:none;transition:opacity 0.3s,transform 0.3s;z-index:9999;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <div class="brand-tag">XrenBeats — XBT Feature</div>
+    <h1>XTÉ<br>TRANSLATE</h1>
+    <p class="subtitle">// CONLANG ENGINE v4.0 — MULTILINGUAL ⇄ XTÉS</p>
+  </div>
+
+  <!-- Top language bar -->
+  <div class="dir-toggle">
+    <div class="lang-selector">
+      <div class="lang-btn src-style" id="top-src-btn">
+        <span id="top-src-lbl">English</span>
+        <span class="tap-hint">double-tap to change</span>
+      </div>
+      <div class="lang-dd" id="top-src-dd"></div>
+    </div>
+    <button class="swap-btn" onclick="swapLangs()">⇄</button>
+    <div class="lang-selector">
+      <div class="lang-btn tgt-style" id="top-tgt-btn">
+        <span id="top-tgt-lbl">XTÉS</span>
+        <span class="tap-hint">double-tap to change</span>
+      </div>
+      <div class="lang-dd" id="top-tgt-dd"></div>
+    </div>
+    <span class="dir-info" id="dir-info">EN → XTÉ</span>
+  </div>
+
+  <div class="card">
+    <div class="panel">
+      <div class="panel-label">
+        Input
+        <div class="badge-wrap">
+          <div class="panel-badge src-style" id="in-badge"><span id="in-badge-lbl">🇺🇸 English</span><span class="dtap">✦</span></div>
+          <div class="badge-dd" id="in-dd"></div>
+        </div>
+      </div>
+      <textarea id="input" placeholder="Type anything in English..." oninput="onInput()"></textarea>
+    </div>
+    <div class="panel">
+      <div class="panel-label">
+        Output
+        <div class="badge-wrap">
+          <div class="panel-badge tgt-style" id="out-badge"><span id="out-badge-lbl">🌐 XTÉS</span><span class="dtap">✦</span></div>
+          <div class="badge-dd" id="out-dd"></div>
+        </div>
+      </div>
+      <div id="output" class="output-area"><span class="output-placeholder">Translation will appear here...</span></div>
+    </div>
+    <div class="stats-bar">
+      <span class="stat">WORDS <span class="stat-val" id="word-count">0</span></span>
+      <span class="stat">CHARS <span class="stat-val" id="char-count">0</span></span>
+      <span class="stat">DICT <span class="stat-val" id="dict-size">0</span></span>
+      <div class="btns-row">
+        <button class="save-btn" id="save-btn" onclick="saveContent()">💾 SAVE</button>
+        <button class="icon-btn" id="star-btn" onclick="toggleStar()">☆</button>
+        <button class="copy-btn" id="copy-btn" onclick="copyOutput()">COPY</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fav-section" id="fav-section">
+    <div class="fav-header">⭐ STARRED TRANSLATIONS</div>
+    <div class="fav-list" id="fav-list"></div>
+  </div>
+
+  <div class="dict-info">
+    <span>XTÉ DICTIONARY</span>
+    <span class="dict-count" id="total-entries">—</span>
+    <span>TOTAL ENTRIES LOADED</span>
+  </div>
+
+  <div class="rating-section">
+    <span class="rating-label">RATE IT</span>
+    <div class="emoji-row">
+      <button class="emoji-btn" title="Very Bad"  onclick="selectRating(this,'😡','Very Bad')">😡</button>
+      <button class="emoji-btn" title="Bad"       onclick="selectRating(this,'😞','Bad')">😞</button>
+      <button class="emoji-btn" title="Meh"       onclick="selectRating(this,'😐','Meh')">😐</button>
+      <button class="emoji-btn" title="OK"        onclick="selectRating(this,'🙂','OK')">🙂</button>
+      <button class="emoji-btn" title="Good"      onclick="selectRating(this,'😄','Good')">😄</button>
+      <button class="emoji-btn" title="Very Good" onclick="selectRating(this,'🤩','Very Good')">🤩</button>
+      <button class="emoji-btn" title="Excellent" onclick="selectRating(this,'🔥','Excellent')">🔥</button>
+    </div>
+    <div class="rating-actions">
+      <input class="rating-comment" id="comment-box" placeholder="Comment..." maxlength="120">
+      <button class="submit-btn" id="submit-btn" onclick="submitFeedback()" disabled>SEND</button>
+      <span class="rating-thanks" id="rating-thanks">✓ THANKS!</span>
+    </div>
+  </div>
+
+  <div class="feedback-log" id="feedback-log">
+    <div class="feedback-log-header">📋 COMMUNITY FEEDBACK</div>
+    <div class="feedback-list" id="feedback-list"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  LANGUAGES
+// ═══════════════════════════════════════
+const LANGS=[
+  {code:'xte',  label:'XTÉS',                flag:'🌐',xte:true},
+  {code:'en',   label:'English',             flag:'🇺🇸'},
+  {code:'es',   label:'Spanish',             flag:'🇪🇸'},
+  {code:'ja',   label:'Japanese',            flag:'🇯🇵'},
+  {code:'it',   label:'Italian',             flag:'🇮🇹'},
+  {code:'tl',   label:'Tagalog',             flag:'🇵🇭'},
+  {code:'zh-TW',label:'Chinese (Traditional)',flag:'🇹🇼'},
+  {code:'zh-CN',label:'Chinese (Simplified)',flag:'🇨🇳'},
+  {code:'ru',   label:'Russian',             flag:'🇷🇺'},
+  {code:'uk',   label:'Ukrainian',           flag:'🇺🇦'},
+  {code:'th',   label:'Thai',               flag:'🇹🇭'},
+  {code:'hmn',  label:'Hmong',              flag:'🌿'},
+  {code:'vi',   label:'Vietnamese',         flag:'🇻🇳'},
+  {code:'de',   label:'German',             flag:'🇩🇪'},
+  {code:'fr',   label:'French',             flag:'🇫🇷'},
+  {code:'ko',   label:'Korean',             flag:'🇰🇷'},
+  {code:'pt',   label:'Portuguese',         flag:'🇧🇷'},
+  {code:'ar',   label:'Arabic',             flag:'🇸🇦'},
+  {code:'exab1',label:'exab1',              flag:'⚙️',wip:true},
+  {code:'elachas',label:'elachas',          flag:'⚙️',wip:true},
+];
+const getLang=c=>LANGS.find(l=>l.code===c)||{code:c,label:c,flag:''};
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let srcLang='en', tgtLang='xte';
+let tTimer=null, selectedRating=null;
+let favorites=[], feedbackLog=[];
+try{favorites= JSON.parse(localStorage.getItem('xte_fav')||'[]');}catch(e){}
+try{feedbackLog=JSON.parse(localStorage.getItem('xte_fb') ||'[]');}catch(e){}
+
+// ═══════════════════════════════════════
+//  XTÉ DICTIONARY
+// ═══════════════════════════════════════
+const D={
+  "hello":"veo","hi":"ve","hey":"vea","bye":"calo","goodbye":"calosa",
+  "farewell":"calovi","welcome":"velomi","greetings":"veosal","howdy":"tovei",
+  "sup":"sokip","what's up":"sokipa","later":"talco","see you":"veo ka",
+  "take care":"kajlosa","peace":"paxila","cheers":"celto",
+  "good morning":"goud mornál","good night":"goud nochtél",
+  "good evening":"goud evanik","good afternoon":"goud apresol",
+  "how are you":"tojelaka","nice to meet you":"nicei tov kontaka",
+  "long time no see":"longov timelo no seova","miss you":"missalo ka",
+  "glad you're here":"joyol ka huila","what's good":"wato goud",
+  "salut":"saluto","bonjour":"bonjourek","konnichiwa":"konicivá",
+  "ohayo":"ohayolo","sayonara":"sayonarelo","adios":"adiosco",
+  "hola":"holaco","namaste":"namasté","ciao":"ciaolo",
+  "aloha":"alohalo","shalom":"shalomi","merhaba":"merhabi",
+  "i":"i","me":"mi","my":"mio","mine":"miosa","myself":"mioself",
+  "we":"welo","us":"uso","our":"oursa","ours":"oursalo","ourselves":"weloself",
+  "you":"ka","your":"kalo","yours":"kalosa","yourself":"kaself","yourselves":"kaselfal",
+  "y'all":"kasal","he":"jol","him":"jolmi","his":"joles","himself":"jolself",
+  "she":"hes","her":"helo","hers":"helosa","herself":"heself",
+  "they":"alpil","them":"alpilsa","their":"alpilko","theirs":"alpilkosa","themselves":"alpilself",
+  "it":"ito","its":"itoska","itself":"itoself",
+  "who":"alpis","whom":"alpismi","whose":"alpislo",
+  "someone":"someuno","anyone":"anyuno","everyone":"everuno",
+  "nobody":"nolbodi","everybody":"evribodi","somebody":"somibodi",
+  "one":"une","another":"anothal","each":"eachol","both":"bothol",
+  "either":"eithol","neither":"neithal","few":"fewol",
+  "many":"manolo","much":"muchol","more":"morelo","most":"mostol",
+  "other":"othral","others":"othralsa","such":"suchol",
+  "am":"sami","is":"sa","are":"jela","was":"sako","were":"jelako",
+  "be":"mel","been":"melo","being":"meling",
+  "have":"havo","has":"havsa","had":"havko","having":"havling",
+  "do":"dova","does":"dovsa","did":"dovko","doing":"dovling",
+  "will":"vol","would":"volko","shall":"shalvo","should":"shalko",
+  "can":"cano","could":"canko","may":"maylo","might":"maiko","must":"musta",
+  "go":"gova","went":"govko","gone":"gota","going":"govling",
+  "come":"comevo","came":"comeko","coming":"comeling",
+  "get":"geto","got":"getko","getting":"getling",
+  "make":"makova","made":"makko","making":"makling",
+  "take":"takova","took":"takko","taking":"takling",
+  "give":"givova","gave":"givko","given":"givelo","giving":"givling",
+  "know":"knova","knew":"knovko","known":"knovelo","knowing":"knovling",
+  "think":"thinkova","thought":"thinkko","thinking":"thinkling",
+  "see":"seova","saw":"seoko","seen":"seolo","seeing":"seoling",
+  "look":"lokova","looked":"lokko","looking":"lokling",
+  "want":"wantova","wanted":"wantko","wanting":"wantling",
+  "need":"nedova","needed":"nedko","needing":"nedling",
+  "love":"lova","loved":"lovko","loving":"lovling",
+  "hate":"hatova","hated":"hatko","hating":"hatling",
+  "like":"likova","liked":"likko","liking":"likling",
+  "feel":"felova","felt":"felko","feeling":"feling",
+  "say":"sayova","said":"sayko","saying":"sayling",
+  "tell":"telova","told":"telko","telling":"telaling",
+  "ask":"askova","asked":"askko","asking":"askling",
+  "work":"workova","worked":"workko","working":"workling",
+  "run":"runova","ran":"runko","running":"runling",
+  "walk":"walkova","walked":"walkko","walking":"walkling",
+  "sit":"sitova","sat":"sitko","sitting":"sitling",
+  "stand":"standova","stood":"standko","standing":"standling",
+  "eat":"eatova","ate":"eatko","eating":"eatling",
+  "drink":"drinkova","drank":"drinkko","drinking":"drinkling",
+  "sleep":"sleepova","slept":"sleepko","sleeping":"sleepling",
+  "wake":"wakeova","woke":"wakeko","waking":"wakelink",
+  "try":"tryova","tried":"tryko","trying":"tryling",
+  "use":"usova","used":"usko","using":"usling",
+  "find":"findova","found":"findko","finding":"findling",
+  "lose":"lozova","lost":"lozko","losing":"lozling",
+  "win":"winova","won":"winko","winning":"winling",
+  "fight":"fightova","fought":"fightko","fighting":"fightling",
+  "kill":"killova","killed":"killko","killing":"killong",
+  "die":"da","died":"dako","dying":"daling",
+  "live":"livova","lived":"livko","living":"livling",
+  "play":"playova","played":"playko","playing":"playling",
+  "sing":"singova","sang":"singko","singing":"singling",
+  "dance":"danceova","danced":"danceko","dancing":"danceling",
+  "write":"writeova","wrote":"writeko","writing":"writeling",
+  "read":"redova","reads":"redsa","reading":"redling",
+  "speak":"speakova","spoke":"speakko","speaking":"speakling",
+  "listen":"listova","listened":"listko","listening":"listling",
+  "help":"helpova","helped":"helpko","helping":"helpling",
+  "move":"movova","moved":"movko","moving":"movling",
+  "change":"changova","changed":"changko","changing":"changling",
+  "start":"startova","started":"startko","starting":"startling",
+  "stop":"shoa","stopped":"shoako","stopping":"shoaling",
+  "wait":"waitova","waited":"waitko","waiting":"waitling",
+  "open":"openova","opened":"openko","opening":"openling",
+  "close":"closeova","closed":"closeko","closing":"closeling",
+  "create":"creatova","created":"creatko","creating":"creatling",
+  "destroy":"destroyova","destroyed":"destroyko","destroying":"destroyling",
+  "build":"buildova","built":"buildko","building":"buildling",
+  "break":"breakova","broke":"breakko","breaking":"breakling",
+  "fix":"fixova","fixed":"fixko","fixing":"fixling",
+  "hold":"holdova","held":"holdko","holding":"holdling",
+  "drop":"dropova","dropped":"dropko","dropping":"dropling",
+  "throw":"throwova","threw":"throwko","throwing":"throwling",
+  "catch":"catchova","caught":"catchko","catching":"catchling",
+  "pull":"pulova","pulled":"pulko","pulling":"puling",
+  "push":"pushova","pushed":"pushko","pushing":"pushling",
+  "touch":"touchova","touched":"touchko","touching":"touchling",
+  "hit":"hitova","hitting":"hitling",
+  "cut":"cutova","cuts":"cutsa","cutting":"cutling",
+  "burn":"burnova","burned":"burnko","burning":"burnling",
+  "grow":"grova","grew":"groko","growing":"groling",
+  "fall":"falova","fell":"falko","falling":"faling",
+  "rise":"risova","rose":"risko","rising":"risling",
+  "fly":"flyova","flew":"flyko","flying":"flyling",
+  "swim":"swimova","swam":"swimko","swimming":"swimling",
+  "jump":"jumpova","jumped":"jumpko","jumping":"jumpling",
+  "climb":"climbova","climbed":"climbko","climbing":"climbling",
+  "hide":"hidova","hid":"hidko","hiding":"hidling",
+  "show":"showova","showed":"showko","showing":"showling",
+  "call":"calova","called":"calko","calling":"caling",
+  "answer":"answova","answered":"answko","answering":"answling",
+  "remember":"remova","remembered":"remko","remembering":"remling",
+  "forget":"forgova","forgot":"forgko","forgetting":"forgling",
+  "learn":"lernova","learned":"lernko","learning":"lerning",
+  "teach":"teachova","taught":"teachko","teaching":"teachling",
+  "follow":"folova","followed":"folko","following":"foling",
+  "lead":"ledova","led":"ledko","leading":"ledling",
+  "choose":"chozova","chose":"chozko","choosing":"chozling",
+  "decide":"decidova","decided":"decidko","deciding":"decidling",
+  "allow":"alova","allowed":"alko","allowing":"aling",
+  "begin":"beguova","began":"beguako","beginning":"begualing",
+  "end":"endova","ended":"endko","ending":"endling",
+  "turn":"turnova","turned":"turnko","turning":"turnling",
+  "return":"retova","returned":"retko","returning":"retling",
+  "leave":"levova","left":"levko","leaving":"levling",
+  "arrive":"arivova","arrived":"arivko","arriving":"arivling",
+  "send":"sendova","sent":"sendko","sending":"sendling",
+  "receive":"recova","received":"recko","receiving":"recling",
+  "share":"sharova","shared":"sharko","sharing":"sharing",
+  "sell":"selova","sold":"selko","selling":"seling",
+  "buy":"buyova","bought":"buyko","buying":"buyling",
+  "pay":"payova","paid":"payko","paying":"payling",
+  "save":"savova","saved":"savko","saving":"savling",
+  "spend":"spenova","spent":"spenco","spending":"spenling",
+  "earn":"ernova","earned":"ernko","earning":"erning",
+  "steal":"stealova","stole":"stealko","stealing":"stealin",
+  "protect":"protova","protected":"protko","protecting":"protling",
+  "attack":"atkova","attacked":"atkko","attacking":"atkling",
+  "escape":"escova","escaped":"escko","escaping":"escling",
+  "believe":"belova","believed":"belko","believing":"beling",
+  "trust":"trustova","trusted":"trustko","trusting":"trusting",
+  "doubt":"doutova","doubted":"doutko","doubting":"doutling",
+  "hope":"hopova","hoped":"hopko","hoping":"hopling",
+  "wish":"wishova","wished":"wishko","wishing":"wishling",
+  "promise":"promova","promised":"promko","promising":"promling",
+  "celebrate":"celebova","celebrated":"celebko","celebrating":"celebling",
+  "enjoy":"enjová","enjoyed":"enjóko","enjoying":"enjóling",
+  "suffer":"sufova","suffered":"sufko","suffering":"sufling",
+  "heal":"healova","healed":"healko","healing":"healing",
+  "dream":"dremova","dreamed":"dremko","dreaming":"dreming",
+  "imagine":"imagova","imagined":"imagko","imagining":"imagling",
+  "plan":"planova","planned":"planko","planning":"planling",
+  "reach":"rechova","reached":"rechko","reaching":"rechling",
+  "achieve":"achova","achieved":"achko","achieving":"achling",
+  "fail":"felak","failed":"felakko","failing":"felakling",
+  "practice":"pracova","practiced":"pracko","practicing":"pracling",
+  "perform":"perfova","performed":"perfko","performing":"perfling",
+  "record":"recorda","recorded":"reckop","recording":"recling",
+  "produce":"prodova","produced":"prodko","producing":"prodling",
+  "release":"relova","released":"relko","releasing":"reling",
+  "upload":"upova","uploaded":"upko","uploading":"upling",
+  "download":"downova","downloaded":"downko","downloading":"downling",
+  "search":"sarchova","searched":"sarchko","searching":"sarching",
+  "explore":"explova","explored":"explko","exploring":"explong",
+  "discover":"discova","discovered":"discko","discovering":"discling",
+  "good":"goud","great":"greto","amazing":"amazik",
+  "awesome":"awesomi","fantastic":"fantiko","wonderful":"wondrilo",
+  "beautiful":"beltás","pretty":"prettola","cute":"cutiko",
+  "handsome":"handomi","ugly":"uglio","gross":"grossi",
+  "bad":"bula","terrible":"terrilo","horrible":"horribli",
+  "awful":"awfula","worst":"worstin","best":"besta",
+  "better":"bettra","worse":"worsa","super":"superó",
+  "cool":"coolio","nice":"nicei","sweet":"sweetilo",
+  "soft":"softé","hard":"hardu","tough":"tuffu",
+  "easy":"easilo","simple":"simpilo","complex":"komplexo",
+  "big":"bigór","large":"largel","huge":"hugel","giant":"giantel",
+  "small":"smali","tiny":"tiniol","little":"littil",
+  "tall":"tallek","short":"shurim","long":"longáv",
+  "fast":"fastik","slow":"sloweno","quick":"quickevi",
+  "old":"olden","new":"newás","young":"youngilo",
+  "hot":"hotáv","cold":"coldevo","warm":"warmálo",
+  "bright":"brightas","dark":"darkeno",
+  "loud":"cenkae","quiet":"quietel","silent":"silentas",
+  "happy":"happiól","sad":"sadiol","angry":"angriol",
+  "scared":"skariol","brave":"braviol","strong":"strongas",
+  "weak":"weakilo","smart":"smartás","dumb":"dumbiol",
+  "crazy":"crazevi","normal":"normalák","weird":"weirden",
+  "strange":"stranieko","funny":"poarta","serious":"seriáv",
+  "kind":"kindelo","mean":"meaneko","rude":"rudumo",
+  "polite":"politas","wild":"wildevo","tame":"tamás",
+  "free":"freesel","trapped":"trapiko","alive":"stalos",
+  "dead":"stakjalhin","true":"trueko","false":"falsálo",
+  "real":"realen","fake":"fakiko","pure":"purás",
+  "corrupt":"corrupik","whole":"wholelo","broken":"brokéno",
+  "perfect":"perfelo","rich":"richás","poor":"pourálo",
+  "lucky":"luckvia","vague":"gujalinga","evasive":"evalespia",
+  "lost":"lostiol","found":"foundiol",
+  "alone":"alonelo","together":"togetáv","separate":"separelo",
+  "empty":"emptól","full":"fullás","clean":"clenas",
+  "dirty":"dirtieko","fresh":"freshálo","stale":"staliko",
+  "deep":"deepáv","shallow":"shalumo","narrow":"narrikó",
+  "wide":"wideko","thick":"thickáv","thin":"thinas",
+  "heavy":"heaválo","raw":"rawáv","cooked":"cookéd",
+  "spicy":"spiciko","sour":"soureko","bitter":"bitolo",
+  "salty":"saltáv","bland":"blandeko","crispy":"crispelo",
+  "soggy":"sogumo","smooth":"smootás","rough":"rougálo",
+  "sharp":"sharpilo","dull":"dulleko","clear":"clearáv",
+  "blurry":"blurriko","glowing":"glouving","shiny":"shinyálo",
+  "colorful":"colorilo","plain":"plaineko","fancy":"fancás",
+  "elegant":"elegantelo","messy":"messuvol","neat":"neatáv",
+  "organized":"organilo","random":"randomeko","specific":"spécálo",
+  "general":"generáv","ancient":"anciálo","modern":"modereko",
+  "eternal":"eternáv","temporary":"tempiko","rare":"rarelo",
+  "common":"comunáv","special":"specialilo","ordinary":"ordineko",
+  "magic":"magicas","cursed":"cursviol","blessed":"blesséno",
+  "god":"pal","hell":"asnatox","heaven":"hevanol",
+  "world":"mondé","earth":"terrel","sky":"cieláv",
+  "sun":"solé","moon":"lunél","star":"étoilu",
+  "water":"acquás","fire":"fuegol","air":"venté",
+  "land":"terrel","sea":"marél","ocean":"oceané",
+  "river":"rivuél","mountain":"montel","forest":"forétik",
+  "city":"ciudel","town":"villél","home":"hogari",
+  "house":"casaél","room":"piecas","door":"portel",
+  "window":"fenétre","wall":"murol","floor":"suelu",
+  "road":"caminel","street":"callél","path":"sendel",
+  "time":"tempás","day":"journel","night":"noctel",
+  "morning":"mañálo","evening":"soirás",
+  "week":"semaek","month":"mesiko","year":"anumo",
+  "life":"vivél","death":"morté","soul":"ámálo",
+  "heart":"corás","mind":"mentel","body":"corpalo",
+  "blood":"sangás","bone":"oseul","eye":"ocuiko",
+  "hand":"manumo","head":"capitel","face":"viselo",
+  "voice":"vocás","song":"cantiko","music":"musicáv",
+  "beat":"veezá","beats":"veesa","sound":"sonel",
+  "word":"parolél","name":"nomél","story":"histiko",
+  "power":"podás","shadow":"ombrielo",
+  "dream":"soñiko","hope":"espás","fear":"paurelo",
+  "love":"lova","hate":"hato","pain":"dolás",
+  "joy":"jourél","war":"gueriko",
+  "truth":"verás","lie":"mensel","secret":"secretiko",
+  "money":"dinás","food":"mangeliko","art":"artumo",
+  "game":"juegiko","friend":"amiás","enemy":"enemel",
+  "family":"famíiko","brother":"fratel","sister":"sorás",
+  "mother":"mèrielo","father":"pèreko","son":"filus",
+  "daughter":"filel","baby":"bébél","kid":"niñiko",
+  "child":"enfás","man":"hombel","woman":"mujelumo",
+  "person":"persoél","people":"gentas",
+  "king":"reyiko","queen":"reinás","hero":"héroelo",
+  "villain":"vilaniko","ghost":"fantôás","demon":"demóiko",
+  "angel":"angelás","monster":"monsterel",
+  "nature":"naturel","animal":"animiko","bird":"oiselumo",
+  "fish":"poisás","dog":"chuiko","cat":"chatás",
+  "horse":"chevalumo","wolf":"louás","lion":"leoniko",
+  "dragon":"dragelo","tree":"arbrumo","flower":"fleuvás",
+  "grass":"herbiko","stone":"pierrel","sand":"sabelo",
+  "cloud":"nuagiko","rain":"pluvás","snow":"nievelo",
+  "wind":"ventumo","thunder":"tonás","lightning":"relampiko",
+  "color":"coulév","red":"rosás","blue":"azuiko",
+  "green":"verdel","yellow":"amarás","white":"blancelo",
+  "black":"noiriko","purple":"morádelo","pink":"rosaiko",
+  "orange":"naranjás","gold":"oriko","silver":"platel",
+  "place":"lieuás","space":"espaciko","universe":"universel",
+  "galaxy":"galakás","planet":"planelumo","void":"voilumo",
+  "energy":"energiko","force":"forcel","wave":"ondás",
+  "darkness":"oscuriko","chaos":"caoás",
+  "order":"ordrel","balance":"equiáv","fate":"destel",
+  "chance":"azaiko","choice":"choixás",
+  "weapon":"armaiko","shield":"escumo","sword":"espiko",
+  "arrow":"flèumo","bow":"arcás","armor":"blindelo",
+  "crown":"couriko","throne":"tronas","kingdom":"regnelo",
+  "flag":"drapelumo","map":"mapiko","letter":"lettrel",
+  "book":"livriko","page":"pagás","chapter":"chapiomos",
+  "school":"écolelo","lesson":"leçás","test":"examiko",
+  "idea":"idelos","thought":"pensel","feeling":"felieko",
+  "memory":"mémoielo","moment":"momeliko","age":"âgás",
+  "past":"passás","present":"présiko","beginning":"débálo",
+  "middle":"mileko","top":"hauiko","bottom":"basás",
+  "side":"côteko","edge":"bolás","corner":"coiniko",
+  "center":"centrás","line":"lignel","circle":"cerculiko",
+  "shape":"formielo","size":"tailleko","weight":"poidás",
+  "height":"hautielo","distance":"disico","direction":"direcilo",
+  "speed":"vitéas","gravity":"gravás",
+  "shit":"shuz","fuck":"fulo","bitch":"betelozi",
+  "ass":"akass","asshole":"akassolo","assholes":"akasloa",
+  "damn":"damno","crap":"crapo","idiot":"idioto",
+  "loser":"lozero","freak":"freakolz",
+  "lol":"clc","omg":"ovpal","wtf":"wafulov",
+  "bruh":"bura","bro":"brova","sis":"sisova",
+  "cap":"capp","no cap":"no capp","slay":"fekaj",
+  "slayer":"fejka","slays":"fejkal","slaying":"fejikaś",
+  "slayers":"fejikal","gooning":"gojalooga","goon":"gojaloont",
+  "goner":"gotása","gooner":"gojaloontá","grooming":"gooval",
+  "groom":"goala","groomer":"gogalas","goofing":"haslin",
+  "goof":"halsin","trash":"atraplas","slop":"sloppo",
+  "bussin":"bussino","lowkey":"lowkeyo","highkey":"highkeyo",
+  "vibe":"vibálo","vibes":"vibás","mood":"moodilo",
+  "drip":"dripel","fit":"fitas","clout":"cloutelmo",
+  "flex":"flexiko","sus":"susumo","based":"basedól",
+  "cringe":"crinjo","ratio":"ration","rent free":"renfre",
+  "understood":"underól","literally":"litrieko",
+  "periodt":"peryolta","snatched":"snachól",
+  "serving":"serviko","iconic":"iconicas","legendary":"legendilo",
+  "tea":"téalo","spill":"spilleko","drama":"dramielo",
+  "shade":"shadieko","exposed":"exposieko",
+  "pressed":"pressiko","petty":"petás","extra":"extrailo",
+  "basic":"basiceko","bougie":"bougiáv","classy":"classiko",
+  "messy":"messielo","thirsty":"thirstri",
+  "obsessed":"obsesiko","stan":"staniko","delusional":"delusás",
+  "unhinged":"unhinas","toxic":"toxieko",
+  "main character":"prouv caratu","npc":"noluv peruv",
+  "down bad":"downás bula","bet":"bettumo",
+  "mid":"midol","rizz":"rizelo","rizzing":"rizling",
+  "situationship":"situlovas","simp":"simpiko",
+  "glowup":"glouielo upo","feral":"feralo",
+  "facts":"factiko","valid":"valiko","respect":"respielo",
+  "xren":"xreń","xrenbeats":"xreń veesa",
+  "bass":"basseko","treble":"trebló","melody":"méloielo",
+  "harmony":"harmoielo","chord":"chordiko","note":"notelo",
+  "rhythm":"ritmel","tempo":"tempel","drop":"dropielo",
+  "hook":"hookel","verse":"versel","chorus":"choruso",
+  "bridge":"bridgiko","intro":"intriko","outro":"outrieko",
+  "sample":"sampel","loop":"loopel","track":"trackel",
+  "album":"albumel","playlist":"playlistvio","stream":"streamiko",
+  "producer":"producel","artist":"artistas","vocalist":"vocalistás",
+  "rapper":"rappel","singer":"singiko","DJ":"djeelo",
+  "bpm":"bpmo","mix":"mixeko","master":"mastielo",
+  "reverb":"reverbielo","delay":"delayiko","filter":"filtiko",
+  "synth":"synthas","drum":"drumiko","kick":"kickelo",
+  "snare":"snarél","808":"eitézero",
+  "vocal":"vocás","lyric":"lyriciko","rap":"rapiko",
+  "flow":"flowelo","bar":"barumo","sixteen":"sinte-even",
+  "studio":"studieko","booth":"boothas","engineer":"enginel",
+  "collab":"colabiko","feature":"featurielo","label":"labiko",
+  "fame":"famiko","fan":"fanico","hype":"hypielo",
+  "trending":"trendiko","viral":"virumo",
+  "banger":"bangilo","anthem":"anthás",
+  "underground":"undéielo","mainstream":"mainstrék",
+  "indie":"indieko","genre":"genas","trap":"trapieko",
+  "lo-fi":"lofieko","chill":"chillas","hyperpop":"hyperilo",
+  "emo":"emiko","pop":"popiko","rock":"rockeko",
+  "jazz":"jazziko","soul":"soulas","rnb":"arnek",
+  "funk":"funkiko","punk":"punkeko","metal":"metalilo",
+  "edm":"edmiko","concert":"concéielo",
+  "tour":"touriko","stage":"stagel","crowd":"crowdiko","merch":"mercielo",
+  "vocaloid":"vocaloida","miku":"mikulo","hatsune":"hatsuno",
+  "ai":"ai","robot":"robotel","digital":"digitielo",
+  "code":"codóv","tech":"techiko","cyber":"cyberielo",
+  "glitch":"glitchieko","pixel":"pixilo","data":"datiko",
+  "system":"systemas","program":"programielo","online":"onlinik",
+  "internet":"netielo","wifi":"wifieko","phone":"fonas",
+  "screen":"scréilo","app":"appeko","software":"softielo",
+  "hardware":"hardiko","device":"deveko","computer":"computel",
+  "laptop":"laptopel","tablet":"tabletiko","server":"servelu",
+  "storage":"storielo","password":"passieko",
+  "login":"loginiko","account":"acumo","profile":"profieko",
+  "email":"emailiko","message":"messieko",
+  "chat":"chatielo","text":"textiko","notification":"notieko",
+  "alert":"alertel","update":"updatel","bug":"bugiko",
+  "crash":"crashieko","lag":"lagielo","hack":"hackiko",
+  "virus":"virumo","database":"datbasek","api":"apiielo",
+  "interface":"interfiko","algorithm":"algielo",
+  "output":"outputel","input":"inputel","error":"errieko",
+  "debug":"debugiko","compile":"compielo","deploy":"depliko",
+  "version":"versieko","beta":"betiko","repository":"repumo",
+  "render":"rendel","animation":"animielo","frame":"framel",
+  "sprite":"spritelo","discord":"discordiko","twitch":"twitchieko",
+  "youtube":"yutielo","tiktok":"tiktokiko",
+  "instagram":"instu","twitter":"xtwitumo",
+  "reddit":"reditielo","spotify":"spotel",
+  "here":"huila","there":"therelek","where":"wales",
+  "everywhere":"everywale","nowhere":"nowale","somewhere":"somewale",
+  "inside":"estellkave","outside":"ounvelo",
+  "in":"estello","out":"lokis","up":"upo","down":"downos",
+  "left":"lefteko","right":"rightiko","north":"norteko",
+  "south":"soutiko","east":"estiko","west":"westeko",
+  "japan":"japanielo","japanese":"japato","italy":"italiko",
+  "italian":"italo","korea":"koranielo","korean":"korato",
+  "america":"americól","american":"americato",
+  "france":"francieko","french":"francato","spain":"espanik",
+  "spanish":"espanato","germany":"alemanieko","german":"alemanato",
+  "china":"chiniko","chinese":"chinato","brazil":"brasiálo",
+  "mexico":"mexiciko","canada":"canadielo","uk":"ukieko",
+  "europe":"europieko","asia":"asiielo","africa":"africiko",
+  "australia":"australielo","island":"islanieko",
+  "hotel":"hotéielo","restaurant":"restieko","café":"cafás",
+  "park":"parkiko","beach":"plajás","lake":"laguas",
+  "desert":"desértielo","valley":"vallieko","cave":"cavumo",
+  "temple":"templéielo","castle":"casteliko",
+  "ruins":"ruinieko","market":"merciko","mall":"mallielo",
+  "library":"libriek","museum":"muselielo","hospital":"hospielo",
+  "university":"univeriek","office":"officeko","farm":"farmik",
+  "village":"vilagás","downtown":"centrás",
+  "and":"of","or":"ana","but":"coda","so":"soki",
+  "because":"becasoki","if":"ifól","when":"wallés",
+  "then":"tal","while":"whilól","until":"untilól",
+  "after":"aprèsól","before":"avantól","during":"pendantól",
+  "for":"pouról","to":"tov","from":"dèsól","with":"avecól",
+  "without":"sanól","about":"suról","above":"dessúsól",
+  "below":"dessóusól","between":"entreól","through":"traversól",
+  "against":"contreól","along":"longól","around":"autourél",
+  "by":"parél","at":"àól","on":"surél","off":"détachól",
+  "over":"pardessél","under":"sousól","into":"dansól",
+  "onto":"versól","upon":"sursumo","within":"dansiko",
+  "of":"oro","a":"orá","the":"telo","an":"anlo",
+  "this":"celieko","that":"cetieko","these":"cesieko",
+  "those":"celuvo","all":"touielo","some":"queliko",
+  "any":"anyiko","no":"nolo","not":"notto",
+  "never":"nevolca","always":"alwavól","sometimes":"parfoisiko",
+  "often":"souventiko","usually":"générálól","rarely":"rarielo",
+  "yes":"oui-ol","yeah":"yealo","yep":"yepol","nope":"nopol",
+  "okay":"okalo","ok":"okol","sure":"sûrél","just":"justól",
+  "only":"seulól","even":"mêmól","still":"encorél",
+  "already":"déjáielo","yet":"encorél","almost":"presquiko",
+  "very":"trèsól","really":"vraimentól","quite":"assezól",
+  "too":"tropól","enough":"assézól","rather":"plûtôielo",
+  "actually":"en faitól","basically":"basiquieko",
+  "literally":"littérielo","probably":"probablieko",
+  "maybe":"peut-êtrél","definitely":"définitiko",
+  "apparently":"appariko","obviously":"évidóielo",
+  "suddenly":"soudainiko","finally":"enfíniko","again":"encorumo",
+  "also":"aussieko","instead":"au liumo","however":"cependielo",
+  "therefore":"donciko","although":"bienquieko",
+  "excuse me":"excusélmi","sorry":"hetá","please":"plesai",
+  "thank you":"thakalos","thanks":"thankól",
+  "what":"wato","why":"whisp","how":"to","which":"whiciko",
+  "what is this":"wato sa celieko",
+  "when did":"wallés dovko","where is":"wales sa",
+  "how much":"to mucho","how many":"to manielo",
+  "how long":"to longáv","how old":"to olden","how fast":"to fastik",
+  "what time":"wato tempás","what day":"wato journel",
+  "who knows":"alpis knova","what happened":"wato getko",
+  "are you okay":"jela ka okalo","is this real":"sa celieko realen",
+  "do you know":"dova ka knova","can you help":"cano ka helpova",
+  "what do you mean":"wato dova ka meaneko",
+  "where are you":"wales jela ka","who are you":"alpis jela ka",
+  "hurry":"hurryiko","calm":"calmeko","stress":"stressiko",
+  "tired":"tirodoal","bored":"borieko","excited":"excitik",
+  "nervous":"nerviko","confused":"confusiko","ready":"readól",
+  "done":"donól","finished":"finieko",
+  "sick":"malaiko","healthy":"sanomo","hurt":"blessieko",
+  "numb":"numbiko","hungry":"faimiko",
+  "exhausted":"épuisieko","energized":"energiko","motivated":"motiviko",
+  "inspired":"inspíielo","creative":"créaiko","focused":"focusiko",
+  "overwhelmed":"surchariko","relieved":"soulagel","grateful":"gratielo",
+  "proud":"fièriko","ashamed":"hontieko","embarrassed":"gênielo",
+  "jealous":"jalóieko","lonely":"seulól","depressed":"dépresieko",
+  "anxious":"anxieko","hopeful":"espérielo","peaceful":"paciielo",
+  "restless":"agitiko","content":"contentiko",
+  "surprised":"surprieko","shocked":"choquieko",
+  "amused":"amusieko","moved":"émuko","nostalgic":"nostalgieko",
+  "mom":"móm","mommy":"mom mi","mama":"mamá","moms":"momsa",
+  "dad":"dadól","daddy":"dadilo","papa":"papól",
+  "aunt":"tantieko","uncle":"onclielo","cousin":"cousíniko",
+  "grandma":"mamie","grandpa":"papie","bestie":"belva",
+  "girlie":"gola","baddie":"golavö","baddies":"golas",
+  "twins":"jumelielo","spouse":"conjugiko","husband":"marieko",
+  "wife":"femmieko","partner":"partielo",
+  "boyfriend":"petitiko ami","girlfriend":"petiiko amie",
+  "ex":"exieko","crush":"crushiko","neighbor":"voisiko",
+  "stranger":"étrangelek","colleague":"collèguieko","boss":"chefieko",
+  "student":"étudieko","teacher":"profieko","doctor":"médieko",
+  "nurse":"infirmieko","lawyer":"avocieko","scientist":"scientieko",
+  "musician":"musieko","athlete":"athlèieko","soldier":"soldaiko",
+  "police":"policieko","chef":"cuisieko",
+  "writer":"écrivieko","actor":"acteuieko","director":"réalisaiko",
+  "journalist":"journaeko","politician":"politieko",
+  "engineer":"ingénieko","architect":"archieko","designer":"designieko",
+  "photographer":"photoko","influencer":"influellumo",
+  "streamer":"stremieko","gamer":"gamielo","coder":"codéieko",
+  "thy":"stakhalossa","fallen":"foli","ashes":"ashisu",
+  "failure":"felaksío","messed":"meisada","mess":"meis",
+  "butt":"codal","booty":"bota","gay":"geiro",
+  "beast":"beastà","beasts":"belvayko","beastie":"belvaykolas",
+  "beer":"kova","beers":"kovas","beets":"kolajas","betts":"koljaskal",
+  "aesthetic":"esthétól","glow":"glouielo","aura":"aurás",
+  "lore":"lorás","canon":"canoniko","fandom":"fandomielo",
+  "ship":"shipiko","community":"commielo",
+  "irl":"irlól","afk":"afkól","brb":"brból",
+  "smh":"smhól","tbh":"tbhól","fr":"frol","deadass":"deadassiko",
+  "zero":"zerco","one":"une","two":"twoce","three":"threte",
+  "four":"sote","five":"fite","six":"sinte","seven":"sente",
+  "eight":"eito","nine":"nynce","ten":"tenco",
+  "eleven":"even","twelve":"telvé","thirteen":"thinté",
+  "fourteen":"sote-tenco","fifteen":"fite-tenco",
+  "sixteen":"sinte-tenco","seventeen":"sente-tenco",
+  "eighteen":"eito-tenco","nineteen":"nynce-tenco",
+  "twenty":"twocenten","thirty":"threteten",
+  "forty":"soteten","fifty":"fiteten","sixty":"sinten",
+  "seventy":"senten","eighty":"eiton","ninety":"nyncen",
+  "hundred":"hundco","thousand":"thousco","million":"millco",
+  "billion":"billco","first":"unesti","second":"twocesti",
+  "third":"thretesti","fourth":"sotesti","fifth":"fitesti",
+  "last":"lastól","next":"nexiko","half":"demiol",
+  "quarter":"quartol","double":"doublól","triple":"triplól",
+  "dozen":"dozumo","couple":"cupiko","pair":"paiás",
+  "single":"singlól","several":"seviko","numerous":"numielo",
+  "monday":"luniko-dai","tuesday":"martiko-dai","wednesday":"merciko-dai",
+  "thursday":"jouieko-dai","friday":"venieko-dai","saturday":"samieko-dai",
+  "sunday":"solieko-dai",
+  "january":"janumo","february":"febumo","march":"marumo",
+  "april":"avrielo","may":"maiumo","june":"junielo",
+  "july":"julás","august":"aoûielo","september":"septieko",
+  "october":"octieko","november":"novielo","december":"decieko",
+  "today":"aujourd'iko","yesterday":"hierielo","tomorrow":"demainieko",
+  "now":"maintielo","soon":"bientôieko","early":"tôielo",
+  "late":"tardel","midnight":"minuitas","noon":"midielo",
+  "dawn":"l'aubéiko","dusk":"crépielo",
+  "minute":"minutiko","hour":"heurél",
+  "daily":"journiko","weekly":"hebdomieko","monthly":"mensuielo",
+  "yearly":"annuielo","forever":"toujouriko","instantly":"instantielo",
+  "recently":"récemmielo","eventually":"finalieko","constantly":"constiko",
+  "rice":"riziko","bread":"painiko","noodle":"nuudléielo",
+  "ramen":"raménielo","sushi":"sushieko","pizza":"pizziko",
+  "pasta":"pastieko","soup":"souupiko","salad":"saladeko",
+  "fruit":"fruitiko","vegetable":"léguielo","meat":"carnielo",
+  "chicken":"poulielo","beef":"boeufiko","pork":"porcel",
+  "egg":"oeufiko","cheese":"fromielo","milk":"laitiko",
+  "coffee":"cafás","tea":"théielo","juice":"jusiko",
+  "soda":"sodaielo","alcohol":"alcielo","wine":"vinielo",
+  "cake":"gâteauielo","cookie":"bisciko","candy":"bonbóielo",
+  "chocolate":"chocolieko","ice cream":"glacieko",
+  "chips":"chipiko","snack":"snackieko","meal":"repielo",
+  "breakfast":"petit-déjielo","lunch":"déjeuieko","dinner":"dîneriko",
+  "dessert":"dessumo",
+  "brain":"cerveaielo","lung":"poulmiko","skin":"peauielo",
+  "hair":"chevelieko","tooth":"dentieko","tongue":"languielo",
+  "nose":"nezielo","ear":"oreillieko","arm":"braúlv",
+  "leg":"jambéielo","foot":"piediko","finger":"doigumo",
+  "shoulder":"épaulel","knee":"genouielo","stomach":"ventriko",
+  "chest":"poitruel","back":"dosieko","neck":"couielo",
+  "chin":"mentonieko","forehead":"fronieko","lip":"lèumo",
+  "allergy":"allergás","fever":"fièvielo","headache":"mal de têieko",
+  "wound":"blessúieko","medicine":"médicilo","therapy":"thérapiko",
+  "cure":"guérieko","recovery":"rétablieko",
+  "anxiety":"anxieko","trauma":"traumiko","meditation":"médieko",
+  "exercise":"exercielo","workout":"entraîieko","rest":"repouielo",
+  "diet":"régimik","sleep":"sommiko",
+  "earthquake":"trembleielo","hurricane":"ouraganik",
+  "tornado":"tornadielo","flood":"inondaiko","wildfire":"incenielo",
+  "volcano":"volcumo","sunset":"couchielo soleil",
+  "sunrise":"lever soleilék","rainbow":"arc-en-cieko",
+  "eclipse":"éclipsieko","fog":"bruiiko","frost":"gelieko",
+  "hail":"grêlielo","blizzard":"blizziko","petal":"pétaliko",
+  "thorn":"épinieko","root":"raciniko","branch":"branchieko",
+  "leaf":"feuillel","seed":"grainieko","moss":"moussiko",
+  "mushroom":"champieko","jungle":"junglel","swamp":"maraiko",
+  "cliff":"falaisik","waterfall":"cascaiko","spring":"sourcel",
+  "pollution":"polluiko","climate":"climieko",
+  "existence":"existielo","consciousness":"consciko",
+  "reality":"réalitiko","illusion":"illusiko","infinity":"infinitiko",
+  "eternity":"éterniko","paradox":"paradoxielo",
+  "symbol":"symbolieko","meaning":"senielo","purpose":"butieko",
+  "identity":"identieko","karma":"karmielo",
+  "justice":"justicieko","morality":"moralieko","ethics":"éthielo",
+  "virtue":"vertuieko","sin":"péielo","redemption":"rachieko",
+  "sacrifice":"sacrifielo","honor":"honnieko","glory":"gloiieko",
+  "legacy":"légacieko","wisdom":"sagesieko","knowledge":"savielo",
+  "beauty":"beauielo","silence":"silenieko","absence":"abselieko",
+  "loss":"pertieko","grief":"deuiieko","growth":"croiiko",
+  "transformation":"transielo",
+  "jace":"jeilo","stacy":"staciko","stacey":"stacika",
+  "taylor":"taylás","brittney":"britíní","amanda":"amsalo",
+  "rebecca":"rebcal","elijah":"eja","cam":"camoru",
+  "john":"jén","zion":"gáy","zaylin":"bailzo","coly":"cotri",
+  "adrian":"adriano","alex":"alexilo","jordan":"jordanel",
+  "maya":"mayalo","luna":"lunalo","nova":"novalo",
+  "phoenix":"fénixas","sage":"sagelo","blake":"blakelo",
+  "drew":"drewlo","quinn":"quinnól","riley":"rileylo",
+  "skyler":"skylerlo","morgan":"morganek","avery":"averylo",
+  "charlie":"charlilo","dakota":"dakotalo",
+  "emma":"emmumo","olivia":"olivieko","ava":"avaik",
+  "sophia":"sofiiko","mia":"miiko","amelia":"amelieko",
+  "ella":"ellielo","grace":"gracieko","chloe":"chloeielo",
+  "lily":"lilieko","aria":"ariiko","nora":"norieko",
+  "aurora":"auroriko","violet":"violéielo","hazel":"hazielo",
+  "layla":"laylielo","stella":"stelieko","zoe":"zoeielo",
+  "claire":"clairieko","willow":"willielo",
+  "liam":"liamieko","noah":"noaielo","oliver":"olieko",
+  "james":"jamsielo","aiden":"aidieko","lucas":"lucieko",
+  "mason":"masonieko","ethan":"ethieko","logan":"logieko",
+  "jackson":"jacieko","sebastian":"sebieko","mateo":"mateielo",
+  "henry":"henrielo","leo":"leoieko","luke":"lukielo",
+  "ryan":"ryanieko","dylan":"dylielo","caleb":"calielo",
+  "daniel":"danielo","carter":"cartieko","wyatt":"wyatielo",
+  "andrew":"andrewiko","evan":"evanieko","thomas":"tomielo",
+  "eli":"elieko","aaron":"aarielo","adam":"adamieko",
+  "hunter":"huntielo","nathan":"nathieko","max":"maxielo",
+  "oscar":"oscielo","victor":"vicielo","felix":"felieko",
+  "miles":"milielo","theo":"teoieko","simon":"simielo",
+  "derek":"dercielo","kevin":"kevielo","marcus":"marcielo",
+  "allen":"alenielo","leon":"leonielo","dean":"deanielo",
+  "cole":"colieko","kyle":"kylielo","sean":"seanielo",
+  "brett":"bretielo","chad":"chadieko","jake":"jakielo",
+  "kayla":"kaylielo","natalie":"natielo","jessica":"jesielo",
+  "sarah":"sarielo","emily":"emilielo","ashley":"ashlielo",
+  "megan":"megielo","madison":"madieko","hannah":"hanielo",
+  "samantha":"samieko","destiny":"destieko","faith":"faithielo",
+  "kai":"kaiiko","sora":"sorielo","hana":"hanielo",
+  "yuna":"yunielo","rin":"rinielo","hiro":"hirielo",
+  "akira":"akirielo","kenji":"kenjielo","ren":"renielo",
+  "suki":"sukielo","sakura":"sakuielo","hikari":"hikuielo",
+  "yuki":"yukilo","nana":"nanielo","momo":"momielo",
+  "sofia":"sofiiko","lucia":"luciiko","camila":"camielo",
+  "valentina":"valielo","diego":"dieieko","santiago":"santielo",
+  "alejandro":"alejumo","pablo":"pablielo","miguel":"migumo",
+  "carlos":"carielo","hugo":"hugumo","omar":"omielo",
+  "yasmin":"yasielo","laila":"laiielo","fatima":"fatielo",
+  "zara":"zarielo","nadia":"nadielo","diana":"dianielo",
+  "mira":"mirielo","lena":"lenielo","nina":"ninielo",
+  "ronan":"ronielo","anaya":"anaielo","zuri":"zurielo",
+  "amara":"amarielo","imani":"imanielo","nia":"niiko",
+  "kofi":"kofieko","kwame":"kwaieko","tyrone":"tyrielo",
+  "darius":"darielo","lamar":"lamielo","jaylen":"jayielo",
+  "trevor":"trevielo","brock":"brokielo","ace":"acieko",
+  "jax":"jaxielo","zane":"zanielo","colt":"coltielo",
+};
+
+const sortedEn  = Object.keys(D).sort((a,b)=>b.length-a.length);
+const reverseD  = {};
+for(const[en,xte] of Object.entries(D)){ if(!reverseD[xte]) reverseD[xte]=en; }
+const sortedXte = Object.keys(reverseD).sort((a,b)=>b.length-a.length);
+const totalCount= Object.keys(D).length;
+document.getElementById('total-entries').textContent = totalCount>=2000?'2000+':totalCount;
+document.getElementById('dict-size').textContent = totalCount;
+
+// ═══════════════════════════════════════
+//  DOUBLE-TAP  (pointer + touch)
+// ═══════════════════════════════════════
+function setupDoubleTap(el, cb){
+  let count=0, timer=null;
+  const fire=e=>{ e.stopPropagation(); count++; if(count===1){ timer=setTimeout(()=>count=0,380); } else { clearTimeout(timer); count=0; cb(); } };
+  el.addEventListener('click', fire);
+  el.addEventListener('touchend', e=>{ e.preventDefault(); fire(e); });
+}
+
+// ═══════════════════════════════════════
+//  DROPDOWN BUILDER
+// ═══════════════════════════════════════
+function buildDD(ddEl, which){
+  const cur = which==='src'?srcLang:tgtLang;
+  ddEl.innerHTML = LANGS.map(l=>{
+    const a=l.code===cur?' active':'', w=l.wip?' wip':'';
+    const oc=l.wip?'':`onclick="pickLang('${which}','${l.code}')"`;
+    return `<div class="dd-item${a}${w}" ${oc}>${l.flag} ${l.label}${l.wip?' (WIP)':''}</div>`;
+  }).join('');
+}
+function openDD(ddEl, which){ closeAll(); buildDD(ddEl,which); ddEl.classList.add('open'); }
+function closeAll(){ document.querySelectorAll('.lang-dd,.badge-dd').forEach(d=>d.classList.remove('open')); }
+document.addEventListener('click', closeAll);
+
+function pickLang(which, code){ closeAll(); if(which==='src') srcLang=code; else tgtLang=code; updateUI(); onInput(); }
+function swapLangs(){ [srcLang,tgtLang]=[tgtLang,srcLang]; const o=document.getElementById('output').textContent; if(o&&o!=='Translation will appear here...') document.getElementById('input').value=o; updateUI(); onInput(); }
+
+// Wire up double-taps
+setupDoubleTap(document.getElementById('top-src-btn'), ()=>openDD(document.getElementById('top-src-dd'),'src'));
+setupDoubleTap(document.getElementById('top-tgt-btn'), ()=>openDD(document.getElementById('top-tgt-dd'),'tgt'));
+setupDoubleTap(document.getElementById('in-badge'),    ()=>openDD(document.getElementById('in-dd'),'src'));
+setupDoubleTap(document.getElementById('out-badge'),   ()=>openDD(document.getElementById('out-dd'),'tgt'));
+
+function updateUI(){
+  const s=getLang(srcLang), t=getLang(tgtLang);
+  document.getElementById('top-src-lbl').textContent   = s.label;
+  document.getElementById('top-tgt-lbl').textContent   = t.label;
+  document.getElementById('in-badge-lbl').textContent  = s.flag+' '+s.label;
+  document.getElementById('out-badge-lbl').textContent = t.flag+' '+t.label;
+  document.getElementById('dir-info').textContent      = s.label.slice(0,3).toUpperCase()+' → '+t.label.slice(0,3).toUpperCase();
+  document.getElementById('input').placeholder         = 'Type in '+s.label+'...';
+}
+
+// ═══════════════════════════════════════
+//  XTÉ DICT APPLY
+// ═══════════════════════════════════════
+function applyDict(text, keys, dict){
+  let res=text, hits=0;
+  keys.forEach(k=>{
+    const rx=new RegExp('\\b'+k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','gi');
+    res=res.replace(rx,m=>{ hits++; const v=dict[k]; return m[0]===m[0].toUpperCase()&&m[0]!==m[0].toLowerCase()?v[0].toUpperCase()+v.slice(1):v; });
+  });
+  document.getElementById('word-count').textContent=hits;
+  return res;
+}
+
+// ═══════════════════════════════════════
+//  FREE TRANSLATION APIs (CORS-safe)
+//  Primary: MyMemory  |  Fallback: Lingva
+// ═══════════════════════════════════════
+async function extTranslate(text, sl, tl){
+  // MyMemory supports most languages; free, no key, CORS-open
+  const langpair=`${sl}|${tl}`;
+  try{
+    const r=await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(langpair)}&de=anonymous@xte.app`);
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    if(j.responseStatus===200) return j.responseData.translatedText;
+    if(j.matches&&j.matches[0]) return j.matches[0].translation;
+    throw 0;
+  }catch(e1){
+    // Fallback: Lingva (Google-backed, CORS-open public instance)
+    try{
+      const r2=await fetch(`https://lingva.ml/api/v1/${encodeURIComponent(sl)}/${encodeURIComponent(tl)}/${encodeURIComponent(text)}`);
+      if(!r2.ok) throw 0;
+      const j2=await r2.json();
+      if(j2.translation) return j2.translation;
+      throw 0;
+    }catch(e2){
+      // Second fallback: another Lingva mirror
+      const r3=await fetch(`https://translate.terraprint.co/api/v1/${encodeURIComponent(sl)}/${encodeURIComponent(tl)}/${encodeURIComponent(text)}`);
+      if(!r3.ok) throw new Error('all failed');
+      const j3=await r3.json();
+      if(j3.translation) return j3.translation;
+      throw new Error('all failed');
+    }
+  }
+}
+
+// ═══════════════════════════════════════
+//  MAIN INPUT HANDLER
+// ═══════════════════════════════════════
+function onInput(){
+  clearTimeout(tTimer);
+  const text=document.getElementById('input').value;
+  document.getElementById('char-count').textContent=text.length;
+  if(!text.trim()){ setOut('<span class="output-placeholder">Translation will appear here...</span>',false); document.getElementById('word-count').textContent=0; return; }
+
+  const src=srcLang, tgt=tgtLang;
+
+  // Instant dict routes
+  if(src==='en'&&tgt==='xte'){ setOut(applyDict(text,sortedEn,D),true); return; }
+  if(src==='xte'&&tgt==='en'){ setOut(applyDict(text,sortedXte,reverseD),true); return; }
+
+  // Routes needing external API
+  setOut('<span class="translating-msg">⟳ Translating...</span>',false);
+  tTimer=setTimeout(async()=>{
+    try{
+      let result;
+      if(tgt==='xte'){
+        const en = src==='en' ? text : await extTranslate(text, src, 'en');
+        result = applyDict(en, sortedEn, D);
+        document.getElementById('word-count').textContent = result.split(/\s+/).filter(Boolean).length;
+      } else if(src==='xte'){
+        const en = applyDict(text, sortedXte, reverseD);
+        result = tgt==='en' ? en : await extTranslate(en,'en',tgt);
+        document.getElementById('word-count').textContent = result.split(/\s+/).filter(Boolean).length;
+      } else {
+        result = await extTranslate(text, src, tgt);
+        document.getElementById('word-count').textContent = result.split(/\s+/).filter(Boolean).length;
+      }
+      setOut(result, true);
+    }catch(err){
+      setOut('<span class="output-placeholder" style="color:var(--accent3)">⚠ Translation service unreachable. Check your internet connection and try again.</span>',false);
+    }
+  }, 500);
+}
+
+function setOut(html,hasContent){ const el=document.getElementById('output'); el.innerHTML=html; el.classList.toggle('has-content',hasContent); }
+
+// ═══════════════════════════════════════
+//  COPY
+// ═══════════════════════════════════════
+function copyOutput(){ const t=document.getElementById('output').textContent; if(!t||t.includes('Translation will appear')||t.includes('⚠')) return; navigator.clipboard.writeText(t).then(()=>{ const b=document.getElementById('copy-btn'); b.textContent='COPIED!'; b.classList.add('copied'); setTimeout(()=>{ b.textContent='COPY'; b.classList.remove('copied'); },1500); }); }
+
+// ═══════════════════════════════════════
+//  SAVE (localStorage + JSON download)
+// ═══════════════════════════════════════
+function saveContent(){
+  const inp=document.getElementById('input').value;
+  const outp=document.getElementById('output').textContent;
+  const sess={input:inp,output:outp,srcLang,tgtLang,favorites,feedbackLog,timestamp:new Date().toISOString()};
+  try{ localStorage.setItem('xte_session',JSON.stringify(sess)); localStorage.setItem('xte_fav',JSON.stringify(favorites)); localStorage.setItem('xte_fb',JSON.stringify(feedbackLog)); }catch(e){}
+  const blob=new Blob([JSON.stringify(sess,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a');
+  a.href=url; a.download='xte-session-'+Date.now()+'.json'; a.click(); URL.revokeObjectURL(url);
+  const btn=document.getElementById('save-btn'); btn.textContent='✓ SAVED'; btn.classList.add('saved');
+  showToast('Session saved!');
+  setTimeout(()=>{ btn.textContent='💾 SAVE'; btn.classList.remove('saved'); },2000);
+}
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+// Restore session
+try{ const s=JSON.parse(localStorage.getItem('xte_session')||'{}'); if(s.input){ srcLang=s.srcLang||'en'; tgtLang=s.tgtLang||'xte'; document.getElementById('input').value=s.input; } }catch(e){}
+
+// ═══════════════════════════════════════
+//  STAR
+// ═══════════════════════════════════════
+function toggleStar(){ const o=document.getElementById('output').textContent; const i=document.getElementById('input').value; if(!o||o.includes('Translation will appear')||o.includes('⚠')) return; const btn=document.getElementById('star-btn'); const idx=favorites.findIndex(f=>f.output===o); if(idx>=0){ favorites.splice(idx,1); btn.textContent='☆'; btn.classList.remove('starred'); } else { favorites.unshift({input:i,output:o,dir:getLang(srcLang).label+'→'+getLang(tgtLang).label,time:new Date().toLocaleString()}); btn.textContent='★'; btn.classList.add('starred'); } try{localStorage.setItem('xte_fav',JSON.stringify(favorites));}catch(e){} renderFav(); }
+function renderFav(){ const sec=document.getElementById('fav-section'); const list=document.getElementById('fav-list'); if(!favorites.length){ sec.classList.remove('visible'); return; } sec.classList.add('visible'); list.innerHTML=favorites.map((f,i)=>`<div class="fav-item"><div style="flex:1"><div class="fav-text">${esc(f.output)}</div><div class="fav-orig">${esc(f.input)} · ${f.dir}</div></div><span class="fav-rm" onclick="rmFav(${i})">✕</span></div>`).join(''); }
+function rmFav(i){ favorites.splice(i,1); try{localStorage.setItem('xte_fav',JSON.stringify(favorites));}catch(e){} renderFav(); }
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+renderFav();
+
+// ═══════════════════════════════════════
+//  RATINGS
+// ═══════════════════════════════════════
+function selectRating(btn,emoji,label){ document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); selectedRating={emoji,label}; document.getElementById('submit-btn').disabled=false; }
+function submitFeedback(){ if(!selectedRating) return; const c=document.getElementById('comment-box').value.trim(); feedbackLog.unshift({emoji:selectedRating.emoji,label:selectedRating.label,comment:c,time:new Date().toLocaleString()}); if(feedbackLog.length>50) feedbackLog.pop(); try{localStorage.setItem('xte_fb',JSON.stringify(feedbackLog));}catch(e){} const th=document.getElementById('rating-thanks'); th.style.display='inline'; document.getElementById('submit-btn').disabled=true; document.querySelectorAll('.emoji-btn').forEach(b=>b.classList.remove('selected')); document.getElementById('comment-box').value=''; selectedRating=null; setTimeout(()=>th.style.display='none',2500); renderFeedback(); }
+function renderFeedback(){ if(!feedbackLog.length) return; document.getElementById('feedback-log').classList.add('visible'); document.getElementById('feedback-list').innerHTML=feedbackLog.map(f=>`<div class="feedback-item"><span class="feedback-emoji">${f.emoji}</span><strong style="color:var(--text);font-size:0.85em;">${f.label}</strong>${f.comment?`<div class="feedback-comment">"${esc(f.comment)}"</div>`:''}<div class="feedback-time">${f.time}</div></div>`).join(''); }
+renderFeedback();
+
+// INIT
+updateUI();
+if(document.getElementById('input').value) onInput();
+</script>
+</body>
+</html>
