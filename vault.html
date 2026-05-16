@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vault: Xrenbeats.com </title>
+    <title>XrenBeats Audio Vault</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -112,23 +112,45 @@
             cursor: pointer;
         }
 
+        /* Fixed Clickable Area & Drag/Drop states */
         .upload-section {
             border: 2px dashed #475569;
-            padding: 25px;
+            padding: 35px 25px;
             text-align: center;
             border-radius: 8px;
             cursor: pointer;
             margin-bottom: 25px;
+            transition: background 0.2s, border-color 0.2s;
+            position: relative;
         }
 
         .upload-section.disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
             border-color: #ef4444;
         }
 
-        .upload-section:not(.disabled):hover { border-color: var(--accent-color); }
-        #file-input { display: none; }
+        .upload-section.dragover {
+            border-color: var(--accent-color);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Invisible native element covering box space for guaranteed mobile trigger */
+        #file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            display: block;
+        }
+
+        .upload-section.disabled #file-input {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         .audio-item {
             background: #334155;
@@ -195,13 +217,13 @@
         </div>
 
         <div style="text-align: center;">
-            <span class="badge-e2ee">🔒 End-to-end encrypted</span>
+            <span class="badge-e2ee">🔒 End-to-end encrypted </span>
         </div>
 
         <div class="secret-setup-box" id="secret-box">
             <label style="color: var(--e2ee-color); font-weight: bold;">Unlock Vault with Secret Key:</label>
             <p style="font-size: 0.8rem; margin: 4px 0 12px 0; color: var(--text-muted);">
-                Enter your unique encryption phrase. This never leaves your device. If lost, your files cannot be recovered.
+                Enter your unique encryption phrase. This never leaves your device. If lost, your files may not be recoverable.
             </p>
             <div style="display: flex; gap: 10px;">
                 <input type="password" id="vault-secret" placeholder="Enter your vault secret phrase...">
@@ -214,7 +236,7 @@
         <div class="upload-section disabled" id="upload-zone">
             <p style="margin:0 0 10px 0;" id="upload-instruction">Unlock your vault with a secret key to upload tracks</p>
             <input type="file" id="file-input" accept="audio/*" disabled>
-            <button class="btn btn-primary" id="browse-btn" style="width:auto; display:inline-block;" disabled>Browse Files</button>
+            <button class="btn btn-primary" id="browse-btn" style="width:auto; display:inline-block; pointer-events: none;" disabled>Browse Files</button>
         </div>
 
         <div id="upload-status" class="status-msg"></div>
@@ -241,15 +263,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Database Setup
     let db = null;
-    let cryptoKey = null; // Secret Crypto key instance derived locally
+    let cryptoKey = null;
     const dbName = "E2EEAudioVaultDB";
     const storeName = "secure_tracks";
     let isSignUpMode = true;
     let currentUser = null;
 
-    // Elements
     const authContainer = document.getElementById('auth-container');
     const appContainer = document.getElementById('app-container');
     const authTitle = document.getElementById('auth-title');
@@ -269,7 +289,6 @@
     const uploadInstruction = document.getElementById('upload-instruction');
     const browseBtn = document.getElementById('browse-btn');
 
-    // Open Native Database
     const dbRequest = indexedDB.open(dbName, 1);
     dbRequest.onupgradeneeded = function(e) {
         db = e.target.result;
@@ -283,9 +302,6 @@
         if(currentUser && cryptoKey) loadUserTracks();
     };
 
-    // --- CRYPTOGRAPHY ENGINE (Web Crypto API) ---
-
-    // Turn plain text secret into a hardened cryptographic AES-GCM Key
     async function deriveKey(secretText, saltText) {
         const encoder = new TextEncoder();
         const baseKey = await window.crypto.subtle.importKey(
@@ -309,21 +325,18 @@
         );
     }
 
-    // Dynamic key locker action
     btnLockSecret.addEventListener('click', async () => {
         if(!vaultSecret.value.trim()) {
             alert("Please provide a valid custom secret key phrase.");
             return;
         }
         try {
-            // Salt is pinned uniquely to user account UID context to prevent cross-account rainbow attacks
             cryptoKey = await deriveKey(vaultSecret.value, currentUser.uid);
             
-            // Enable uploading controls safely
             uploadZone.classList.remove('disabled');
             fileInput.removeAttribute('disabled');
             browseBtn.removeAttribute('disabled');
-            uploadInstruction.innerText = "Select or Drop Audio File (Up to 100MB)";
+            uploadInstruction.innerText = "Select, Drop, or Tap to Upload Audio (Up to 100MB)";
             
             vaultSecret.style.borderColor = "var(--e2ee-color)";
             btnLockSecret.innerText = "Key Synced";
@@ -332,9 +345,96 @@
             loadUserTracks();
         } catch (e) {
             alert("Cryptographic computation initialization error.");
-            console.error(e);
         }
     });
+
+    // --- DRAG AND DROP HANDLERS ---
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (cryptoKey) uploadZone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadZone.classList.remove('dragover');
+        }, false);
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        if (!cryptoKey) return;
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length) {
+            processFile(files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', function(e) {
+        if (e.target.files.length) {
+            processFile(e.target.files[0]);
+        }
+    });
+
+    // Unified File Scrambler Function
+    async function processFile(file) {
+        if (!file || !currentUser || !cryptoKey) return;
+
+        // Verify file mimetype context is audio
+        if (!file.type.startsWith('audio/')) {
+            alert("Invalid format. Please upload valid audio file types.");
+            fileInput.value = '';
+            return;
+        }
+
+        const maxBytes = 100 * 1024 * 1024; // 100MB
+        if (file.size > maxBytes) {
+            alert("File size limit warning! Max size allowed is 100MB.");
+            fileInput.value = '';
+            return;
+        }
+
+        uploadStatus.innerText = "Encrypting audio tracks on-the-fly using AES-256...";
+
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+            
+            const encryptedData = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv },
+                cryptoKey,
+                arrayBuffer
+            );
+
+            const record = {
+                id: Date.now().toString(),
+                userId: currentUser.uid,
+                name: file.name,
+                type: file.type,
+                iv: iv,
+                encryptedBlob: new Blob([encryptedData])
+            };
+
+            const transaction = db.transaction([storeName], "readwrite");
+            const store = transaction.objectStore(storeName);
+            store.add(record);
+
+            transaction.oncomplete = function() {
+                uploadStatus.innerText = "Encrypted file successfully secured!";
+                fileInput.value = '';
+                setTimeout(() => { uploadStatus.innerText = ""; }, 2500);
+                loadUserTracks();
+            };
+        } catch (cryptoErr) {
+            uploadStatus.innerText = "Encryption calculation failed.";
+            console.error(cryptoErr);
+            fileInput.value = '';
+        }
+    }
 
     // --- AUTHENTICATION LOGIC ---
     authToggleBtn.addEventListener('click', () => {
@@ -388,66 +488,6 @@
         }
     });
 
-    // --- ENCRYPTED STORAGE EXECUTION ---
-    uploadZone.addEventListener('click', (e) => {
-        if (!cryptoKey) {
-            e.preventDefault();
-            alert("Please type and apply your Secret Key first to enable file operations.");
-        } else if (e.target !== fileInput && e.target !== browseBtn) {
-            fileInput.click();
-        }
-    });
-
-    fileInput.addEventListener('change', async function(e) {
-        const file = e.target.files[0];
-        if (!file || !currentUser || !cryptoKey) return;
-
-        const maxBytes = 100 * 1024 * 1024; // 100MB
-        if (file.size > maxBytes) {
-            alert("File size limit warning! Max size allowed is 100MB.");
-            fileInput.value = '';
-            return;
-        }
-
-        uploadStatus.innerText = "Encrypting audio tracks...";
-
-        try {
-            const arrayBuffer = await file.arrayBuffer();
-            const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM Initialization Vector
-            
-            // Encrypt raw file binary array data
-            const encryptedData = await window.crypto.subtle.encrypt(
-                { name: "AES-GCM", iv: iv },
-                cryptoKey,
-                arrayBuffer
-            );
-
-            const record = {
-                id: Date.now().toString(),
-                userId: currentUser.uid,
-                name: file.name,
-                type: file.type,
-                iv: iv, // Stored safely alongside blob to verify block payload structural hashes
-                encryptedBlob: new Blob([encryptedData])
-            };
-
-            const transaction = db.transaction([storeName], "readwrite");
-            const store = transaction.objectStore(storeName);
-            store.add(record);
-
-            transaction.oncomplete = function() {
-                uploadStatus.innerText = "File encrypted and successfully locked in database!";
-                fileInput.value = '';
-                setTimeout(() => { uploadStatus.innerText = ""; }, 2500);
-                loadUserTracks();
-            };
-        } catch (cryptoErr) {
-            uploadStatus.innerText = "Encryption calculation failed.";
-            console.error(cryptoErr);
-        }
-    });
-
-    // Read and Decrypt
     function loadUserTracks() {
         if(!cryptoKey || !currentUser) return;
         audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Decrypting local profile files...</p>';
@@ -469,8 +509,6 @@
             for (const track of tracks) {
                 try {
                     const encryptedBuffer = await track.encryptedBlob.arrayBuffer();
-                    
-                    // Decrypt raw binary payload back to system values
                     const decryptedBuffer = await window.crypto.subtle.decrypt(
                         { name: "AES-GCM", iv: track.iv },
                         cryptoKey,
@@ -494,7 +532,6 @@
                     `;
                     audioList.appendChild(itemDiv);
                 } catch (decryptError) {
-                    // Triggers if code phrase typed is wrong/invalid for a specific block element
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'audio-item';
                     itemDiv.style.border = "1px solid #ef4444";
