@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Audio Vault</title>
+    <title>Hybrid Cloud Audio Vault</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -125,7 +125,7 @@
             margin-bottom: 8px;
         }
 
-        .audio-title { font-weight: 600; word-break: break-all; }
+        .audio-title { font-weight: 600; word-break: break-all; padding-right: 10px;}
         
         .actions { display: flex; gap: 8px; }
         .action-btn {
@@ -139,13 +139,13 @@
         .btn-delete { background-color: #ef4444; color: white; }
 
         audio { width: 100%; }
-        .status-msg { text-align: center; color: var(--accent-color); margin: 10px 0; }
+        .status-msg { text-align: center; color: var(--accent-color); margin: 10px 0; font-weight: 500; }
+        .error-msg { color: #ef4444 !important; }
     </style>
 </head>
 <body>
 
 <div class="vault-container">
-    <!-- 1. AUTHENTICATION INTERFACE -->
     <div id="auth-container" class="auth-box active">
         <h2 id="auth-title">Create Account</h2>
         <div class="form-group">
@@ -158,59 +158,55 @@
         </div>
         <button class="btn btn-primary" id="auth-submit-btn">Sign Up</button>
         <button class="btn btn-secondary" id="auth-toggle-btn">Already have an account? Log In</button>
-        <p class="status-msg" id="auth-error"></p>
+        <p class="status-msg error-msg" id="auth-error"></p>
     </div>
 
-    <!-- 2. VAULT INTERFACE (Hidden until logged in) -->
     <div id="app-container" class="app-box">
         <div class="user-banner">
             <span id="user-display">Loading user...</span>
             <button class="logout-btn" id="logout-btn">Log Out</button>
         </div>
 
-        <h1>Cloud Audio Vault</h1>
+        <h1>Cloud Identity Audio Vault</h1>
 
         <div class="upload-section" onclick="document.getElementById('file-input').click()">
-            <p style="margin:0 0 10px 0;">Select or Drop Audio File (Up to 50MB)</p>
+            <p style="margin:0 0 10px 0;">Select or Drop Audio File (Up to 100MB)</p>
             <input type="file" id="file-input" accept="audio/*">
-            <button class="btn btn-primary" style="width:auto; display:inline-block;">Browse Cloud Upload</button>
+            <button class="btn btn-primary" style="width:auto; display:inline-block;">Browse Local Files</button>
         </div>
 
         <div id="upload-status" class="status-msg"></div>
 
-        <h3>Your Cloud Tracks</h3>
-        <div id="audio-list">
-            <!-- Loaded cloud files will appear here -->
-        </div>
+        <h3>Your Local Account Tracks</h3>
+        <div id="audio-list"></div>
     </div>
 </div>
 
-<!-- Firebase SDKs (v9 Compatible) -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-    import { getStorage, ref, uploadBytes, listAll, getDownloadURL, deleteObject, getMetadata } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
 
-   const firebaseConfig = {
-  apiKey: "AIzaSyCF2bIrdhtljSGaBOfdJ_wnMwHegqq94Bk",
-  authDomain: "xrenbeats-vault.firebaseapp.com",
-  projectId: "xrenbeats-vault",
-  storageBucket: "xrenbeats-vault.firebasestorage.app",
-  messagingSenderId: "52906720796",
-  appId: "1:52906720796:web:65f2a3484b420ff518e9d9",
-  measurementId: "G-RE05QTMTPV"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyCF2bIrdhtljSGaBOfdJ_wnMwHegqq94Bk",
+        authDomain: "xrenbeats-vault.firebaseapp.com",
+        projectId: "xrenbeats-vault",
+        storageBucket: "xrenbeats-vault.firebasestorage.app",
+        messagingSenderId: "52906720796",
+        appId: "1:52906720796:web:65f2a3484b420ff518e9d9",
+        measurementId: "G-RE05QTMTPV"
+    };
     
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const storage = getStorage(app);
 
-    // State Variables
+    // Database Setup
+    let db = null;
+    const dbName = "HybridAudioVaultDB";
+    const storeName = "user_tracks";
     let isSignUpMode = true;
     let currentUser = null;
 
-    // DOM Elements
+    // Elements
     const authContainer = document.getElementById('auth-container');
     const appContainer = document.getElementById('app-container');
     const authTitle = document.getElementById('auth-title');
@@ -225,9 +221,22 @@
     const uploadStatus = document.getElementById('upload-status');
     const audioList = document.getElementById('audio-list');
 
-    // --- AUTHENTICATION LOGIC ---
-    
-    // Toggle between Sign Up and Login UI
+    // Open Native Database
+    const dbRequest = indexedDB.open(dbName, 1);
+    dbRequest.onupgradeneeded = function(e) {
+        db = e.target.result;
+        if (!db.objectStoreNames.contains(storeName)) {
+            // Setup keys and indexes so we can search entries matching user fields
+            const store = db.createObjectStore(storeName, { keyPath: "id" });
+            store.createIndex("userId", "userId", { unique: false });
+        }
+    };
+    dbRequest.onsuccess = function(e) {
+        db = e.target.result;
+        if(currentUser) loadUserTracks();
+    };
+
+    // --- AUTHENTICATION UI CONTROL ---
     authToggleBtn.addEventListener('click', () => {
         isSignUpMode = !isSignUpMode;
         authTitle.innerText = isSignUpMode ? "Create Account" : "Welcome Back";
@@ -236,12 +245,10 @@
         authError.innerText = "";
     });
 
-    // Handle Authentication Submission
     authSubmitBtn.addEventListener('click', async () => {
         const email = authEmail.value;
         const password = authPassword.value;
         authError.innerText = "Processing...";
-
         try {
             if (isSignUpMode) {
                 await createUserWithEmailAndPassword(auth, email, password);
@@ -254,17 +261,15 @@
         }
     });
 
-    // Handle Logout
     logoutBtn.addEventListener('click', () => signOut(auth));
 
-    // Monitor Authentication State
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
             userDisplay.innerText = user.email;
             authContainer.classList.remove('active');
             appContainer.classList.add('active');
-            loadCloudVault();
+            if (db) loadUserTracks();
         } else {
             currentUser = null;
             appContainer.classList.remove('active');
@@ -273,122 +278,111 @@
         }
     });
 
-
-    // --- STORAGE LOGIC ---
-
-    // Handle File Uploads
-    fileInput.addEventListener('change', async (e) => {
+    // --- TRACK STORAGE LOGIC ---
+    fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file || !currentUser) return;
 
-        // Check if file exceeds the 50MB maximum you wanted
-        const maxBytes = 50 * 1024 * 1024; // 50MB
+        const maxBytes = 100 * 1024 * 1024; // 100MB
         if (file.size > maxBytes) {
-            alert("File is too large! Maximum allowed size is 50MB.");
+            alert("File is too large! Maximum limit is 100MB.");
             fileInput.value = '';
             return;
         }
 
-        uploadStatus.innerText = "Uploading audio track to the cloud...";
-        
-        // Scope the storage pathway strictly to this user's UID
-        const fileRef = ref(storage, `vaults/${currentUser.uid}/${Date.now()}_${file.name}`);
+        uploadStatus.innerText = "Securing file into account library profile...";
 
-        try {
-            await uploadBytes(fileRef, file);
-            uploadStatus.innerText = "Upload successful!";
+        const record = {
+            id: Date.now().toString(),
+            userId: currentUser.uid, // Ties the file strictly to the logged-in user context
+            name: file.name,
+            type: file.type,
+            fileBlob: file
+        };
+
+        const transaction = db.transaction([storeName], "readwrite");
+        const store = transaction.objectStore(storeName);
+        store.add(record);
+
+        transaction.oncomplete = function() {
+            uploadStatus.innerText = "Saved successfully!";
             fileInput.value = '';
-            setTimeout(() => { uploadStatus.innerText = ""; }, 3000);
-            loadCloudVault();
-        } catch (error) {
-            uploadStatus.innerText = "Upload failed.";
-            console.error(error);
-        }
+            setTimeout(() => { uploadStatus.innerText = ""; }, 2000);
+            loadUserTracks();
+        };
+        transaction.onerror = function() {
+            uploadStatus.innerText = "Database storage execution error.";
+        };
     });
 
-    // Fetch and Display files from the user's secure folder
-    async function loadCloudVault() {
-        audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Syncing vault tracks...</p>';
-        
-        const listRef = ref(storage, `vaults/${currentUser.uid}`);
-        
-        try {
-            const res = await listAll(listRef);
-            if (res.items.length === 0) {
-                audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-style:italic;">Your cloud vault is empty.</p>';
+    // Load files tied only to the current user's UID
+    function loadUserTracks() {
+        audioList.innerHTML = '';
+        const transaction = db.transaction([storeName], "readonly");
+        const store = transaction.objectStore(storeName);
+        const index = store.index("userId");
+        const query = index.getAll(currentUser.uid); // Filter items matching uid only
+
+        query.onsuccess = function() {
+            const tracks = query.result;
+            if (tracks.length === 0) {
+                audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-style:italic;">Your vault collection is empty.</p>';
                 return;
             }
 
-            audioList.innerHTML = ''; // Clear status loader
-
-            // Loop through references and dynamically load data
-            for (const itemRef of res.items) {
-                const url = await getDownloadURL(itemRef);
-                
+            tracks.forEach(track => {
+                const blobUrl = URL.createObjectURL(track.fileBlob);
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'audio-item';
-                
-                // Clean timestamp prefix from filenames for clean presentation
-                const visibleName = itemRef.name.substring(itemRef.name.indexOf('_') + 1);
-
                 itemDiv.innerHTML = `
                     <div class="audio-info">
-                        <span class="audio-title">${visibleName}</span>
+                        <span class="audio-title">${track.name}</span>
                         <div class="actions">
-                            <button class="action-btn btn-download" data-url="${url}" data-name="${visibleName}">Export</button>
-                            <button class="action-btn btn-delete" data-path="${itemRef.fullPath}">Delete</button>
+                            <button class="action-btn btn-download" data-id="${track.id}">Export</button>
+                            <button class="action-btn btn-delete" data-id="${track.id}">Delete</button>
                         </div>
                     </div>
-                    <audio controls src="${url}" preload="none"></audio>
+                    <audio controls src="${blobUrl}" preload="none"></audio>
                 `;
                 audioList.appendChild(itemDiv);
-            }
+            });
 
-            // Bind click handlers to dynamically rendered actions
+            // Action mappings
             document.querySelectorAll('.btn-download').forEach(btn => {
-                btn.onclick = (e) => exportTrack(e.target.dataset.url, e.target.dataset.name);
+                btn.onclick = (e) => exportTrack(e.target.dataset.id);
             });
             document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = (e) => deleteTrack(e.target.dataset.path);
+                btn.onclick = (e) => deleteTrack(e.target.dataset.id);
             });
-
-        } catch (error) {
-            audioList.innerHTML = '<p style="color:#ef4444;">Error syncing files from storage.</p>';
-            console.error(error);
-        }
+        };
     }
 
-    // Export track helper (Forces browser package download)
-    async function exportTrack(url, filename) {
-        try {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            const blobUrl = window.URL.createObjectURL(blob);
-            
+    function exportTrack(id) {
+        const transaction = db.transaction([storeName], "readonly");
+        const store = transaction.objectStore(storeName);
+        const req = store.get(id);
+
+        req.onsuccess = function() {
+            const track = req.result;
+            if (!track) return;
+            const url = URL.createObjectURL(track.fileBlob);
             const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = filename;
+            link.href = url;
+            link.download = track.name;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(blobUrl);
-        } catch (err) {
-            alert("Export failed. Opening audio source fallback in new window instead.");
-            window.open(url, '_blank');
-        }
+        };
     }
 
-    // Delete track helper
-    async function deleteTrack(fullPath) {
-        if (!confirm("Are you sure you want to permanently delete this file from your cloud vault?")) return;
-        const fileRef = ref(storage, fullPath);
-        try {
-            await deleteObject(fileRef);
-            loadCloudVault();
-        } catch (error) {
-            alert("Could not remove file.");
-            console.error(error);
-        }
+    function deleteTrack(id) {
+        if (!confirm("Remove track permanently from account vault view?")) return;
+        const transaction = db.transaction([storeName], "readwrite");
+        const store = transaction.objectStore(storeName);
+        store.delete(id);
+        transaction.oncomplete = function() {
+            loadUserTracks();
+        };
     }
 </script>
 
