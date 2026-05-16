@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XrenBeats Vault</title>
+    <title>Vault: Xrenbeats.com </title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -12,6 +12,7 @@
             --accent-hover: #2563eb;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --e2ee-color: #10b981;
         }
 
         body {
@@ -39,6 +40,18 @@
             margin-top: 0;
         }
 
+        .badge-e2ee {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--e2ee-color);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
         .auth-box, .app-box {
             display: none;
         }
@@ -57,7 +70,7 @@
             color: var(--text-muted);
         }
 
-        input[type="email"], input[type="password"] {
+        input[type="email"], input[type="password"], input[type="text"] {
             width: 100%;
             padding: 10px;
             background: #334155;
@@ -108,7 +121,13 @@
             margin-bottom: 25px;
         }
 
-        .upload-section:hover { border-color: var(--accent-color); }
+        .upload-section.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #ef4444;
+        }
+
+        .upload-section:not(.disabled):hover { border-color: var(--accent-color); }
         #file-input { display: none; }
 
         .audio-item {
@@ -141,6 +160,14 @@
         audio { width: 100%; }
         .status-msg { text-align: center; color: var(--accent-color); margin: 10px 0; font-weight: 500; }
         .error-msg { color: #ef4444 !important; }
+        
+        .secret-setup-box {
+            background: #1e293b;
+            border: 1px solid var(--e2ee-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -163,21 +190,36 @@
 
     <div id="app-container" class="app-box">
         <div class="user-banner">
-            <span id="user-display">Loading user...</span>
+            <span id="user-display">Loading...</span>
             <button class="logout-btn" id="logout-btn">Log Out</button>
         </div>
 
-        <h1>XrenBeats Audio Vault</h1>
+        <div style="text-align: center;">
+            <span class="badge-e2ee">🔒 End-to-end encrypted</span>
+        </div>
 
-        <div class="upload-section" onclick="document.getElementById('file-input').click()">
-            <p style="margin:0 0 10px 0;">Select or Drop Audio File (Up to 100MB)</p>
-            <input type="file" id="file-input" accept="audio/*">
-            <button class="btn btn-primary" style="width:auto; display:inline-block;">Browse Local Files</button>
+        <div class="secret-setup-box" id="secret-box">
+            <label style="color: var(--e2ee-color); font-weight: bold;">Unlock Vault with Secret Key:</label>
+            <p style="font-size: 0.8rem; margin: 4px 0 12px 0; color: var(--text-muted);">
+                Enter your unique encryption phrase. This never leaves your device. If lost, your files cannot be recovered.
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <input type="password" id="vault-secret" placeholder="Enter your vault secret phrase...">
+                <button class="btn btn-primary" id="btn-lock-secret" style="width: auto; white-space: nowrap; background: var(--e2ee-color);">Apply Key</button>
+            </div>
+        </div>
+
+        <h1>Secure Audio Vault</h1>
+
+        <div class="upload-section disabled" id="upload-zone">
+            <p style="margin:0 0 10px 0;" id="upload-instruction">Unlock your vault with a secret key to upload tracks</p>
+            <input type="file" id="file-input" accept="audio/*" disabled>
+            <button class="btn btn-primary" id="browse-btn" style="width:auto; display:inline-block;" disabled>Browse Files</button>
         </div>
 
         <div id="upload-status" class="status-msg"></div>
 
-        <h3>Your Local Account Tracks</h3>
+        <h3>Your Encrypted Track Storage</h3>
         <div id="audio-list"></div>
     </div>
 </div>
@@ -201,8 +243,9 @@
 
     // Database Setup
     let db = null;
-    const dbName = "HybridAudioVaultDB";
-    const storeName = "user_tracks";
+    let cryptoKey = null; // Secret Crypto key instance derived locally
+    const dbName = "E2EEAudioVaultDB";
+    const storeName = "secure_tracks";
     let isSignUpMode = true;
     let currentUser = null;
 
@@ -220,23 +263,80 @@
     const fileInput = document.getElementById('file-input');
     const uploadStatus = document.getElementById('upload-status');
     const audioList = document.getElementById('audio-list');
+    const vaultSecret = document.getElementById('vault-secret');
+    const btnLockSecret = document.getElementById('btn-lock-secret');
+    const uploadZone = document.getElementById('upload-zone');
+    const uploadInstruction = document.getElementById('upload-instruction');
+    const browseBtn = document.getElementById('browse-btn');
 
     // Open Native Database
     const dbRequest = indexedDB.open(dbName, 1);
     dbRequest.onupgradeneeded = function(e) {
         db = e.target.result;
         if (!db.objectStoreNames.contains(storeName)) {
-            // Setup keys and indexes so we can search entries matching user fields
             const store = db.createObjectStore(storeName, { keyPath: "id" });
             store.createIndex("userId", "userId", { unique: false });
         }
     };
     dbRequest.onsuccess = function(e) {
         db = e.target.result;
-        if(currentUser) loadUserTracks();
+        if(currentUser && cryptoKey) loadUserTracks();
     };
 
-    // --- AUTHENTICATION UI CONTROL ---
+    // --- CRYPTOGRAPHY ENGINE (Web Crypto API) ---
+
+    // Turn plain text secret into a hardened cryptographic AES-GCM Key
+    async function deriveKey(secretText, saltText) {
+        const encoder = new TextEncoder();
+        const baseKey = await window.crypto.subtle.importKey(
+            "raw", 
+            encoder.encode(secretText), 
+            { name: "PBKDF2" }, 
+            false, 
+            ["deriveKey"]
+        );
+        return window.crypto.subtle.deriveKey(
+            {
+                name: "PBKDF2",
+                salt: encoder.encode(saltText),
+                iterations: 100000,
+                hash: "SHA-256"
+            },
+            baseKey,
+            { name: "AES-GCM", length: 256 },
+            false,
+            ["encrypt", "decrypt"]
+        );
+    }
+
+    // Dynamic key locker action
+    btnLockSecret.addEventListener('click', async () => {
+        if(!vaultSecret.value.trim()) {
+            alert("Please provide a valid custom secret key phrase.");
+            return;
+        }
+        try {
+            // Salt is pinned uniquely to user account UID context to prevent cross-account rainbow attacks
+            cryptoKey = await deriveKey(vaultSecret.value, currentUser.uid);
+            
+            // Enable uploading controls safely
+            uploadZone.classList.remove('disabled');
+            fileInput.removeAttribute('disabled');
+            browseBtn.removeAttribute('disabled');
+            uploadInstruction.innerText = "Select or Drop Audio File (Up to 100MB)";
+            
+            vaultSecret.style.borderColor = "var(--e2ee-color)";
+            btnLockSecret.innerText = "Key Synced";
+            btnLockSecret.style.backgroundColor = "var(--e2ee-color)";
+            
+            loadUserTracks();
+        } catch (e) {
+            alert("Cryptographic computation initialization error.");
+            console.error(e);
+        }
+    });
+
+    // --- AUTHENTICATION LOGIC ---
     authToggleBtn.addEventListener('click', () => {
         isSignUpMode = !isSignUpMode;
         authTitle.innerText = isSignUpMode ? "Create Account" : "Welcome Back";
@@ -261,7 +361,17 @@
         }
     });
 
-    logoutBtn.addEventListener('click', () => signOut(auth));
+    logoutBtn.addEventListener('click', () => {
+        cryptoKey = null;
+        vaultSecret.value = "";
+        btnLockSecret.innerText = "Apply Key";
+        btnLockSecret.style.backgroundColor = "var(--accent-color)";
+        uploadZone.classList.add('disabled');
+        fileInput.setAttribute('disabled', 'true');
+        browseBtn.setAttribute('disabled', 'true');
+        uploadInstruction.innerText = "Unlock your vault with a secret key to upload tracks";
+        signOut(auth);
+    });
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -269,7 +379,7 @@
             userDisplay.innerText = user.email;
             authContainer.classList.remove('active');
             appContainer.classList.add('active');
-            if (db) loadUserTracks();
+            if (db && cryptoKey) loadUserTracks();
         } else {
             currentUser = null;
             appContainer.classList.remove('active');
@@ -278,76 +388,127 @@
         }
     });
 
-    // --- TRACK STORAGE LOGIC ---
-    fileInput.addEventListener('change', function(e) {
+    // --- ENCRYPTED STORAGE EXECUTION ---
+    uploadZone.addEventListener('click', (e) => {
+        if (!cryptoKey) {
+            e.preventDefault();
+            alert("Please type and apply your Secret Key first to enable file operations.");
+        } else if (e.target !== fileInput && e.target !== browseBtn) {
+            fileInput.click();
+        }
+    });
+
+    fileInput.addEventListener('change', async function(e) {
         const file = e.target.files[0];
-        if (!file || !currentUser) return;
+        if (!file || !currentUser || !cryptoKey) return;
 
         const maxBytes = 100 * 1024 * 1024; // 100MB
         if (file.size > maxBytes) {
-            alert("File is too large! Maximum limit is 100MB.");
+            alert("File size limit warning! Max size allowed is 100MB.");
             fileInput.value = '';
             return;
         }
 
-        uploadStatus.innerText = "Securing file into account library profile...";
+        uploadStatus.innerText = "Encrypting audio tracks...";
 
-        const record = {
-            id: Date.now().toString(),
-            userId: currentUser.uid, // Ties the file strictly to the logged-in user context
-            name: file.name,
-            type: file.type,
-            fileBlob: file
-        };
+        try {
+            const arrayBuffer = await file.arrayBuffer();
+            const iv = window.crypto.getRandomValues(new Uint8Array(12)); // AES-GCM Initialization Vector
+            
+            // Encrypt raw file binary array data
+            const encryptedData = await window.crypto.subtle.encrypt(
+                { name: "AES-GCM", iv: iv },
+                cryptoKey,
+                arrayBuffer
+            );
 
-        const transaction = db.transaction([storeName], "readwrite");
-        const store = transaction.objectStore(storeName);
-        store.add(record);
+            const record = {
+                id: Date.now().toString(),
+                userId: currentUser.uid,
+                name: file.name,
+                type: file.type,
+                iv: iv, // Stored safely alongside blob to verify block payload structural hashes
+                encryptedBlob: new Blob([encryptedData])
+            };
 
-        transaction.oncomplete = function() {
-            uploadStatus.innerText = "Saved successfully!";
-            fileInput.value = '';
-            setTimeout(() => { uploadStatus.innerText = ""; }, 2000);
-            loadUserTracks();
-        };
-        transaction.onerror = function() {
-            uploadStatus.innerText = "Database storage execution error.";
-        };
+            const transaction = db.transaction([storeName], "readwrite");
+            const store = transaction.objectStore(storeName);
+            store.add(record);
+
+            transaction.oncomplete = function() {
+                uploadStatus.innerText = "File encrypted and successfully locked in database!";
+                fileInput.value = '';
+                setTimeout(() => { uploadStatus.innerText = ""; }, 2500);
+                loadUserTracks();
+            };
+        } catch (cryptoErr) {
+            uploadStatus.innerText = "Encryption calculation failed.";
+            console.error(cryptoErr);
+        }
     });
 
-    // Load files tied only to the current user's UID
+    // Read and Decrypt
     function loadUserTracks() {
-        audioList.innerHTML = '';
+        if(!cryptoKey || !currentUser) return;
+        audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Decrypting local profile files...</p>';
+        
         const transaction = db.transaction([storeName], "readonly");
         const store = transaction.objectStore(storeName);
         const index = store.index("userId");
-        const query = index.getAll(currentUser.uid); // Filter items matching uid only
+        const query = index.getAll(currentUser.uid);
 
-        query.onsuccess = function() {
+        query.onsuccess = async function() {
             const tracks = query.result;
+            audioList.innerHTML = '';
+
             if (tracks.length === 0) {
-                audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-style:italic;">Your vault collection is empty.</p>';
+                audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-style:italic;">Your encrypted vault collection is empty.</p>';
                 return;
             }
 
-            tracks.forEach(track => {
-                const blobUrl = URL.createObjectURL(track.fileBlob);
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'audio-item';
-                itemDiv.innerHTML = `
-                    <div class="audio-info">
-                        <span class="audio-title">${track.name}</span>
-                        <div class="actions">
-                            <button class="action-btn btn-download" data-id="${track.id}">Export</button>
+            for (const track of tracks) {
+                try {
+                    const encryptedBuffer = await track.encryptedBlob.arrayBuffer();
+                    
+                    // Decrypt raw binary payload back to system values
+                    const decryptedBuffer = await window.crypto.subtle.decrypt(
+                        { name: "AES-GCM", iv: track.iv },
+                        cryptoKey,
+                        encryptedBuffer
+                    );
+
+                    const cleanBlob = new Blob([decryptedBuffer], { type: track.type });
+                    const blobUrl = URL.createObjectURL(cleanBlob);
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'audio-item';
+                    itemDiv.innerHTML = `
+                        <div class="audio-info">
+                            <span class="audio-title">🔒 ${track.name}</span>
+                            <div class="actions">
+                                <button class="action-btn btn-download" data-id="${track.id}">Export</button>
+                                <button class="action-btn btn-delete" data-id="${track.id}">Delete</button>
+                            </div>
+                        </div>
+                        <audio controls src="${blobUrl}" preload="none"></audio>
+                    `;
+                    audioList.appendChild(itemDiv);
+                } catch (decryptError) {
+                    // Triggers if code phrase typed is wrong/invalid for a specific block element
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'audio-item';
+                    itemDiv.style.border = "1px solid #ef4444";
+                    itemDiv.innerHTML = `
+                        <div class="audio-info">
+                            <span class="audio-title" style="color:#ef4444;">❌ Block Decryption Failure</span>
                             <button class="action-btn btn-delete" data-id="${track.id}">Delete</button>
                         </div>
-                    </div>
-                    <audio controls src="${blobUrl}" preload="none"></audio>
-                `;
-                audioList.appendChild(itemDiv);
-            });
+                        <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0 0 0;">Could not unpack data blocks. The Applied Secret Key is invalid for this track.</p>
+                    `;
+                    audioList.appendChild(itemDiv);
+                }
+            }
 
-            // Action mappings
             document.querySelectorAll('.btn-download').forEach(btn => {
                 btn.onclick = (e) => exportTrack(e.target.dataset.id);
             });
@@ -357,26 +518,38 @@
         };
     }
 
-    function exportTrack(id) {
+    async function exportTrack(id) {
         const transaction = db.transaction([storeName], "readonly");
         const store = transaction.objectStore(storeName);
         const req = store.get(id);
 
-        req.onsuccess = function() {
+        req.onsuccess = async function() {
             const track = req.result;
             if (!track) return;
-            const url = URL.createObjectURL(track.fileBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = track.name;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            try {
+                const encryptedBuffer = await track.encryptedBlob.arrayBuffer();
+                const decryptedBuffer = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: track.iv },
+                    cryptoKey,
+                    encryptedBuffer
+                );
+                const cleanBlob = new Blob([decryptedBuffer], { type: track.type });
+                const url = URL.createObjectURL(cleanBlob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = track.name;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (e) {
+                alert("Export decryption authorization verification failed.");
+            }
         };
     }
 
     function deleteTrack(id) {
-        if (!confirm("Remove track permanently from account vault view?")) return;
+        if (!confirm("Permanently erase encrypted block entry track from database?")) return;
         const transaction = db.transaction([storeName], "readwrite");
         const store = transaction.objectStore(storeName);
         store.delete(id);
