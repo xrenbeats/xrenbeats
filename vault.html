@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XrenBeats Audio Vault</title>
+    <title>XrenBeats Vault</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -34,12 +34,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
-        h1, h2 {
-            text-align: center;
-            color: var(--accent-color);
-            margin-top: 0;
-        }
-
+        h1, h2, h3 { text-align: center; color: var(--accent-color); margin-top: 0; }
         .badge-e2ee {
             background-color: rgba(16, 185, 129, 0.2);
             color: var(--e2ee-color);
@@ -52,144 +47,60 @@
             margin-bottom: 15px;
         }
 
-        .auth-box, .app-box {
-            display: none;
-        }
+        .auth-box, .app-box { display: none; }
+        .auth-box.active, .app-box.active { display: block; }
 
-        .auth-box.active, .app-box.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: var(--text-muted);
-        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--text-muted); }
 
         input[type="email"], input[type="password"], input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            background: #334155;
-            border: 1px solid #475569;
-            border-radius: 6px;
-            color: white;
-            box-sizing: border-box;
+            width: 100%; padding: 10px; background: #334155; border: 1px solid #475569;
+            border-radius: 6px; color: white; box-sizing: border-box;
         }
 
-        .btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-
+        .btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         .btn-primary { background-color: var(--accent-color); color: white; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-secondary { background-color: transparent; color: var(--text-muted); text-decoration: underline; margin-top: 10px;}
         
-        .user-banner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #475569;
-        }
+        .user-banner { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #475569; }
+        .logout-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
 
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        /* Fixed Clickable Area & Drag/Drop states */
         .upload-section {
-            border: 2px dashed #475569;
-            padding: 35px 25px;
-            text-align: center;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-bottom: 25px;
-            transition: background 0.2s, border-color 0.2s;
-            position: relative;
+            border: 2px dashed #475569; padding: 35px 25px; text-align: center; border-radius: 8px;
+            cursor: pointer; margin-bottom: 25px; transition: background 0.2s, border-color 0.2s; position: relative;
         }
+        .upload-section.disabled { opacity: 0.4; cursor: not-allowed; border-color: #ef4444; }
+        .upload-section.dragover { border-color: var(--accent-color); background: rgba(59, 130, 246, 0.1); }
 
-        .upload-section.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            border-color: #ef4444;
-        }
+        .native-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; display: block; }
+        .upload-section.disabled .native-input { cursor: not-allowed; pointer-events: none; }
 
-        .upload-section.dragover {
-            border-color: var(--accent-color);
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        /* Invisible native element covering box space for guaranteed mobile trigger */
-        #file-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            display: block;
-        }
-
-        .upload-section.disabled #file-input {
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .audio-item {
-            background: #334155;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .audio-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .audio-title { font-weight: 600; word-break: break-all; padding-right: 10px;}
+        .item-card { background: #334155; padding: 15px; border-radius: 8px; margin-bottom: 12px; }
+        .item-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .item-title { font-weight: 600; word-break: break-all; padding-right: 10px;}
         
         .actions { display: flex; gap: 8px; }
-        .action-btn {
-            padding: 4px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
+        .action-btn { padding: 4px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
         .btn-download { background-color: #10b981; color: white; }
         .btn-delete { background-color: #ef4444; color: white; }
 
         audio { width: 100%; }
         .status-msg { text-align: center; color: var(--accent-color); margin: 10px 0; font-weight: 500; }
-        .error-msg { color: #ef4444 !important; }
         
-        .secret-setup-box {
-            background: #1e293b;
-            border: 1px solid var(--e2ee-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .secret-setup-box { background: #1e293b; border: 1px solid var(--e2ee-color); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+
+        /* Bottom link styling */
+        .footer-toggle {
+            text-align: center; margin-top: 40px; border-top: 1px solid #475569; padding-top: 15px;
         }
+        .footer-toggle a {
+            color: var(--text-muted); font-size: 0.75rem; text-decoration: none; cursor: pointer; opacity: 0.6;
+        }
+        .footer-toggle a:hover { opacity: 1; text-decoration: underline; }
+
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
     </style>
 </head>
 <body>
@@ -207,7 +118,7 @@
         </div>
         <button class="btn btn-primary" id="auth-submit-btn">Sign Up</button>
         <button class="btn btn-secondary" id="auth-toggle-btn">Already have an account? Log In</button>
-        <p class="status-msg error-msg" id="auth-error"></p>
+        <p class="status-msg" id="auth-error" style="color:#ef4444;"></p>
     </div>
 
     <div id="app-container" class="app-box">
@@ -217,32 +128,43 @@
         </div>
 
         <div style="text-align: center;">
-            <span class="badge-e2ee">🔒 End-to-end encrypted </span>
+            <span class="badge-e2ee" id="vault-badge">🔒 ENCRYPTED AUDIO VAULT</span>
         </div>
 
         <div class="secret-setup-box" id="secret-box">
-            <label style="color: var(--e2ee-color); font-weight: bold;">Unlock Vault with Secret Key:</label>
-            <p style="font-size: 0.8rem; margin: 4px 0 12px 0; color: var(--text-muted);">
-                Enter your unique encryption phrase. This never leaves your device. If lost, your files may not be recoverable.
+            <label id="secret-label" style="color: var(--e2ee-color); font-weight: bold;">Unlock Vault with Secret Key:</label>
+            <p id="secret-desc" style="font-size: 0.8rem; margin: 4px 0 12px 0; color: var(--text-muted);">
+                Enter your unique phrase. If left blank, files save unencrypted to local storage.
             </p>
             <div style="display: flex; gap: 10px;">
-                <input type="password" id="vault-secret" placeholder="Enter your vault secret phrase...">
+                <input type="password" id="vault-secret" placeholder="Enter optional secret phrase...">
                 <button class="btn btn-primary" id="btn-lock-secret" style="width: auto; white-space: nowrap; background: var(--e2ee-color);">Apply Key</button>
             </div>
         </div>
 
-        <h1>Secure Audio Vault</h1>
-
-        <div class="upload-section disabled" id="upload-zone">
-            <p style="margin:0 0 10px 0;" id="upload-instruction">Unlock your vault with a secret key to upload tracks</p>
-            <input type="file" id="file-input" accept="audio/*" disabled>
-            <button class="btn btn-primary" id="browse-btn" style="width:auto; display:inline-block; pointer-events: none;" disabled>Browse Files</button>
+        <div id="audio-pane" class="view-pane active">
+            <h3>Audio Vault</h3>
+            <div class="upload-section" id="audio-upload-zone">
+                <p style="margin:0;">Drop or Tap to Upload Audio (.mp3, .wav, .flac, .aiff, etc.)</p>
+                <input type="file" id="audio-file-input" class="native-input" accept=".mp3,.wav,.flac,.aiff,.m4a,.ogg,.m4r,audio/*">
+            </div>
+            <div id="audio-status" class="status-msg"></div>
+            <div id="audio-list"></div>
         </div>
 
-        <div id="upload-status" class="status-msg"></div>
+        <div id="universal-pane" class="view-pane">
+            <h3>Universal File Vault</h3>
+            <div class="upload-section" id="universal-upload-zone">
+                <p style="margin:0;">Drop or Tap to Upload ANY File Type (Infinite Space Limit)</p>
+                <input type="file" id="universal-file-input" class="native-input" accept="*/*">
+            </div>
+            <div id="universal-status" class="status-msg"></div>
+            <div id="universal-list"></div>
+        </div>
 
-        <h3>Your Encrypted Track Storage</h3>
-        <div id="audio-list"></div>
+        <div class="footer-toggle">
+            <a id="toggle-vault-mode">Full File Vault (all files up to as much as you can possibly load into my website)</a>
+        </div>
     </div>
 </div>
 
@@ -256,8 +178,7 @@
         projectId: "xrenbeats-vault",
         storageBucket: "xrenbeats-vault.firebasestorage.app",
         messagingSenderId: "52906720796",
-        appId: "1:52906720796:web:65f2a3484b420ff518e9d9",
-        measurementId: "G-RE05QTMTPV"
+        appId: "1:52906720796:web:65f2a3484b420ff518e9d9"
     };
     
     const app = initializeApp(firebaseConfig);
@@ -265,336 +186,251 @@
 
     let db = null;
     let cryptoKey = null;
-    const dbName = "E2EEAudioVaultDB";
-    const storeName = "secure_tracks";
-    let isSignUpMode = true;
+    let currentMode = "audio"; // or "universal"
     let currentUser = null;
 
+    // DOM Links
     const authContainer = document.getElementById('auth-container');
     const appContainer = document.getElementById('app-container');
-    const authTitle = document.getElementById('auth-title');
     const authSubmitBtn = document.getElementById('auth-submit-btn');
     const authToggleBtn = document.getElementById('auth-toggle-btn');
-    const authEmail = document.getElementById('auth-email');
-    const authPassword = document.getElementById('auth-password');
-    const authError = document.getElementById('auth-error');
-    const userDisplay = document.getElementById('user-display');
-    const logoutBtn = document.getElementById('logout-btn');
-    const fileInput = document.getElementById('file-input');
-    const uploadStatus = document.getElementById('upload-status');
-    const audioList = document.getElementById('audio-list');
     const vaultSecret = document.getElementById('vault-secret');
     const btnLockSecret = document.getElementById('btn-lock-secret');
-    const uploadZone = document.getElementById('upload-zone');
-    const uploadInstruction = document.getElementById('upload-instruction');
-    const browseBtn = document.getElementById('browse-btn');
+    const toggleVaultMode = document.getElementById('toggle-vault-mode');
+    const vaultBadge = document.getElementById('vault-badge');
+    
+    const audioPane = document.getElementById('audio-pane');
+    const universalPane = document.getElementById('universal-pane');
+    
+    const audioInput = document.getElementById('audio-file-input');
+    const universalInput = document.getElementById('universal-file-input');
+    const audioList = document.getElementById('audio-list');
+    const universalList = document.getElementById('universal-list');
 
-    const dbRequest = indexedDB.open(dbName, 1);
+    // DB initialization
+    const dbRequest = indexedDB.open("UniversalE2EEVaultDB", 2);
     dbRequest.onupgradeneeded = function(e) {
         db = e.target.result;
-        if (!db.objectStoreNames.contains(storeName)) {
-            const store = db.createObjectStore(storeName, { keyPath: "id" });
-            store.createIndex("userId", "userId", { unique: false });
-        }
+        ["audio_store", "universal_store"].forEach(storeName => {
+            if (!db.objectStoreNames.contains(storeName)) {
+                const store = db.createObjectStore(storeName, { keyPath: "id" });
+                store.createIndex("userId", "userId", { unique: false });
+            }
+        });
     };
     dbRequest.onsuccess = function(e) {
         db = e.target.result;
-        if(currentUser && cryptoKey) loadUserTracks();
+        if(currentUser) loadVaultData();
     };
 
+    // Cryto Engine
     async function deriveKey(secretText, saltText) {
         const encoder = new TextEncoder();
-        const baseKey = await window.crypto.subtle.importKey(
-            "raw", 
-            encoder.encode(secretText), 
-            { name: "PBKDF2" }, 
-            false, 
-            ["deriveKey"]
-        );
+        const baseKey = await window.crypto.subtle.importKey("raw", encoder.encode(secretText), { name: "PBKDF2" }, false, ["deriveKey"]);
         return window.crypto.subtle.deriveKey(
-            {
-                name: "PBKDF2",
-                salt: encoder.encode(saltText),
-                iterations: 100000,
-                hash: "SHA-256"
-            },
-            baseKey,
-            { name: "AES-GCM", length: 256 },
-            false,
-            ["encrypt", "decrypt"]
+            { name: "PBKDF2", salt: encoder.encode(saltText), iterations: 50000, hash: "SHA-256" },
+            baseKey, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
         );
     }
 
     btnLockSecret.addEventListener('click', async () => {
-        if(!vaultSecret.value.trim()) {
-            alert("Please provide a valid custom secret key phrase.");
-            return;
-        }
-        try {
-            cryptoKey = await deriveKey(vaultSecret.value, currentUser.uid);
-            
-            uploadZone.classList.remove('disabled');
-            fileInput.removeAttribute('disabled');
-            browseBtn.removeAttribute('disabled');
-            uploadInstruction.innerText = "Select, Drop, or Tap to Upload Audio (Up to 100MB)";
-            
-            vaultSecret.style.borderColor = "var(--e2ee-color)";
-            btnLockSecret.innerText = "Key Synced";
+        const val = vaultSecret.value.trim();
+        if(!val) {
+            cryptoKey = null;
+            btnLockSecret.innerText = "Saving Unencrypted";
+            btnLockSecret.style.backgroundColor = "#eab308";
+        } else {
+            cryptoKey = await deriveKey(val, currentUser.uid);
+            btnLockSecret.innerText = "Locked & Enforced";
             btnLockSecret.style.backgroundColor = "var(--e2ee-color)";
-            
-            loadUserTracks();
-        } catch (e) {
-            alert("Cryptographic computation initialization error.");
         }
+        loadVaultData();
     });
 
-    // --- DRAG AND DROP HANDLERS ---
-    ['dragenter', 'dragover'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (cryptoKey) uploadZone.classList.add('dragover');
-        }, false);
+    // Toggle view panel mode switcher link 
+    toggleVaultMode.addEventListener('click', () => {
+        if(currentMode === "audio") {
+            currentMode = "universal";
+            audioPane.classList.remove('active');
+            universalPane.classList.add('active');
+            vaultBadge.innerText = "📂 UNIVERSAL STORAGE PROFILE";
+            toggleVaultMode.innerText = "Switch back to Specialized Audio Vault View";
+        } else {
+            currentMode = "audio";
+            universalPane.classList.remove('active');
+            audioPane.classList.add('active');
+            vaultBadge.innerText = "🔒 AUDIO VAULT (E2EE)";
+            toggleVaultMode.innerText = "Full File Vault (Upload anything!)";
+        }
+        loadVaultData();
     });
 
-    ['dragleave', 'drop'].forEach(eventName => {
-        uploadZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadZone.classList.remove('dragover');
-        }, false);
-    });
+    // Setup input monitors
+    audioInput.addEventListener('change', (e) => { if(e.target.files.length) processUpload(e.target.files[0], "audio_store"); });
+    universalInput.addEventListener('change', (e) => { if(e.target.files.length) processUpload(e.target.files[0], "universal_store"); });
 
-    uploadZone.addEventListener('drop', (e) => {
-        if (!cryptoKey) return;
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        if (files.length) {
-            processFile(files[0]);
-        }
-    });
-
-    fileInput.addEventListener('change', function(e) {
-        if (e.target.files.length) {
-            processFile(e.target.files[0]);
-        }
-    });
-
-    // Unified File Scrambler Function
-    async function processFile(file) {
-        if (!file || !currentUser || !cryptoKey) return;
-
-        // Verify file mimetype context is audio
-        if (!file.type.startsWith('audio/')) {
-            alert("Invalid format. Please upload valid audio file types.");
-            fileInput.value = '';
-            return;
-        }
-
-        const maxBytes = 100 * 1024 * 1024; // 100MB
-        if (file.size > maxBytes) {
-            alert("File size limit warning! Max size allowed is 100MB.");
-            fileInput.value = '';
-            return;
-        }
-
-        uploadStatus.innerText = "Encrypting audio tracks on-the-fly using AES-256...";
+    async function processUpload(file, storeName) {
+        const statusEl = storeName === "audio_store" ? document.getElementById('audio-status') : document.getElementById('universal-status');
+        statusEl.innerText = "Storing payload tracking structures...";
 
         try {
-            const arrayBuffer = await file.arrayBuffer();
-            const iv = window.crypto.getRandomValues(new Uint8Array(12));
-            
-            const encryptedData = await window.crypto.subtle.encrypt(
-                { name: "AES-GCM", iv: iv },
-                cryptoKey,
-                arrayBuffer
-            );
+            const buffer = await file.arrayBuffer();
+            let finalBlob = null;
+            let iv = null;
+
+            if (cryptoKey) {
+                iv = window.crypto.getRandomValues(new Uint8Array(12));
+                const encrypted = await window.crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, cryptoKey, buffer);
+                finalBlob = new Blob([encrypted]);
+            } else {
+                finalBlob = new Blob([buffer]);
+            }
 
             const record = {
                 id: Date.now().toString(),
                 userId: currentUser.uid,
                 name: file.name,
                 type: file.type,
+                isEncrypted: !!cryptoKey,
                 iv: iv,
-                encryptedBlob: new Blob([encryptedData])
+                payload: finalBlob
             };
 
-            const transaction = db.transaction([storeName], "readwrite");
-            const store = transaction.objectStore(storeName);
-            store.add(record);
-
-            transaction.oncomplete = function() {
-                uploadStatus.innerText = "Encrypted file successfully secured!";
-                fileInput.value = '';
-                setTimeout(() => { uploadStatus.innerText = ""; }, 2500);
-                loadUserTracks();
+            const tx = db.transaction([storeName], "readwrite");
+            tx.objectStore(storeName).add(record);
+            tx.oncomplete = () => {
+                statusEl.innerText = "Successfully saved!";
+                audioInput.value = universalInput.value = "";
+                setTimeout(() => statusEl.innerText = "", 2000);
+                loadVaultData();
             };
-        } catch (cryptoErr) {
-            uploadStatus.innerText = "Encryption calculation failed.";
-            console.error(cryptoErr);
-            fileInput.value = '';
+        } catch(err) {
+            statusEl.innerText = "Payload compilation exception.";
+            console.error(err);
         }
     }
 
-    // --- AUTHENTICATION LOGIC ---
-    authToggleBtn.addEventListener('click', () => {
-        isSignUpMode = !isSignUpMode;
-        authTitle.innerText = isSignUpMode ? "Create Account" : "Welcome Back";
-        authSubmitBtn.innerText = isSignUpMode ? "Sign Up" : "Log In";
-        authToggleBtn.innerText = isSignUpMode ? "Already have an account? Log In" : "Need an account? Sign Up";
-        authError.innerText = "";
-    });
+    function loadVaultData() {
+        if(!db || !currentUser) return;
+        const activeStore = currentMode === "audio" ? "audio_store" : "universal_store";
+        const targetList = currentMode === "audio" ? audioList : universalList;
+        targetList.innerHTML = "<p style='text-align:center; opacity:0.5;'>Reading records...</p>";
 
-    authSubmitBtn.addEventListener('click', async () => {
-        const email = authEmail.value;
-        const password = authPassword.value;
-        authError.innerText = "Processing...";
-        try {
-            if (isSignUpMode) {
-                await createUserWithEmailAndPassword(auth, email, password);
-            } else {
-                await signInWithEmailAndPassword(auth, email, password);
-            }
-            authError.innerText = "";
-        } catch (error) {
-            authError.innerText = error.message.replace("Firebase: ", "");
-        }
-    });
+        const tx = db.transaction([activeStore], "readonly");
+        tx.objectStore(activeStore).index("userId").getAll(currentUser.uid).onsuccess = async function(e) {
+            const items = e.target.result;
+            targetList.innerHTML = items.length === 0 ? "<p style='text-align:center; opacity:0.4; font-style:italic;'>Vault layer clear.</p>" : "";
 
-    logoutBtn.addEventListener('click', () => {
-        cryptoKey = null;
-        vaultSecret.value = "";
-        btnLockSecret.innerText = "Apply Key";
-        btnLockSecret.style.backgroundColor = "var(--accent-color)";
-        uploadZone.classList.add('disabled');
-        fileInput.setAttribute('disabled', 'true');
-        browseBtn.setAttribute('disabled', 'true');
-        uploadInstruction.innerText = "Unlock your vault with a secret key to upload tracks";
-        signOut(auth);
-    });
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            currentUser = user;
-            userDisplay.innerText = user.email;
-            authContainer.classList.remove('active');
-            appContainer.classList.add('active');
-            if (db && cryptoKey) loadUserTracks();
-        } else {
-            currentUser = null;
-            appContainer.classList.remove('active');
-            authContainer.classList.add('active');
-            audioList.innerHTML = '';
-        }
-    });
-
-    function loadUserTracks() {
-        if(!cryptoKey || !currentUser) return;
-        audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Decrypting local profile files...</p>';
-        
-        const transaction = db.transaction([storeName], "readonly");
-        const store = transaction.objectStore(storeName);
-        const index = store.index("userId");
-        const query = index.getAll(currentUser.uid);
-
-        query.onsuccess = async function() {
-            const tracks = query.result;
-            audioList.innerHTML = '';
-
-            if (tracks.length === 0) {
-                audioList.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-style:italic;">Your encrypted vault collection is empty.</p>';
-                return;
-            }
-
-            for (const track of tracks) {
+            for(const item of items) {
                 try {
-                    const encryptedBuffer = await track.encryptedBlob.arrayBuffer();
-                    const decryptedBuffer = await window.crypto.subtle.decrypt(
-                        { name: "AES-GCM", iv: track.iv },
-                        cryptoKey,
-                        encryptedBuffer
-                    );
+                    let cleanBlob = null;
+                    if(item.isEncrypted) {
+                        if(!cryptoKey) throw new Error("Locked");
+                        const buf = await item.payload.arrayBuffer();
+                        const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: item.iv }, cryptoKey, buf);
+                        cleanBlob = new Blob([decrypted], { type: item.type });
+                    } else {
+                        cleanBlob = item.payload;
+                    }
 
-                    const cleanBlob = new Blob([decryptedBuffer], { type: track.type });
-                    const blobUrl = URL.createObjectURL(cleanBlob);
+                    const url = URL.createObjectURL(cleanBlob);
+                    const div = document.createElement('div');
+                    div.className = "item-card";
+                    
+                    let mediaRender = "";
+                    if(currentMode === "audio") {
+                        mediaRender = `<audio controls src="${url}" preload="none"></audio>`;
+                    } else if (item.type.startsWith("image/")) {
+                        mediaRender = `<img src="${url}" style="max-width:100%; border-radius:4px; margin-top:5px;">`;
+                    }
 
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'audio-item';
-                    itemDiv.innerHTML = `
-                        <div class="audio-info">
-                            <span class="audio-title">🔒 ${track.name}</span>
+                    div.innerHTML = `
+                        <div class="item-info">
+                            <span class="item-title">${item.isEncrypted ? '🔒':'🔓'} ${item.name}</span>
                             <div class="actions">
-                                <button class="action-btn btn-download" data-id="${track.id}">Export</button>
-                                <button class="action-btn btn-delete" data-id="${track.id}">Delete</button>
+                                <button class="action-btn btn-download" data-id="${item.id}">Export</button>
+                                <button class="action-btn btn-delete" data-id="${item.id}">Delete</button>
                             </div>
                         </div>
-                        <audio controls src="${blobUrl}" preload="none"></audio>
+                        ${mediaRender}
                     `;
-                    audioList.appendChild(itemDiv);
-                } catch (decryptError) {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'audio-item';
-                    itemDiv.style.border = "1px solid #ef4444";
-                    itemDiv.innerHTML = `
-                        <div class="audio-info">
-                            <span class="audio-title" style="color:#ef4444;">❌ Block Decryption Failure</span>
-                            <button class="action-btn btn-delete" data-id="${track.id}">Delete</button>
+                    targetList.appendChild(div);
+                } catch(err) {
+                    const div = document.createElement('div');
+                    div.className = "item-card";
+                    div.style.borderColor = "#ef4444";
+                    div.innerHTML = `
+                        <div class="item-info">
+                            <span class="item-title" style="color:#ef4444;">🔒 Encrypted Record Block</span>
+                            <button class="action-btn btn-delete" data-id="${item.id}">Delete</button>
                         </div>
-                        <p style="font-size:0.75rem; color:var(--text-muted); margin:4px 0 0 0;">Could not unpack data blocks. The Applied Secret Key is invalid for this track.</p>
+                        <p style="font-size:0.75rem; margin:0; opacity:0.5;">Enter the matching secret key to view this file.</p>
                     `;
-                    audioList.appendChild(itemDiv);
+                    targetList.appendChild(div);
                 }
             }
 
-            document.querySelectorAll('.btn-download').forEach(btn => {
-                btn.onclick = (e) => exportTrack(e.target.dataset.id);
-            });
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = (e) => deleteTrack(e.target.dataset.id);
-            });
+            // Setup listeners
+            targetList.querySelectorAll('.btn-download').forEach(b => b.onclick = (e) => downloadItem(e.target.dataset.id, activeStore));
+            targetList.querySelectorAll('.btn-delete').forEach(b => b.onclick = (e) => deleteItem(e.target.dataset.id, activeStore));
         };
     }
 
-    async function exportTrack(id) {
-        const transaction = db.transaction([storeName], "readonly");
-        const store = transaction.objectStore(storeName);
-        const req = store.get(id);
-
-        req.onsuccess = async function() {
-            const track = req.result;
-            if (!track) return;
+    function downloadItem(id, storeName) {
+        db.transaction([storeName], "readonly").objectStore(storeName).get(id).onsuccess = async function(e) {
+            const item = e.target.result;
             try {
-                const encryptedBuffer = await track.encryptedBlob.arrayBuffer();
-                const decryptedBuffer = await window.crypto.subtle.decrypt(
-                    { name: "AES-GCM", iv: track.iv },
-                    cryptoKey,
-                    encryptedBuffer
-                );
-                const cleanBlob = new Blob([decryptedBuffer], { type: track.type });
-                const url = URL.createObjectURL(cleanBlob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = track.name;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } catch (e) {
-                alert("Export decryption authorization verification failed.");
-            }
+                let cleanBlob = item.payload;
+                if(item.isEncrypted) {
+                    const buf = await item.payload.arrayBuffer();
+                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-GCM", iv: item.iv }, cryptoKey, buf);
+                    cleanBlob = new Blob([decrypted], { type: item.type });
+                }
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(cleanBlob);
+                a.download = item.name;
+                a.click();
+            } catch(err) { alert("Download decryption error."); }
         };
     }
 
-    function deleteTrack(id) {
-        if (!confirm("Permanently erase encrypted block entry track from database?")) return;
-        const transaction = db.transaction([storeName], "readwrite");
-        const store = transaction.objectStore(storeName);
-        store.delete(id);
-        transaction.oncomplete = function() {
-            loadUserTracks();
-        };
+    function deleteItem(id, storeName) {
+        if(!confirm("Erase from device database storage?")) return;
+        const tx = db.transaction([storeName], "readwrite");
+        tx.objectStore(storeName).delete(id);
+        tx.oncomplete = () => loadVaultData();
     }
+
+    // --- standard authentication hooks ---
+    authSubmitBtn.addEventListener('click', async () => {
+        const email = document.getElementById('auth-email').value;
+        const pass = document.getElementById('auth-password').value;
+        try {
+            if (isSignUpMode) await createUserWithEmailAndPassword(auth, email, pass);
+            else await signInWithEmailAndPassword(auth, email, pass);
+        } catch (err) { document.getElementById('auth-error').innerText = err.message; }
+    });
+
+    authToggleBtn.addEventListener('click', () => {
+        isSignUpMode = !isSignUpMode;
+        document.getElementById('auth-title').innerText = isSignUpMode ? "Create Account" : "Welcome Back";
+        authSubmitBtn.innerText = isSignUpMode ? "Sign Up" : "Log In";
+        authToggleBtn.innerText = isSignUpMode ? "Already have an account? Log In" : "Need an account? Sign Up";
+    });
+
+    logoutBtn.addEventListener('click', () => { cryptoKey = null; vaultSecret.value = ""; signOut(auth); });
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        if (user) {
+            document.getElementById('user-display').innerText = user.email;
+            authContainer.classList.remove('active');
+            appContainer.classList.add('active');
+            if (db) loadVaultData();
+        } else {
+            appContainer.classList.remove('active');
+            authContainer.classList.add('active');
+        }
+    });
 </script>
-
 </body>
 </html>
