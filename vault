@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Audio Vault</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .vault-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+
+        .upload-section {
+            border: 2px dashed #475569;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            margin-bottom: 25px;
+        }
+
+        .upload-section:hover {
+            border-color: var(--accent-color);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .upload-btn {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .upload-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .audio-list {
+            margin-top: 20px;
+        }
+
+        .audio-item {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .audio-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .audio-title {
+            font-weight: 600;
+            word-break: break-all;
+            padding-right: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .btn-download { background-color: #10b981; color: white; }
+        .btn-download:hover { background-color: #059669; }
+        .btn-delete { background-color: #ef4444; color: white; }
+        .btn-delete:hover { background-color: #dc2626; }
+
+        audio {
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .storage-warning {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="vault-container">
+    <h1>Virtual Audio Vault</h1>
+    
+    <!-- Upload Area -->
+    <div class="upload-section" onclick="document.getElementById('file-input').click()">
+        <p style="margin: 0 0 10px 0;">Drag & drop or click to upload audio files</p>
+        <input type="file" id="file-input" accept="audio/*">
+        <button class="upload-btn">Choose Audio File</button>
+    </div>
+
+    <!-- Track List -->
+    <div class="audio-list" id="audio-list">
+        <!-- Tracks dynamically injected here -->
+    </div>
+    
+    <div class="storage-warning">
+        Note: Storage uses browser localStorage. Total limit is typically around 5MB.
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('file-input');
+    const audioList = document.getElementById('audio-list');
+
+    // Load vault items on startup
+    document.addEventListener('DOMContentLoaded', loadVault);
+
+    // Handle file selection
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            const audioData = {
+                id: Date.now().toString(),
+                name: file.name,
+                type: file.type,
+                data: event.target.result // Base64 String
+            };
+
+            saveToVault(audioData);
+        };
+
+        // Convert file to Base64 string
+        reader.readAsDataURL(file);
+    });
+
+    // Save item to localStorage
+    function saveToVault(item) {
+        try {
+            let vault = JSON.parse(localStorage.getItem('audio_vault')) || [];
+            vault.push(item);
+            localStorage.setItem('audio_vault', JSON.stringify(vault));
+            loadVault();
+            fileInput.value = ''; // Reset input
+        } catch (error) {
+            alert("Storage limit exceeded! LocalStorage can only hold about 5MB of data. Try uploading a smaller or compressed audio file.");
+            console.error("Storage error:", error);
+        }
+    }
+
+    // Load and render items
+    function loadVault() {
+        audioList.innerHTML = '';
+        const vault = JSON.parse(localStorage.getItem('audio_vault')) || [];
+
+        if (vault.length === 0) {
+            audioList.innerHTML = '<p class="empty-msg">Your vault is empty. Upload a track to get started!</p>';
+            return;
+        }
+
+        vault.forEach(track => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'audio-item';
+            
+            itemDiv.innerHTML = `
+                <div class="audio-info">
+                    <span class="audio-title">${track.name}</span>
+                    <div class="actions">
+                        <button class="btn btn-download" onclick="exportTrack('${track.id}')">Export</button>
+                        <button class="btn btn-delete" onclick="deleteTrack('${track.id}')">Delete</button>
+                    </div>
+                </div>
+                <audio controls src="${track.data}"></audio>
+            `;
+            audioList.appendChild(itemDiv);
+        });
+    }
+
+    // Export / Download item
+    function exportTrack(id) {
+        const vault = JSON.parse(localStorage.getItem('audio_vault')) || [];
+        const track = vault.find(t => t.id === id);
+        
+        if (!track) return;
+
+        const link = document.createElement('a');
+        link.href = track.data;
+        link.download = track.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Delete item
+    function deleteTrack(id) {
+        let vault = JSON.parse(localStorage.getItem('audio_vault')) || [];
+        vault = vault.filter(t => t.id !== id);
+        localStorage.setItem('audio_vault', JSON.stringify(vault));
+        loadVault();
+    }
+</script>
+
+</body>
+</html>
