@@ -5,88 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANDROID BEAT FLP</title>
     <style>
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        /* CSS Variable Definitions for Themes */
+        :root {
+            --bg-color: #f4f4f4;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --heading-color: #000000;
+            --detail-color: #666666;
+            --border-color: #cccccc;
+            --btn-bg: #0056b3;
+            --btn-text: #ffffff;
+            --btn-hover: #004494;
+            --btn-active: #003366;
+            --font-family: Arial, Helvetica, sans-serif;
+            --border-radius: 0px;
         }
-        .container {
-            background: #fff;
-            padding: 40px;
-            border: 1px solid #ccc;
-            width: 100%;
-            max-width: 500px;
-        }
-        h1 {
-            font-size: 1.5rem;
-            margin: 0 0 10px 0;
-            color: #000;
-        }
-        .details {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .btn {
-            display: inline-block;
-            background-color: #0056b3;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #004494;
-        }
-        .btn:active {
-            background-color: #003366;
-        }
-        .footer {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #888;
-        }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <h1>File Download</h1>
-    <p class="details">
-        <strong>File Name:</strong> Android Beat FLP<br>
-        <strong>Format:</strong> FLP Project File
-    </p>
-    
-    <a href="https://drive.google.com/file/d/1gFDelWbaHcXmL1QLjqHcYEUoW58jU8XD/view?usp=sharing" 
-       target="_blank" 
-       class="btn" 
-       id="downloadBtn">
-        Download from Google Drive
-    </a>
-
-    <div class="footer">
-        Verified File: Android Beat
-    </div>
-</div>
-
-<script>
-    const downloadBtn = document.getElementById('downloadBtn');
-    downloadBtn.addEventListener('click', () => {
-        downloadBtn.textContent = 'Redirecting...';
-        downloadBtn.style.backgroundColor = '#666';
-    });
-</script>
-
-</body>
-</html>
+        [data-theme="dark"] {
+            --bg-color: #121212; --container-bg: #1e1e1e; --text-color: #e0e0e0; --heading-color: #ffffff; --detail-color: #aaaaaa; --border-color: #333333; --btn-bg: #3700b3; --btn-hover: #6200ee; --btn-active: #bb86fc;
+        }
+        [data-theme="1990s"] {
+            --bg-color: #808080; --container-bg: #c0c0c0; --text-color: #000000; --heading-color: #0000ff; --detail-color: #404040; --border-color: #ffffff; --btn-bg: #008080; --btn-hover: #004040; --btn-active: #00ffff; --font-family: 'MS Sans Serif', monospace;
+        }
+        [data-theme="2000s"] {
+            --bg-color: #e0f0ff; --container-bg: #ffffff; --text-color: #113366; --heading-color: #0066cc; --detail-color: #5588cc; --border-color: #99ccff; --btn-bg: #00ccff; --btn-hover: #0099cc; --btn-active: #006699; --border-radius: 15px;
+        }
+        [data-theme="producer"] {
+            --bg-color: #0d0e15; --container-bg: #161920; --text-color: #8a90a0; --heading-color: #00ffcc; --detail-color: #565d6d; --border-color: #252a37; --btn-bg: #ff0055; --btn-hover: #cc0044; --btn-active: #990033; --border-radius: 4px;
+        }
+        [data-theme="singer"] {
+            --bg-color: #faf5f5; --container-bg: #ffffff; --text-color: #5a4b4b; --heading-color: #d4a5a5; --detail-color: #9e8a8a; --border-color: #f0e2e2; --btn-bg: #ffb7b2; --btn-hover: #ff9aa2; --btn-active: #e27d84; --border-radius: 20px;
+        }
+        [data-theme="roblox"] {
+            --bg-color: #e3e4e4; --container-bg: #ffffff; --text-color: #393b3d; --heading-color: #000000; --detail-color: #6c7075; --border-color: #b8b9ba; --btn-bg: #00a2ff; --btn-hover: #007acc; --btn-active: #005599; --border-radius: 3px;
+        }
+        [data-theme="fortnite"] {
+            --bg-color: #191c24; --container-bg: #282e3d; --text-color: #ffffff; --heading-color: #f7ef16; --detail-color: #a2a8b8; --border-color: #3b4356; --btn-bg: #9e00ff; --btn-hover: #7b00c7; --btn-active: #58008f; --font-family: Impact, sans-serif;
+        }
+        [data-theme="scenecore"] {
+            --bg-color: #000000; --container-bg: #111111; --text-color: #00ff00; --heading-color: #ff00ff; --detail-color: #00ffff; --border-color: #ff00ff; --btn-bg: #000000; --btn-text: #00ff00; --btn-hover: #ff00ff; --btn-active: #ffffff;
+        }
+        [data-theme="kandi"] {
+            --bg-color: #ffe3f1; --container-bg: #ffffff; --text-color: #222222; --heading-color: #ff66cc; --detail-color: #33ccff; --border-color: #ffff66; --btn-bg: #99ff66; --btn-text: #222222; --btn-hover: #ff99ff; --btn-active: #66ffff; --border-radius: 12px;
+        }
+        [data-theme="femboy"] {
+            --bg-color: #fff0f5; --container-bg: #ffffff; --text-color: #444444; --heading-color: #ff69b4; --detail-color: #87cefa; --border-color: #ffb6c1; --btn-bg: #ffb6c1; --btn-hover: #ff69b4; --btn-active: #db7093; --border-radius: 25px;
+        }
+        [data-theme="furry"] {
+            --bg-color: #3c2f2f; --container-bg: #4b3832; --text-color: #e7d3cd; --heading-color: #be9b7b; --detail-color: #854442; --border-color: #854442; --btn-bg: #be9b7b; --btn-text: #3c2f2f; --btn-hover: #854442; --btn-active: #4b3832; --border-radius: 8px;
+        }
+        [data-theme="cyberpunk"] { --bg-color: #000000; --container-bg: #000000; --text-color: #00ffcc; --heading-color: #fcee0a; --detail-color: #ff003c; --border-color: #3ae374; --btn-bg: #ff003c; --btn-hover: #fcee0a; --btn-active: #00ffcc; }
+        [data-theme="goth"] { --bg-color: #050505; --container-bg: #111111; --text-color: #888888; --heading-color: #ffffff; --detail-color: #555555; --border-color: #222222; --btn-bg: #333333; --btn-hover: #444444; --btn-active: #000000; }
+        [data-theme="vaporwave"] { --bg-color: #ffb3ff; --container-bg: #2b0066; --text-color: #00ffff; --heading-color: #ff007f; --detail-color: #ffb3ff; --border-color: #00ffff; --btn-bg: #ff007f; --btn-hover: #00ffff; --btn-active: #2b0066; }
+        [data-theme="cottagecore"] { --bg-color: #f4f0db; --container-bg: #fffdf6; --text-color: #4a3b32; --heading-color: #606c38; --detail-color: #b56576; --border-color: #dda15e; --btn-bg: #606c38; --btn-hover: #283618; --btn-active: #dda15e; --border-radius: 8px; }
+        [data-theme="synthwave"] { --bg-color: #1a0826; --container-bg: #2a1140; --text-color: #e100ff; --heading-color: #00f0ff; --detail-color: #ff007c; --border-color: #ff007c; --btn-bg: #ff007c; --btn-hover: #00f0ff; --btn-active: #1a0826; }
+        [data-theme="glitch"] { --bg-color: #111; --container-bg: #222; --text-color: #ff0055; --heading-color: #00ffaa; --detail-color: #0055ff; --border-color: #333; --btn-bg: #00ffaa; --btn-text: #000; --btn-hover: #ff0055; --btn-active: #0055ff; }
+        [data-theme="acid"] { --bg-color: #000; --container-bg: #111; --text-color: #ccff00; --heading-color: #ccff00; --detail-color: #888; --border-color: #ccff00; --btn-bg: #ccff00; --btn-text: #000; --btn-hover: #fff; --btn-active: #444; }
+        [data-theme="pastel"] { --bg-color: #f7eeff; --container-bg: #ffffff; --text-color: #6d6875; --heading-color: #ffb5a7; --detail-color: #fcd5ce; --border-color: #f8edeb; --btn-bg: #ffcad4; --btn-hover: #b5e2fa; --btn-active: #edafb8; --border-radius: 12px; }
+        [data-theme="emo"] { --bg-color: #000000; --container-bg: #1a1a1a; --text-color: #ffffff; --heading-color: #ff0000; --detail-color: #888888; --border-color: #ff0000; --btn-bg: #ff0000; --btn-hover: #bc0000; --btn-active: #000000; }
+        [data-theme="steampunk"] { --bg-color: #2b1d11; --container-bg: #422f1d; --text-color: #dfb15b; --heading-color: #e97f02; --detail-color: #8a5a36; --border-color: #e97f02; --btn-bg: #e97f02; --btn-hover: #8a5a36; --btn-active: #2b1d11; }
+        [data-theme="minecraft"] { --bg-color: #4c7828; --container-bg: #312113; --text-color: #ffffff; --heading-color: #decf2a; --detail-color: #aaaaaa; --border-color: #4a4a4a; --btn-bg: #5c5c5c; --btn-hover: #8c8c8c; --btn-active: #3c3c3c; }
+        [data-theme="matrix"] { --bg-color: #000000; --container-bg: #000000; --text-color: #00ff00; --heading-color: #00ff00; --detail-color: #005500; --border-color: #00ff00; --btn-bg: #003300; --btn-text: #00ff00; --btn-hover: #00ff00; --btn-active: #001100; --font-family: monospace; }
+        [data-theme="anime"] { --bg-color: #fff5f5; --container-bg: #ffffff; --text-color: #4a5568; --heading-color: #ff6b6b; --detail-color: #a0aec0; --border-color: #fecdd3; --btn-bg: #ff6b6b; --btn-hover: #ff8787; --btn-active: #fa5252; --border-radius: 8px; }
+        [data-theme="military"] { --bg-color: #283618; --container-bg: #606c38; --text-color: #fefae0; --heading-color: #dda15e; --detail-color: #bc6c25; --border-color: #283618; --btn-bg: #bc6c25; --btn-hover: #dda15e; --btn-active: #283618; }
+        [data-theme="ocean"] { --bg-color: #0077b6; --container-bg: #03045e; --text-color: #caf0f8; --heading-color: #90e0ef; --detail-color: #00b4d8; --border-color: #0096c7; --btn-bg: #00b4d8; --btn-hover: #90e0ef; --btn-active: #03045e; }
+        [data-theme="space"] { --bg-color: #03071e; --container-bg: #370617; --text-color: #ffba08; --heading-color: #dc2f02; --detail-color: #f48c06; --border-color: #6a040f; --btn-bg: #d00000; --btn-hover: #dc2f02; --btn-active: #370617; }
+        [data-theme="forest"] { --bg-color: #132a13; --container-bg: #31572c; --text-color: #ecf39e; --heading-color: #90a955; --detail-color: #4f772d; --border-color: #132a13; --btn-bg: #4f772d; --btn-hover: #90a955; --btn-active: #132a13; }
+        [data-theme="sunset"] { --bg-color: #241429; --container-bg: #46123c; --text-color: #f9c02f; --heading-color: #e54b4b; --detail-color: #f1883c; --border-color: #46123c; --btn-bg: #e54b4b; --btn-hover: #f1883c; --btn-active: #241429; }
+        [data-theme="liminal"] { --bg-color: #e5e0d8; --container-bg: #f4efe6; --text-color: #55524c; --heading-color: #2d2c29; --detail-color: #8c877e; --border-color: #cbc5ba; --btn-bg: #7c7870; --btn-hover: #55524c; --btn-active: #2d2c29; }
+        [data-theme="bubblegum"] { --bg-color: #ffdeeb; --container-bg: #ffffff; --text-color: #444444; --heading-color: #ff4081; --detail-color: #00e5ff; --border-color: #ff4081; --btn-bg: #00e5ff; --btn-text: #000; --btn-hover: #ff4081; --btn-active: #ffffff; --border-radius: 15px; }
+        [data-theme="kidcore"] { --bg-color: #ff0000; --container-bg: #ffff00; --text-color: #000000; --heading-color: #0000ff; --detail-color: #ff00ff; --border-color: #00ff00; --btn-bg: #00ff00; --btn-hover: #ff00ff; --btn-active: #0000ff; }
+        [data-theme="y2k"] { --bg-color: #000044; --container-bg: #ffffff; --text-color: #0033cc; --heading-color: #ff0099; --detail-color: #00ffff; --border-color: #ff0099; --btn-bg: #00ffff; --btn-text: #000; --btn-hover: #ff0099; --btn-active: #000044; --border-radius: 8px; }
+        [data-theme="barbie"] { --bg-color: #ffccd5; --container-bg: #ffffff; --text-color: #c9184a; --heading-color: #ff4d6d; --detail-color: #ff758f; --border-color: #ffb3c1; --btn-bg: #ff4d6d; --btn-hover: #ff758f; --btn-active: #c9184a; --border-radius: 12px; }
