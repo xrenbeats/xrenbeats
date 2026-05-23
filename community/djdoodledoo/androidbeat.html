@@ -5,160 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANDROID BEAT FLP</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
-            --success: #10b981;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
-
-        .download-card {
-            background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 32px;
+        .container {
+            background: #fff;
+            padding: 40px;
+            border: 1px solid #ccc;
             width: 100%;
-            max-width: 450px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
         }
-
-        .icon-container {
-            width: 80px;
-            height: 80px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-
-        .icon-container svg {
-            width: 40px;
-            height: 40px;
-            fill: var(--primary);
-        }
-
         h1 {
-            font-size: 24px;
-            margin-bottom: 8px;
-            font-weight: 700;
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+            color: #000;
         }
-
-        .file-info {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 24px;
+        .details {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
         }
-
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 14px;
-            background-color: var(--primary);
+            display: inline-block;
+            background-color: #0056b3;
             color: white;
+            padding: 12px 24px;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background 0.2s, transform 0.1s;
-            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
             border: none;
+            cursor: pointer;
         }
-
         .btn:hover {
-            background-color: var(--primary-hover);
+            background-color: #004494;
         }
-
         .btn:active {
-            transform: scale(0.98);
+            background-color: #003366;
         }
-
-        .btn.loading {
-            background-color: var(--text-muted);
-            pointer-events: none;
-        }
-
-        .btn.success {
-            background-color: var(--success);
-        }
-
-        .footer-note {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 16px;
+        .footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #888;
         }
     </style>
 </head>
 <body>
 
-    <div class="download-card">
-        <div class="icon-container">
+<div class="container">
+    <h1>File Download</h1>
+    <p class="details">
+        <strong>File Name:</strong> Android Beat FLP<br>
+        <strong>Format:</strong> FLP Project File
+    </p>
+    
+    <a href="https://drive.google.com/file/d/1gFDelWbaHcXmL1QLjqHcYEUoW58jU8XD/view?usp=sharing" 
+       target="_blank" 
+       class="btn" 
+       id="downloadBtn">
+        Download from Google Drive
+    </a>
 
-            <svg viewBox="0 0 24 24">
-                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-            </svg>
-        </div>
-
-        <h1>Android Beat FLP</h1>
-        <p class="file-info">Format: FLP&bull; Djdoodledoo is cool ig</p>
-
-
-        <a href="https://drive.google.com/file/d/1gFDelWbaHcXmL1QLjqHcYEUoW58jU8XD/view?usp=sharing" 
-           target="_blank" 
-           rel="noopener noreferrer" 
-           class="btn" 
-           id="downloadBtn">
-
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span id="btnText">Download FLP</span>
-        </a>
-
-        <p class="footer-note">ANDROID BEAT</p>
+    <div class="footer">
+        Verified File: Android Beat
     </div>
+</div>
 
-    <script>
-        const downloadBtn = document.getElementById('downloadBtn');
-        const btnText = document.getElementById('btnText');
-
-        downloadBtn.addEventListener('click', () => {
-
-            downloadBtn.classList.add('loading');
-            btnText.textContent = 'Opening Drive...';
-            
-            setTimeout(() => {
-                downloadBtn.classList.remove('loading');
-                downloadBtn.classList.add('success');
-                btnText.textContent = 'Downloaded Started';
-            }, 1500);
-        });
-    </script>
+<script>
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.addEventListener('click', () => {
+        downloadBtn.textContent = 'Redirecting...';
+        downloadBtn.style.backgroundColor = '#666';
+    });
+</script>
 
 </body>
 </html>
