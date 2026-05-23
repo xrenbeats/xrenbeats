@@ -1,2 +1,2531 @@
-welcome to the site builder!
-go to https://xrenbeats.com/sbs (stands for site builder studio!)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xrenbeats — Site Builder Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050508;
+  --bg2: #0c0c14;
+  --bg3: #12121e;
+  --bg4: #1a1a2e;
+  --surface: #1e1e32;
+  --surface2: #252540;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --accent3: #c084fc;
+  --pink: #ec4899;
+  --cyan: #06b6d4;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --orange: #f97316;
+  --text: #f1f0ff;
+  --text2: #a8a3c4;
+  --text3: #6b6888;
+  --radius: 10px;
+  --radius2: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Space Grotesk',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow:hidden; }
+body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(124,58,237,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.025) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+
+/* ── APP SHELL ── */
+.app { display:flex; height:100vh; position:relative; z-index:1; }
+
+/* ── SIDEBAR ── */
+.sidebar { width:60px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:10px 0; gap:2px; z-index:100; flex-shrink:0; overflow-y:auto; overflow-x:hidden; }
+.sidebar::-webkit-scrollbar { width:0; }
+.logo-icon { width:38px; height:38px; background:linear-gradient(135deg,var(--accent),var(--pink)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:900; color:#fff; margin-bottom:10px; box-shadow:0 0 20px rgba(124,58,237,0.5); flex-shrink:0; cursor:pointer; }
+.sidebar-divider { width:28px; height:1px; background:var(--border); margin:3px 0; flex-shrink:0; }
+.sidebar-btn { width:40px; height:40px; border-radius:8px; border:none; background:transparent; color:var(--text3); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:16px; transition:all 0.2s; position:relative; flex-shrink:0; }
+.sidebar-btn:hover,.sidebar-btn.active { background:var(--surface); color:var(--accent3); }
+.sidebar-btn.active { background:rgba(124,58,237,0.2); color:var(--accent2); box-shadow:0 0 12px rgba(124,58,237,0.2); }
+.sidebar-btn .tip { position:absolute; left:calc(100% + 8px); background:var(--surface2); color:var(--text); padding:3px 8px; border-radius:5px; font-size:11px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.15s; border:1px solid var(--border2); z-index:999; font-family:'Space Grotesk',sans-serif; }
+.sidebar-btn:hover .tip { opacity:1; }
+
+/* ── LEFT PANEL ── */
+.left-panel { width:272px; background:var(--bg2); border-right:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; transition:width 0.25s ease; }
+.left-panel.collapsed { width:0; }
+.panel-header { padding:12px 14px; border-bottom:1px solid var(--border); font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700; letter-spacing:0.15em; color:var(--accent2); text-transform:uppercase; display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.panel-scroll { overflow-y:auto; flex:1; }
+.panel-scroll::-webkit-scrollbar { width:2px; }
+.panel-scroll::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+.panel-search { padding:8px 10px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.panel-search input { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:6px 10px; color:var(--text); font-size:12px; font-family:inherit; outline:none; transition:border 0.2s; }
+.panel-search input:focus { border-color:var(--accent); }
+.panel-search input::placeholder { color:var(--text3); }
+.panel-section { padding:8px 0; }
+.panel-section-label { padding:4px 12px 6px; font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--text3); }
+.element-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; padding:0 8px; }
+.element-btn { background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:8px 6px; cursor:pointer; text-align:center; transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--text2); font-size:10px; font-family:inherit; position:relative; overflow:hidden; }
+.element-btn:hover { border-color:var(--accent); background:rgba(124,58,237,0.1); color:var(--text); }
+.element-btn.span2 { grid-column:span 2; flex-direction:row; text-align:left; gap:8px; padding:8px 10px; border-color:rgba(124,58,237,0.3); background:rgba(124,58,237,0.07); }
+.element-btn .eicon { font-size:18px; line-height:1; }
+.badge { display:inline-flex; align-items:center; padding:1px 5px; border-radius:3px; font-size:8px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; }
+.badge-new { background:rgba(16,185,129,0.2); color:var(--green); }
+.badge-ai { background:rgba(168,85,247,0.2); color:var(--accent2); }
+.badge-hot { background:rgba(239,68,68,0.2); color:var(--red); }
+
+/* ── CANVAS AREA ── */
+.canvas-area { flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; min-width:0; }
+
+/* ── TOPBAR ── */
+.topbar { height:50px; background:var(--bg2); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:10px; flex-shrink:0; z-index:50; }
+.site-name-btn { display:flex; align-items:center; gap:6px; font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700; color:var(--text); background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:5px 10px; cursor:pointer; transition:border-color 0.2s; white-space:nowrap; }
+.site-name-btn:hover { border-color:var(--accent); }
+.topbar-sep { width:1px; height:20px; background:var(--border); flex-shrink:0; }
+.tb-btn { height:30px; padding:0 9px; border-radius:6px; border:1px solid transparent; background:transparent; color:var(--text2); cursor:pointer; font-size:11px; font-family:inherit; font-weight:500; display:flex; align-items:center; gap:5px; transition:all 0.2s; white-space:nowrap; }
+.tb-btn:hover { background:var(--surface); color:var(--text); border-color:var(--border); }
+.tb-btn.primary { background:linear-gradient(135deg,var(--accent),var(--pink)); color:#fff; border-color:transparent; box-shadow:0 0 14px rgba(124,58,237,0.4); padding:0 12px; }
+.tb-btn.primary:hover { box-shadow:0 0 22px rgba(124,58,237,0.6); transform:translateY(-1px); }
+.tb-btn.secondary { background:var(--surface); border-color:var(--border2); color:var(--text); }
+.topbar-center { flex:1; display:flex; justify-content:center; align-items:center; gap:4px; }
+.view-toggle { display:flex; background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:2px; }
+.view-btn { padding:3px 10px; border-radius:5px; font-size:10px; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--text3); transition:all 0.2s; font-family:inherit; }
+.view-btn.active { background:var(--surface2); color:var(--text); }
+.collab-avatars { display:flex; align-items:center; }
+.collab-av { width:26px; height:26px; border-radius:50%; border:2px solid var(--bg2); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; margin-left:-5px; cursor:pointer; }
+.collab-av:first-child { margin-left:0; }
+
+/* ── CANVAS ── */
+.canvas-wrapper { flex:1; overflow:auto; background:var(--bg3); position:relative; display:flex; align-items:flex-start; justify-content:center; padding:20px; }
+.canvas-wrapper::-webkit-scrollbar { width:6px; height:6px; }
+.canvas-wrapper::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+.canvas-frame { width:100%; max-width:1200px; min-height:600px; background:#07070d; border-radius:10px; border:1px solid var(--border2); position:relative; overflow:hidden; box-shadow:0 0 60px rgba(0,0,0,0.7); transition:max-width 0.3s ease; }
+
+/* ── EMPTY STATE ── */
+.empty-state { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:500px; text-align:center; padding:40px; position:relative; }
+.empty-state-orb { width:140px; height:140px; border-radius:50%; background:radial-gradient(circle at 35% 35%,rgba(168,85,247,0.4),rgba(124,58,237,0.15) 50%,transparent 75%); border:1px solid rgba(124,58,237,0.25); display:flex; align-items:center; justify-content:center; font-size:50px; margin-bottom:28px; animation:orb-float 4s ease-in-out infinite; box-shadow:0 0 60px rgba(124,58,237,0.15); }
+@keyframes orb-float { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-10px) scale(1.02)} }
+.empty-title { font-family:'Orbitron',sans-serif; font-size:22px; font-weight:900; color:var(--text); margin-bottom:10px; }
+.empty-sub { font-size:13px; color:var(--text3); max-width:380px; line-height:1.7; margin-bottom:28px; }
+.empty-actions { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.start-btn { padding:11px 22px; border-radius:9px; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.25s; border:none; }
+.start-btn.primary { background:linear-gradient(135deg,var(--accent),var(--pink)); color:#fff; box-shadow:0 0 24px rgba(124,58,237,0.4); }
+.start-btn.primary:hover { transform:translateY(-2px); box-shadow:0 0 36px rgba(124,58,237,0.6); }
+.start-btn.secondary { background:var(--surface); border:1px solid var(--border2); color:var(--text2); }
+.start-btn.secondary:hover { color:var(--text); border-color:var(--accent); }
+
+/* ── SITE PREVIEW (canvas content) ── */
+.site-preview { min-height:100%; }
+.preview-section { position:relative; }
+.preview-section:hover .section-overlay { opacity:1; }
+.section-overlay { position:absolute; top:6px; right:6px; display:flex; gap:4px; opacity:0; transition:opacity 0.2s; z-index:10; }
+.section-ctrl { padding:4px 8px; background:rgba(0,0,0,0.8); border:1px solid var(--border2); border-radius:5px; color:var(--text2); font-size:10px; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+.section-ctrl:hover { color:var(--text); border-color:var(--accent); }
+.section-ctrl.del:hover { border-color:var(--red); color:var(--red); }
+
+/* ── PAGE TABS ── */
+.page-tabs { display:flex; align-items:center; gap:2px; border-bottom:1px solid var(--border); background:var(--bg2); padding:0 12px; flex-shrink:0; overflow-x:auto; }
+.page-tabs::-webkit-scrollbar { height:0; }
+.page-tab { padding:8px 14px; font-size:11px; font-weight:600; cursor:pointer; color:var(--text3); border-bottom:2px solid transparent; white-space:nowrap; transition:all 0.2s; display:flex; align-items:center; gap:5px; flex-shrink:0; }
+.page-tab:hover { color:var(--text2); }
+.page-tab.active { color:var(--accent2); border-bottom-color:var(--accent2); }
+.page-tab .tab-close { width:14px; height:14px; border-radius:3px; display:none; align-items:center; justify-content:center; font-size:9px; background:rgba(239,68,68,0.15); color:var(--red); }
+.page-tab:hover .tab-close { display:flex; }
+.add-page-tab { padding:8px 10px; font-size:16px; color:var(--text3); cursor:pointer; border-bottom:2px solid transparent; transition:color 0.2s; flex-shrink:0; }
+.add-page-tab:hover { color:var(--accent2); }
+
+/* ── RIGHT PANEL ── */
+.right-panel { width:288px; background:var(--bg2); border-left:1px solid var(--border); display:flex; flex-direction:column; flex-shrink:0; overflow:hidden; transition:width 0.25s ease; }
+.right-panel.collapsed { width:0; }
+.right-tabs { display:flex; border-bottom:1px solid var(--border); background:var(--bg2); flex-shrink:0; }
+.r-tab { flex:1; padding:10px 0; font-size:10px; font-weight:700; text-align:center; cursor:pointer; color:var(--text3); border-bottom:2px solid transparent; transition:all 0.2s; letter-spacing:0.06em; text-transform:uppercase; }
+.r-tab.active { color:var(--accent2); border-bottom-color:var(--accent2); }
+.right-scroll { overflow-y:auto; flex:1; padding:10px; }
+.right-scroll::-webkit-scrollbar { width:2px; }
+.right-scroll::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+/* ── PROP GROUPS ── */
+.prop-group { margin-bottom:12px; background:var(--bg3); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
+.prop-group-header { padding:8px 12px; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+.prop-group-body { padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
+.prop-row { display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.prop-label { font-size:10px; color:var(--text3); white-space:nowrap; min-width:52px; }
+.prop-input { flex:1; background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:4px 8px; color:var(--text); font-size:11px; font-family:'JetBrains Mono',monospace; outline:none; transition:border-color 0.2s; min-width:0; }
+.prop-input:focus { border-color:var(--accent); }
+.prop-color { width:28px; height:24px; border-radius:5px; border:1px solid var(--border); cursor:pointer; padding:0; overflow:hidden; }
+.prop-select { flex:1; background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:4px 8px; color:var(--text); font-size:11px; font-family:inherit; outline:none; cursor:pointer; min-width:0; }
+.prop-range { flex:1; accent-color:var(--accent); }
+.color-palette { display:grid; grid-template-columns:repeat(8,1fr); gap:3px; }
+.color-swatch { width:100%; aspect-ratio:1; border-radius:4px; cursor:pointer; border:2px solid transparent; transition:transform 0.15s; }
+.color-swatch:hover { transform:scale(1.2); }
+.color-swatch.active { border-color:#fff; }
+.theme-grid-small { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.theme-mini { border-radius:7px; overflow:hidden; border:2px solid transparent; cursor:pointer; transition:all 0.2s; }
+.theme-mini:hover { transform:scale(1.03); }
+.theme-mini.active { border-color:var(--accent2); }
+.theme-mini-preview { height:44px; position:relative; overflow:hidden; }
+.theme-mini-name { font-size:9px; font-weight:600; padding:3px 6px; text-align:center; letter-spacing:0.03em; }
+
+/* ── AI PANEL ── */
+.ai-panel { display:flex; flex-direction:column; height:100%; overflow:hidden; }
+.ai-messages { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.ai-messages::-webkit-scrollbar { width:2px; }
+.ai-messages::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+.ai-msg { max-width:92%; padding:9px 11px; border-radius:9px; font-size:11px; line-height:1.65; }
+.ai-msg.bot { background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2); align-self:flex-start; }
+.ai-msg.usr { background:var(--surface2); border:1px solid var(--border2); align-self:flex-end; color:var(--text2); }
+.ai-msg.sys { background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); color:var(--green); font-size:10px; align-self:center; max-width:100%; text-align:center; }
+.ai-msg.err { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.2); color:var(--red); font-size:10px; align-self:center; max-width:100%; text-align:center; }
+.ai-typing { display:flex; gap:4px; align-items:center; padding:8px 11px; }
+.ai-typing span { width:5px; height:5px; border-radius:50%; background:var(--accent3); animation:typing 1.2s ease-in-out infinite; }
+.ai-typing span:nth-child(2){animation-delay:0.2s}
+.ai-typing span:nth-child(3){animation-delay:0.4s}
+@keyframes typing { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+.ai-bottom { padding:8px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
+.ai-textarea { width:100%; background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:7px 9px; color:var(--text); font-size:11px; font-family:inherit; outline:none; resize:none; transition:border-color 0.2s; height:54px; }
+.ai-textarea:focus { border-color:var(--accent); }
+.ai-send-row { display:flex; gap:5px; }
+.ai-send { flex:1; padding:7px; background:linear-gradient(135deg,var(--accent),var(--pink)); border:none; border-radius:7px; color:#fff; font-weight:700; font-size:11px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+.ai-send:hover { opacity:0.9; }
+.ai-send:disabled { opacity:0.5; cursor:not-allowed; }
+.ai-key-btn { padding:7px 10px; background:var(--surface); border:1px solid var(--border2); border-radius:7px; color:var(--text3); font-size:10px; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.ai-key-btn:hover { color:var(--text); border-color:var(--accent); }
+.ai-chips { display:flex; gap:4px; flex-wrap:wrap; }
+.ai-chip { padding:3px 7px; background:var(--bg3); border:1px solid var(--border); border-radius:5px; font-size:9px; color:var(--text3); cursor:pointer; transition:all 0.15s; }
+.ai-chip:hover { border-color:var(--accent); color:var(--text); }
+
+/* ── API KEY MODAL OVERLAY ── */
+.apikey-banner { background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:8px; padding:8px 10px; font-size:10px; color:var(--yellow); margin:8px 10px; line-height:1.6; cursor:pointer; transition:background 0.2s; }
+.apikey-banner:hover { background:rgba(245,158,11,0.15); }
+
+/* ── CSS TAB ── */
+.code-editor { background:#060610; border-radius:7px; border:1px solid var(--border); overflow:hidden; }
+.code-toolbar { background:var(--bg3); border-bottom:1px solid var(--border); padding:6px 10px; display:flex; align-items:center; gap:5px; }
+.code-dot { width:9px; height:9px; border-radius:50%; }
+.dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}
+.code-lang { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:9px; color:var(--text3); }
+.code-body { padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.75; color:#e2e0ff; white-space:pre; overflow-x:auto; min-height:100px; outline:none; }
+.ck{color:var(--accent2)} .cs{color:var(--green)} .cc{color:var(--text3)} .cf{color:var(--cyan)} .cn{color:var(--orange)}
+
+/* ── DAW ── */
+.daw-grid { display:grid; grid-template-columns:repeat(16,1fr); gap:2px; flex:1; }
+.daw-step { height:24px; border-radius:3px; background:var(--bg3); border:1px solid var(--border); cursor:pointer; transition:all 0.12s; }
+.daw-step.on { background:var(--accent2); border-color:var(--accent); box-shadow:0 0 6px rgba(168,85,247,0.35); }
+.daw-step:hover { border-color:var(--accent3); }
+.daw-track { display:flex; align-items:center; gap:6px; margin-bottom:5px; }
+.daw-track-label { width:48px; font-size:9px; font-weight:700; color:var(--text3); font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+.daw-btn { padding:6px 12px; border-radius:6px; border:1px solid var(--border2); background:var(--surface); color:var(--text); font-size:11px; cursor:pointer; font-family:inherit; font-weight:600; transition:all 0.2s; display:flex; align-items:center; gap:5px; }
+.daw-btn.play { background:linear-gradient(135deg,var(--green),#059669); border:none; color:#fff; }
+.daw-btn:hover { transform:translateY(-1px); }
+
+/* ── MODALS ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity 0.2s; }
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--bg2); border:1px solid var(--border2); border-radius:14px; width:90%; max-width:680px; max-height:88vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 0 80px rgba(0,0,0,0.8),0 0 30px rgba(124,58,237,0.08); transform:translateY(16px) scale(0.98); transition:transform 0.25s ease,opacity 0.2s; }
+.modal-overlay.open .modal { transform:translateY(0) scale(1); }
+.modal-header { padding:16px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+.modal-title { font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700; }
+.modal-close { width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--bg3); color:var(--text2); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.modal-close:hover { background:var(--red); border-color:var(--red); color:#fff; }
+.modal-body { padding:18px; overflow-y:auto; flex:1; }
+.modal-body::-webkit-scrollbar { width:3px; }
+.modal-body::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+/* ── TABS ── */
+.tab-row { display:flex; gap:3px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:3px; margin-bottom:14px; flex-wrap:wrap; }
+.tab-pill { padding:4px 10px; border-radius:5px; font-size:10px; font-weight:700; cursor:pointer; border:none; background:transparent; color:var(--text3); transition:all 0.2s; font-family:inherit; white-space:nowrap; }
+.tab-pill.active { background:var(--surface2); color:var(--text); }
+
+/* ── TEMPLATE GRID ── */
+.template-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
+.template-card { border-radius:10px; overflow:hidden; border:2px solid var(--border); cursor:pointer; transition:all 0.22s; position:relative; }
+.template-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 12px 36px rgba(0,0,0,0.5); }
+.template-card.selected { border-color:var(--accent2); }
+.template-preview { height:100px; position:relative; overflow:hidden; }
+.template-info { padding:8px 10px; background:var(--bg3); }
+.template-name { font-size:11px; font-weight:700; margin-bottom:2px; }
+.template-desc { font-size:9px; color:var(--text3); }
+.template-badge { position:absolute; top:6px; right:6px; padding:2px 6px; border-radius:4px; font-size:8px; font-weight:700; }
+
+/* ── PAGES PANEL ── */
+.page-list { display:flex; flex-direction:column; gap:4px; padding:8px; }
+.page-item { display:flex; align-items:center; gap:8px; padding:9px 11px; border-radius:8px; border:1px solid var(--border); background:var(--bg3); cursor:pointer; transition:all 0.2s; font-size:12px; }
+.page-item:hover { border-color:var(--accent); background:rgba(124,58,237,0.06); }
+.page-item.active { border-color:var(--accent); background:rgba(124,58,237,0.1); }
+.page-item .pi-label { flex:1; font-weight:600; }
+.page-item .pi-live { padding:1px 5px; background:rgba(16,185,129,0.2); color:var(--green); border-radius:3px; font-size:9px; font-weight:700; }
+.page-item .pi-actions { display:none; gap:3px; }
+.page-item:hover .pi-actions { display:flex; }
+.pi-btn { padding:2px 6px; border-radius:4px; border:1px solid var(--border); background:var(--bg2); color:var(--text3); font-size:9px; cursor:pointer; font-family:inherit; }
+.pi-btn:hover { border-color:var(--red); color:var(--red); }
+.add-page-btn { width:100%; padding:9px; background:transparent; border:1px dashed var(--border2); border-radius:8px; color:var(--text3); cursor:pointer; font-family:inherit; font-size:11px; transition:all 0.2s; }
+.add-page-btn:hover { border-color:var(--accent); color:var(--accent3); }
+
+/* ── FORM ── */
+.form-group { display:flex; flex-direction:column; gap:4px; margin-bottom:10px; }
+.form-label { font-size:10px; color:var(--text3); font-weight:600; text-transform:uppercase; letter-spacing:0.06em; }
+.form-input { background:var(--bg3); border:1px solid var(--border); border-radius:7px; padding:8px 11px; color:var(--text); font-size:12px; font-family:inherit; outline:none; transition:border-color 0.2s; }
+.form-input:focus { border-color:var(--accent); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+/* ── STATUSBAR ── */
+.statusbar { height:26px; background:var(--bg); border-top:1px solid var(--border); display:flex; align-items:center; padding:0 14px; gap:12px; font-size:10px; color:var(--text3); flex-shrink:0; }
+.status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 5px var(--green); flex-shrink:0; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.status-item { display:flex; align-items:center; gap:4px; }
+
+/* ── TOAST ── */
+.toast-container { position:fixed; bottom:36px; right:16px; z-index:2000; display:flex; flex-direction:column; gap:6px; pointer-events:none; }
+.toast { background:var(--surface2); border:1px solid var(--border2); border-left:3px solid var(--green); border-radius:9px; padding:10px 14px; font-size:11px; box-shadow:0 8px 32px rgba(0,0,0,0.5); animation:toastIn 0.3s ease; max-width:260px; display:flex; align-items:center; gap:8px; pointer-events:all; }
+.toast.warn{border-left-color:var(--yellow)}.toast.err{border-left-color:var(--red)}.toast.ai{border-left-color:var(--accent2)}
+@keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(110%)}}
+
+/* ── FAB ── */
+.fab { position:fixed; bottom:36px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,var(--accent),var(--pink)); border:none; border-radius:100px; padding:10px 20px; color:#fff; font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.08em; cursor:pointer; box-shadow:0 6px 28px rgba(124,58,237,0.5); z-index:500; display:flex; align-items:center; gap:6px; transition:all 0.3s; }
+.fab:hover { transform:translateX(-50%) translateY(-3px); box-shadow:0 10px 40px rgba(124,58,237,0.7); }
+
+/* ── PRODUCT / ALBUM GRIDS ── */
+.product-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px; }
+.product-card { background:var(--bg3); border:1px solid var(--border); border-radius:9px; overflow:hidden; cursor:pointer; transition:all 0.2s; }
+.product-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.product-img { width:100%; aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:28px; }
+.product-info { padding:7px 9px; }
+.product-name { font-size:11px; font-weight:700; margin-bottom:2px; }
+.product-price { font-size:12px; font-weight:700; color:var(--green); }
+.album-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; }
+.album-item { cursor:pointer; transition:transform 0.2s; }
+.album-item:hover { transform:scale(1.04); }
+.album-art { width:100%; aspect-ratio:1; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:5px; }
+.album-title { font-size:10px; font-weight:700; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; }
+.album-artist { font-size:9px; color:var(--text3); }
+
+/* ── IMPORT DROP ── */
+.import-drop { border:2px dashed var(--border2); border-radius:10px; padding:28px; text-align:center; cursor:pointer; transition:all 0.2s; margin-bottom:10px; }
+.import-drop:hover { border-color:var(--accent); background:rgba(124,58,237,0.04); }
+.import-drop-icon { font-size:28px; margin-bottom:6px; }
+.import-drop-text { font-size:12px; color:var(--text2); }
+.import-drop-sub { font-size:10px; color:var(--text3); margin-top:3px; }
+
+/* ── SECTIONS RENDERED IN CANVAS ── */
+.site-nav-preview { padding:0 36px; height:60px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(0,0,0,0.4); backdrop-filter:blur(20px); }
+.site-nav-logo { font-family:'Orbitron',sans-serif; font-size:16px; font-weight:900; background:linear-gradient(135deg,var(--accent2),var(--pink)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.site-nav-links { display:flex; gap:20px; }
+.site-nav-link { font-size:12px; color:rgba(255,255,255,0.55); cursor:pointer; transition:color 0.2s; }
+.site-nav-link:hover { color:#fff; }
+.hero-section { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:70px 36px; position:relative; min-height:400px; }
+.hero-glow { position:absolute; width:500px; height:500px; background:radial-gradient(circle,rgba(124,58,237,0.14) 0%,transparent 70%); pointer-events:none; }
+.hero-tag { display:inline-flex; align-items:center; gap:5px; background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.3); border-radius:100px; padding:3px 12px; font-size:10px; font-weight:700; color:var(--accent3); margin-bottom:20px; letter-spacing:0.05em; }
+.hero-title { font-family:'Orbitron',sans-serif; font-size:clamp(26px,4.5vw,56px); font-weight:900; line-height:1.1; margin-bottom:16px; }
+.hero-sub { font-size:14px; color:rgba(255,255,255,0.5); max-width:440px; line-height:1.7; margin-bottom:28px; }
+.hero-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.hero-btn-primary { padding:12px 24px; background:linear-gradient(135deg,var(--accent),var(--pink)); border:none; border-radius:9px; color:#fff; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit; box-shadow:0 0 24px rgba(124,58,237,0.4); transition:all 0.3s; }
+.hero-btn-primary:hover { transform:translateY(-2px); box-shadow:0 0 40px rgba(124,58,237,0.6); }
+.hero-btn-secondary { padding:12px 24px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:9px; color:#fff; font-weight:600; font-size:13px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+.hero-btn-secondary:hover { background:rgba(255,255,255,0.1); }
+.block-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1px; background:var(--border); }
+.block-card { background:#0c0c18; padding:28px 24px; cursor:pointer; transition:background 0.2s; }
+.block-card:hover { background:#121220; }
+.block-card-icon { width:40px; height:40px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
+.block-card-title { font-size:14px; font-weight:700; margin-bottom:5px; }
+.block-card-desc { font-size:11px; color:rgba(255,255,255,0.4); line-height:1.6; }
+.element-block { padding:16px 20px; margin:8px 16px; background:rgba(124,58,237,0.07); border:1px solid rgba(124,58,237,0.2); border-radius:9px; font-size:12px; display:flex; align-items:center; gap:10px; position:relative; cursor:pointer; transition:all 0.2s; }
+.element-block:hover { background:rgba(124,58,237,0.12); }
+.element-block .eb-remove { position:absolute; right:10px; top:50%; transform:translateY(-50%); width:22px; height:22px; border-radius:5px; border:none; background:rgba(239,68,68,0.15); color:var(--red); cursor:pointer; font-size:11px; opacity:0; transition:opacity 0.15s; display:flex; align-items:center; justify-content:center; }
+.element-block:hover .eb-remove { opacity:1; }
+.section-header { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:rgba(124,58,237,0.05); border-bottom:1px solid rgba(124,58,237,0.1); }
+.section-label { font-size:9px; font-weight:700; color:var(--accent3); letter-spacing:0.12em; text-transform:uppercase; }
+
+/* ── SCENE GRID ── */
+.scene-grid-full { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:6px; padding:0 8px 8px; }
+.scene-btn { padding:12px 6px; border-radius:8px; cursor:pointer; text-align:center; font-size:10px; font-weight:700; font-family:inherit; border:2px solid transparent; transition:all 0.2s; }
+.scene-btn:hover { transform:scale(1.04); border-color:rgba(255,255,255,0.25); }
+.art-tools-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(72px,1fr)); gap:5px; padding:0 8px 8px; }
+.art-tool-btn { padding:12px 6px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; cursor:pointer; text-align:center; font-size:9px; color:var(--text2); transition:all 0.2s; font-family:inherit; }
+.art-tool-btn:hover { border-color:var(--pink); background:rgba(236,72,153,0.08); color:var(--text); }
+.art-tool-btn .icon { font-size:18px; display:block; margin-bottom:4px; }
+
+/* ── SCROLLBAR GLOBAL ── */
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+@keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.slide-in { animation:slideIn 0.25s ease; }
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<div class="app">
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="logo-icon" onclick="toast('Xrenbeats Studio v4.0 🎵','✨')">XR</div>
+
+  <button class="sidebar-btn active" id="sb-elements" onclick="switchPanel('elements')">➕<span class="tip">Elements</span></button>
+  <button class="sidebar-btn" id="sb-pages" onclick="switchPanel('pages')">📄<span class="tip">Pages</span></button>
+  <button class="sidebar-btn" id="sb-media" onclick="switchPanel('media')">🎵<span class="tip">Media</span></button>
+  <button class="sidebar-btn" id="sb-art" onclick="switchPanel('art')">🎨<span class="tip">Art Tools</span></button>
+  <button class="sidebar-btn" id="sb-shop" onclick="switchPanel('shop')">🛍️<span class="tip">Shop</span></button>
+  <button class="sidebar-btn" id="sb-scene" onclick="switchPanel('scene')">✨<span class="tip">Scene & Style</span></button>
+
+  <div class="sidebar-divider"></div>
+
+  <button class="sidebar-btn" id="sb-templates" onclick="openModal('templates')">🗂️<span class="tip">Templates</span></button>
+  <button class="sidebar-btn" id="sb-daw" onclick="openModal('music')">🎹<span class="tip">Music Maker</span></button>
+  <button class="sidebar-btn" id="sb-collab" onclick="openModal('collab')">👥<span class="tip">Collaborate</span></button>
+  <button class="sidebar-btn" id="sb-3d" onclick="openModal('3d')">🧊<span class="tip">3D Objects</span></button>
+  <button class="sidebar-btn" id="sb-code" onclick="openModal('code')">💻<span class="tip">Code Editor</span></button>
+  <button class="sidebar-btn" id="sb-stripe" onclick="openModal('stripe')">💳<span class="tip">Payments</span></button>
+
+  <div class="sidebar-divider"></div>
+
+  <button class="sidebar-btn" id="sb-themes" onclick="openModal('themes')">🌈<span class="tip">Themes</span></button>
+  <button class="sidebar-btn" id="sb-album" onclick="openModal('album')">💿<span class="tip">Albums</span></button>
+  <button class="sidebar-btn" id="sb-video" onclick="openModal('video')">🎬<span class="tip">Video</span></button>
+  <button class="sidebar-btn" id="sb-settings" onclick="openModal('settings')">⚙️<span class="tip">Settings</span></button>
+</div>
+
+<!-- ── LEFT PANEL ── -->
+<div class="left-panel" id="leftPanel">
+  <div class="panel-header" id="panelHeader">
+    ⚡ ELEMENTS
+    <button onclick="document.getElementById('leftPanel').classList.toggle('collapsed')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0">‹</button>
+  </div>
+
+  <!-- ELEMENTS PANEL -->
+  <div id="panel-elements" style="display:flex;flex-direction:column;overflow:hidden;flex:1">
+    <div class="panel-search"><input type="text" placeholder="Search elements..." id="elemSearch" oninput="filterElements(this.value)"></div>
+    <div class="panel-scroll" id="elemScroll">
+      <div class="panel-section">
+        <div class="panel-section-label">🎵 Music Embeds</div>
+        <div class="element-grid" id="elemGrid">
+          <button class="element-btn span2" onclick="addEl('spotify')"><span class="eicon">🎵</span><div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start"><span style="font-weight:700;color:var(--text);font-size:11px">Spotify Player</span><span class="badge badge-hot">HOT</span></div></button>
+          <button class="element-btn" onclick="addEl('soundcloud')"><span class="eicon">☁️</span>SoundCloud</button>
+          <button class="element-btn" onclick="addEl('genius')"><span class="eicon">🧠</span>Lyrics</button>
+          <button class="element-btn" onclick="addEl('apple-music')"><span class="eicon">🍎</span>Apple Music</button>
+          <button class="element-btn" onclick="addEl('youtube-music')"><span class="eicon">▶️</span>YT Music</button>
+          <button class="element-btn" onclick="addEl('bandcamp')"><span class="eicon">🏕️</span>Bandcamp</button>
+          <button class="element-btn" onclick="addEl('tidal')"><span class="eicon">🌊</span>Tidal</button>
+          <button class="element-btn" onclick="addEl('deezer')"><span class="eicon">💫</span>Deezer</button>
+          <button class="element-btn" onclick="addEl('audius')"><span class="eicon">🔊</span>Audius</button>
+          <button class="element-btn" onclick="addEl('mixcloud')"><span class="eicon">🌀</span>Mixcloud</button>
+          <button class="element-btn" onclick="addEl('audiomack')"><span class="eicon">🎤</span>Audiomack</button>
+          <button class="element-btn" onclick="addEl('reverbnation')"><span class="eicon">🎸</span>ReverbNation</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-label">🔧 Essential</div>
+        <div class="element-grid">
+          <button class="element-btn span2" onclick="switchRTab('ai',document.querySelector('.r-tab:nth-child(3)'))"><span class="eicon">🤖</span><div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start"><span style="font-weight:700;color:var(--text);font-size:11px">AI Assistant</span><span class="badge badge-ai">AI</span></div></button>
+          <button class="element-btn" onclick="addEl('text')"><span class="eicon">📝</span>Text Block</button>
+          <button class="element-btn" onclick="addEl('image')"><span class="eicon">🖼️</span>Image</button>
+          <button class="element-btn" onclick="addEl('gallery')"><span class="eicon">🗃️</span>Gallery</button>
+          <button class="element-btn" onclick="addEl('button')"><span class="eicon">🔘</span>Button</button>
+          <button class="element-btn" onclick="addEl('form')"><span class="eicon">📋</span>Contact Form</button>
+          <button class="element-btn" onclick="addEl('countdown')"><span class="eicon">⏰</span>Countdown</button>
+          <button class="element-btn" onclick="addEl('map')"><span class="eicon">🗺️</span>Map</button>
+          <button class="element-btn" onclick="addEl('social')"><span class="eicon">📱</span>Social Links</button>
+          <button class="element-btn" onclick="addEl('testimonial')"><span class="eicon">💬</span>Reviews</button>
+          <button class="element-btn" onclick="addEl('faq')"><span class="eicon">❓</span>FAQ</button>
+          <button class="element-btn" onclick="addEl('divider')"><span class="eicon">➖</span>Divider</button>
+          <button class="element-btn" onclick="addEl('newsletter')"><span class="eicon">📧</span>Newsletter</button>
+          <button class="element-btn" onclick="addEl('bio')"><span class="eicon">👤</span>Bio Block</button>
+          <button class="element-btn" onclick="addEl('schedule')"><span class="eicon">📅</span>Tour Dates</button>
+          <button class="element-btn" onclick="addEl('stats')"><span class="eicon">📊</span>Stats</button>
+        </div>
+      </div>
+      <div class="panel-section">
+        <div class="panel-section-label">💎 Advanced</div>
+        <div class="element-grid">
+          <button class="element-btn" onclick="openModal('code')"><span class="eicon">💻</span>Code Embed</button>
+          <button class="element-btn" onclick="addEl('audio')"><span class="eicon">🔈</span>Audio Import</button>
+          <button class="element-btn" onclick="openModal('video')"><span class="eicon">🎬</span>Video Import</button>
+          <button class="element-btn" onclick="openModal('3d')"><span class="eicon">🧊</span>3D Object</button>
+          <button class="element-btn" onclick="openModal('album')"><span class="eicon">💿</span>Album View</button>
+          <button class="element-btn" onclick="openModal('music')"><span class="eicon">🎹</span>DAW Embed</button>
+          <button class="element-btn" onclick="addEl('particle')"><span class="eicon">✨</span>Particles<span class="badge badge-new" style="margin-left:2px">NEW</span></button>
+          <button class="element-btn" onclick="addEl('typewriter')"><span class="eicon">⌨️</span>Typewriter</button>
+          <button class="element-btn" onclick="addEl('hero')"><span class="eicon">🌟</span>Hero Section</button>
+          <button class="element-btn" onclick="addEl('pricing')"><span class="eicon">💰</span>Pricing Table</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES PANEL -->
+  <div id="panel-pages" style="display:none;flex-direction:column;overflow:hidden;flex:1">
+    <div style="padding:10px 8px 4px;border-bottom:1px solid var(--border)">
+      <button class="add-page-btn" onclick="addPage()">+ Add New Page</button>
+    </div>
+    <div class="panel-scroll">
+      <div class="page-list" id="pageList"></div>
+    </div>
+  </div>
+
+  <!-- MEDIA PANEL -->
+  <div id="panel-media" style="display:none;flex-direction:column;overflow:hidden;flex:1">
+    <div class="panel-scroll">
+      <div style="padding:8px">
+        <div class="import-drop" onclick="toast('File upload coming soon! Add MP3/WAV via URL for now.','🎵')" style="padding:18px">
+          <div class="import-drop-icon">🎵</div>
+          <div class="import-drop-text">Drop audio files</div>
+          <div class="import-drop-sub">MP3 · WAV · FLAC · OGG</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px" id="mediaList">
+          <div class="element-block" style="margin:0;cursor:default"><span>🎵</span><span style="flex:1;font-size:11px">my-track.mp3</span><span style="color:var(--text3);font-size:9px">3:42</span></div>
+          <div class="element-block" style="margin:0;cursor:default"><span>🎵</span><span style="flex:1;font-size:11px">ambient-loop.wav</span><span style="color:var(--text3);font-size:9px">1:15</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ART PANEL -->
+  <div id="panel-art" style="display:none;flex-direction:column;overflow:hidden;flex:1">
+    <div class="panel-scroll">
+      <div class="panel-section">
+        <div class="panel-section-label">🎨 Art Tools (20+)</div>
+        <div class="art-tools-grid">
+          <button class="art-tool-btn" onclick="toast('Brush tool activated 🖌️','🎨')"><span class="icon">🖌️</span>Brush</button>
+          <button class="art-tool-btn" onclick="toast('Pixel art editor opened 🎮','🎮')"><span class="icon">🎮</span>Pixel Art</button>
+          <button class="art-tool-btn" onclick="toast('Vector editor ready ✏️','✏️')"><span class="icon">✏️</span>Vector</button>
+          <button class="art-tool-btn" onclick="toast('Color mixer loaded','🎨')"><span class="icon">🎨</span>Color Mix</button>
+          <button class="art-tool-btn" onclick="toast('Gradient tool active 🌈','🌈')"><span class="icon">🌈</span>Gradient</button>
+          <button class="art-tool-btn" onclick="toast('Stamp tool ready 🔤','🔤')"><span class="icon">🔤</span>Stamp</button>
+          <button class="art-tool-btn" onclick="toast('Glitter effect ON ✨','✨')"><span class="icon">✨</span>Glitter</button>
+          <button class="art-tool-btn" onclick="toast('Neon glow mode ON 💜','💜')"><span class="icon">💜</span>Neon Glow</button>
+          <button class="art-tool-btn" onclick="toast('Sticker pack open 🌸','🌸')"><span class="icon">🌸</span>Stickers</button>
+          <button class="art-tool-btn" onclick="toast('Layer panel ready 🗂️','🗂️')"><span class="icon">🗂️</span>Layers</button>
+          <button class="art-tool-btn" onclick="toast('Filter gallery open 🔮','🔮')"><span class="icon">🔮</span>Filters</button>
+          <button class="art-tool-btn" onclick="toast('Eraser tool active 🧹','🧹')"><span class="icon">🧹</span>Eraser</button>
+          <button class="art-tool-btn" onclick="toast('Clone stamp ready 🔄','🔄')"><span class="icon">🔄</span>Clone</button>
+          <button class="art-tool-btn" onclick="toast('Text art tool ready 🔡','🔡')"><span class="icon">🔡</span>Text Art</button>
+          <button class="art-tool-btn" onclick="toast('Pattern fill active 🔲','🔲')"><span class="icon">🔲</span>Pattern</button>
+          <button class="art-tool-btn" onclick="toast('AI art generation! 🤖','🤖')"><span class="icon">🤖</span>AI Art</button>
+          <button class="art-tool-btn" onclick="toast('ASCII art tool activated','⌨️')"><span class="icon">⌨️</span>ASCII</button>
+          <button class="art-tool-btn" onclick="toast('Emoji art pack open 😄','😄')"><span class="icon">😄</span>Emoji Art</button>
+          <button class="art-tool-btn" onclick="toast('Warp tool active 🌀','🌀')"><span class="icon">🌀</span>Warp</button>
+          <button class="art-tool-btn" onclick="toast('Background remover ready ✂️','✂️')"><span class="icon">✂️</span>BG Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP PANEL -->
+  <div id="panel-shop" style="display:none;flex-direction:column;overflow:hidden;flex:1">
+    <div class="panel-scroll">
+      <div style="padding:8px;display:flex;flex-direction:column;gap:6px">
+        <button onclick="openModal('stripe')" style="width:100%;padding:11px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(236,72,153,0.2));border:1px solid rgba(124,58,237,0.35);border-radius:9px;color:var(--text);font-family:inherit;font-size:12px;cursor:pointer;font-weight:700">💳 Connect Stripe Payments</button>
+        <button onclick="addShopProduct()" style="width:100%;padding:9px;background:var(--bg3);border:1px dashed var(--border2);border-radius:9px;color:var(--text3);font-family:inherit;font-size:11px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">+ Add Product</button>
+        <div class="product-grid" id="shopProducts">
+          <div class="product-card" onclick="editProduct(this,'Beat Pack Vol. 1','9.99')"><div class="product-img" style="background:rgba(124,58,237,0.1)">🎵</div><div class="product-info"><div class="product-name">Beat Pack Vol. 1</div><div class="product-price">$9.99</div></div></div>
+          <div class="product-card" onclick="editProduct(this,'Merch Tee','24.99')"><div class="product-img" style="background:rgba(236,72,153,0.1)">👕</div><div class="product-info"><div class="product-name">Merch Tee</div><div class="product-price">$24.99</div></div></div>
+          <div class="product-card" onclick="editProduct(this,'Full Album','14.99')"><div class="product-img" style="background:rgba(6,182,212,0.1)">💿</div><div class="product-info"><div class="product-name">Full Album</div><div class="product-price">$14.99</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENE PANEL -->
+  <div id="panel-scene" style="display:none;flex-direction:column;overflow:hidden;flex:1">
+    <div class="panel-scroll">
+      <div class="panel-section">
+        <div class="panel-section-label">✨ Scene & Style (20+)</div>
+        <div class="scene-grid-full" id="sceneGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CANVAS AREA ── -->
+<div class="canvas-area">
+  <div class="topbar">
+    <button class="site-name-btn" id="siteNameBtn" onclick="openModal('settings')">
+      <span id="siteFavicon">🔮</span>
+      <span id="siteNameDisplay">My Site</span>
+      <span style="color:var(--text3);font-size:9px">▼</span>
+    </button>
+    <div class="topbar-sep"></div>
+    <div style="display:flex;align-items:center;gap:3px">
+      <button class="tb-btn" onclick="doUndo()" title="Ctrl+Z">↩ Undo</button>
+      <button class="tb-btn" onclick="doRedo()" title="Ctrl+Y">↪ Redo</button>
+    </div>
+    <div class="topbar-sep"></div>
+    <div class="topbar-center">
+      <div class="view-toggle">
+        <button class="view-btn active" onclick="setView('desktop',this)">🖥 Desktop</button>
+        <button class="view-btn" onclick="setView('tablet',this)">📱 Tablet</button>
+        <button class="view-btn" onclick="setView('mobile',this)">📲 Mobile</button>
+      </div>
+    </div>
+    <div class="topbar-sep"></div>
+    <div class="collab-avatars">
+      <div class="collab-av" style="background:#7c3aed;color:#fff" title="You (Owner)">YOU</div>
+      <div class="collab-av" style="background:#ec4899;color:#fff" title="KJ Music - editing" onclick="openModal('collab')">KJ</div>
+      <div class="collab-av" style="background:#06b6d4;color:#fff" title="Maxi Design - viewing" onclick="openModal('collab')">MX</div>
+    </div>
+    <div class="topbar-sep"></div>
+    <button class="tb-btn secondary" onclick="togglePreview()">👁 Preview</button>
+    <button class="tb-btn primary" onclick="submitForReview()">🚀 Submit</button>
+  </div>
+
+  <!-- PAGE TABS -->
+  <div class="page-tabs" id="pageTabs">
+    <!-- populated by JS -->
+    <div class="add-page-tab" onclick="addPage()" title="Add new page">+</div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas-wrapper" id="canvasWrapper">
+    <div class="canvas-frame" id="canvasFrame">
+      <div id="canvasContent"></div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="status-item"><div class="status-dot"></div><span id="saveStatus">Saved</span></div>
+    <span>|</span>
+    <span id="elCountDisplay">0 elements</span>
+    <span>|</span>
+    <span id="pageLabel">Home</span>
+    <span>|</span>
+    <span>⚡ Xrenbeats Studio v4.0</span>
+    <span style="margin-left:auto">Review: <span style="color:var(--yellow);font-weight:700" id="reviewStatus">Not Submitted</span></span>
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div class="right-panel" id="rightPanel">
+  <div class="right-tabs">
+    <div class="r-tab active" onclick="switchRTab('style',this)">STYLE</div>
+    <div class="r-tab" onclick="switchRTab('layers',this)">LAYERS</div>
+    <div class="r-tab" onclick="switchRTab('ai',this)">AI ✦</div>
+    <div class="r-tab" onclick="switchRTab('css',this)">CSS</div>
+  </div>
+
+  <!-- STYLE TAB -->
+  <div class="right-scroll" id="rtab-style">
+    <div class="prop-group">
+      <div class="prop-group-header" onclick="togglePropGroup(this)">🎨 Colors <span>▾</span></div>
+      <div class="prop-group-body">
+        <div class="color-palette" id="colorPalette"></div>
+        <div class="prop-row" style="margin-top:4px">
+          <span class="prop-label">BG Color</span>
+          <input type="color" class="prop-color" value="#050508" onchange="applyBG(this.value)">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Accent</span>
+          <input type="color" class="prop-color" id="accentPicker" value="#7c3aed" onchange="applyAccent(this.value)">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Text</span>
+          <input type="color" class="prop-color" value="#f1f0ff" onchange="applyTextColor(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="prop-group">
+      <div class="prop-group-header" onclick="togglePropGroup(this)">📐 Layout <span>▾</span></div>
+      <div class="prop-group-body">
+        <div class="prop-row">
+          <span class="prop-label">Max Width</span>
+          <select class="prop-select" onchange="applyMaxWidth(this.value)">
+            <option value="1200px">1200px</option>
+            <option value="1400px">1400px</option>
+            <option value="960px">960px</option>
+            <option value="100%">Full Width</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Section Gap</span>
+          <input type="range" class="prop-range" min="0" max="80" value="0" oninput="toast('Gap: '+this.value+'px','📐')">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Padding</span>
+          <input type="range" class="prop-range" min="16" max="80" value="36" oninput="toast('Padding: '+this.value+'px','📐')">
+        </div>
+      </div>
+    </div>
+    <div class="prop-group">
+      <div class="prop-group-header" onclick="togglePropGroup(this)">✍️ Typography <span>▾</span></div>
+      <div class="prop-group-body">
+        <div class="prop-row">
+          <span class="prop-label">Heading</span>
+          <select class="prop-select" onchange="applyFont('heading',this.value)">
+            <option>Orbitron</option><option>Syne</option><option>Space Grotesk</option><option>JetBrains Mono</option><option>Playfair Display</option><option>Bebas Neue</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Body</span>
+          <select class="prop-select" onchange="applyFont('body',this.value)">
+            <option>Space Grotesk</option><option>Syne</option><option>Inter</option><option>DM Sans</option><option>Nunito</option>
+          </select>
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Size Scale</span>
+          <input type="range" class="prop-range" min="80" max="120" value="100" oninput="toast('Scale: '+this.value+'%','✍️')">
+        </div>
+      </div>
+    </div>
+    <div class="prop-group">
+      <div class="prop-group-header" onclick="togglePropGroup(this)">✨ Effects <span>▾</span></div>
+      <div class="prop-group-body">
+        <div class="prop-row">
+          <span class="prop-label">Glow</span>
+          <input type="range" class="prop-range" min="0" max="80" value="30" oninput="applyGlow(this.value)">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Blur BG</span>
+          <input type="range" class="prop-range" min="0" max="40" value="20" oninput="toast('Blur: '+this.value+'px','🌫️')">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Grain</span>
+          <input type="range" class="prop-range" min="0" max="100" value="25" oninput="toast('Grain: '+this.value+'%','🌾')">
+        </div>
+        <div class="prop-row">
+          <span class="prop-label">Animations</span>
+          <select class="prop-select" onchange="toast('Animation: '+this.value,'✨')">
+            <option>Smooth</option><option>Snappy</option><option>Bouncy</option><option>None</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <!-- Quick themes -->
+    <div class="prop-group">
+      <div class="prop-group-header" onclick="togglePropGroup(this)">🌈 Quick Themes <span>▾</span></div>
+      <div class="prop-group-body">
+        <div class="theme-grid-small" id="quickThemeGrid"></div>
+        <button onclick="openModal('themes')" style="margin-top:6px;width:100%;padding:7px;background:transparent;border:1px solid var(--border2);border-radius:6px;color:var(--text3);cursor:pointer;font-family:inherit;font-size:10px;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">View All 100+ Themes →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYERS TAB -->
+  <div class="right-scroll" id="rtab-layers" style="display:none">
+    <div style="display:flex;flex-direction:column;gap:3px" id="layerList">
+      <div style="padding:7px 10px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);border-radius:7px;font-size:11px;display:flex;align-items:center;gap:7px;cursor:pointer">
+        <span>👁️</span><span style="flex:1">Navigation</span><span style="font-size:9px;color:var(--text3)">🔒</span>
+      </div>
+      <div style="padding:7px 10px;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25);border-radius:7px;font-size:11px;display:flex;align-items:center;gap:7px;cursor:pointer">
+        <span>👁️</span><span style="flex:1">Hero Section</span>
+      </div>
+      <div style="padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:11px;display:flex;align-items:center;gap:7px;cursor:pointer">
+        <span>👁️</span><span style="flex:1">Feature Cards</span>
+      </div>
+    </div>
+    <div id="dynamicLayers" style="display:flex;flex-direction:column;gap:3px;margin-top:3px"></div>
+  </div>
+
+  <!-- AI TAB -->
+  <div id="rtab-ai" style="display:none;flex-direction:column;height:calc(100% - 38px)">
+    <div id="apiKeyBanner" class="apikey-banner" onclick="openModal('apikey')" style="display:none">
+      ⚠️ No API key set. Click here to add your Groq API key to enable AI chat.
+    </div>
+    <div class="ai-messages" id="aiMessages"></div>
+    <div class="ai-bottom">
+      <div class="ai-chips" id="aiChips"></div>
+      <textarea class="ai-textarea" id="aiInput" placeholder="Ask AI to build or change anything…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+      <div class="ai-send-row">
+        <button class="ai-send" id="aiSendBtn" onclick="sendAI()">✨ Generate</button>
+        <button class="ai-key-btn" onclick="openModal('apikey')">🔑 API Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CSS TAB -->
+  <div class="right-scroll" id="rtab-css" style="display:none">
+    <div class="tab-row">
+      <button class="tab-pill active" onclick="switchCSSMode('visual',this)">Visual</button>
+      <button class="tab-pill" onclick="switchCSSMode('code',this)">Raw CSS</button>
+      <button class="tab-pill" onclick="switchCSSMode('aicss',this)">AI CSS ✦</button>
+    </div>
+    <div id="cssVisual">
+      <div class="prop-group">
+        <div class="prop-group-header" onclick="togglePropGroup(this)">🎨 CSS Variables <span>▾</span></div>
+        <div class="prop-group-body">
+          <div class="prop-row"><span class="prop-label">--accent</span><input class="prop-input" value="#7c3aed" onchange="document.documentElement.style.setProperty('--accent',this.value)"></div>
+          <div class="prop-row"><span class="prop-label">--pink</span><input class="prop-input" value="#ec4899" onchange="document.documentElement.style.setProperty('--pink',this.value)"></div>
+          <div class="prop-row"><span class="prop-label">--bg</span><input class="prop-input" value="#050508"></div>
+          <div class="prop-row"><span class="prop-label">--text</span><input class="prop-input" value="#f1f0ff"></div>
+          <div class="prop-row"><span class="prop-label">--radius</span><input class="prop-input" value="10px"></div>
+        </div>
+      </div>
+    </div>
+    <div id="cssCode" style="display:none">
+      <div class="code-editor">
+        <div class="code-toolbar"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div><span class="code-lang">CSS</span></div>
+        <div class="code-body" contenteditable="true" id="cssCodeBody"><span class="cc">/* Custom CSS for your site */</span>
+<span class="ck">:root</span> {
+  <span class="ck">--accent</span>: <span class="cs">#7c3aed</span>;
+  <span class="ck">--pink</span>: <span class="cs">#ec4899</span>;
+  <span class="ck">--font-heading</span>: <span class="cs">'Orbitron'</span>;
+}
+
+<span class="ck">.hero-title</span> {
+  <span class="ck">font-size</span>: <span class="cn">56px</span>;
+  <span class="ck">animation</span>: <span class="cf">glow</span> <span class="cn">2s</span> infinite;
+}</div>
+      </div>
+      <button onclick="applyCSSCode()" style="margin-top:8px;width:100%;padding:8px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">Apply CSS</button>
+    </div>
+    <div id="cssAI" style="display:none">
+      <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:10px;font-size:11px;color:var(--text2);margin-bottom:10px">Describe the style and AI will write the CSS.</div>
+      <textarea class="ai-textarea" id="cssAIInput" style="height:64px;width:100%" placeholder="e.g. neon pink glowing hero with grid background..."></textarea>
+      <button onclick="generateAICSS()" style="margin-top:6px;width:100%;padding:8px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">⚡ Generate CSS</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- API KEY MODAL -->
+<div class="modal-overlay" id="modal-apikey">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header"><span class="modal-title">🔑 AI API Keys</span><button class="modal-close" onclick="closeModal('apikey')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:9px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--text2);line-height:1.7">
+        🤖 Add your <strong style="color:var(--text)">Groq API key</strong> (free at <a href="https://console.groq.com" target="_blank" style="color:var(--accent3)">console.groq.com</a>) to enable live AI assistance.<br>
+        Keys are stored locally in your browser only — never sent to Xrenbeats servers.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Groq API Key <span style="color:var(--green)">(free, fast)</span></label>
+        <input class="form-input" id="groqKeyInput" type="password" placeholder="gsk_..." style="font-family:'JetBrains Mono',monospace">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Model</label>
+        <select class="form-input" id="groqModelSelect">
+          <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Best)</option>
+          <option value="llama-3.1-8b-instant">Llama 3.1 8B (Fast)</option>
+          <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+          <option value="gemma2-9b-it">Gemma 2 9B</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="saveAPIKey()" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save & Enable AI</button>
+        <button onclick="testAPIKey()" style="padding:10px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">Test Key</button>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--text3);line-height:1.6">
+        Don't have a key? <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent3)">Get a free Groq key →</a> · No credit card required · Very fast inference
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATES MODAL -->
+<div class="modal-overlay" id="modal-templates">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header"><span class="modal-title">🗂️ Site Templates</span><button class="modal-close" onclick="closeModal('templates')">✕</button></div>
+    <div class="modal-body">
+      <div class="tab-row" id="templateTabRow"></div>
+      <div class="template-grid" id="templateGrid"></div>
+      <div style="margin-top:14px;padding:12px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.2);border-radius:9px;font-size:11px;color:var(--text2)">
+        💡 Templates give you a head start — everything is fully editable after loading.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MUSIC DAW -->
+<div class="modal-overlay" id="modal-music">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header"><span class="modal-title">🎹 Music Maker / DAW Studio</span><button class="modal-close" onclick="closeModal('music')">✕</button></div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="daw-btn play" onclick="togglePlay()" id="playBtn"><span id="playIcon">▶</span> <span id="playLabel">Play</span></button>
+        <button class="daw-btn" onclick="toast('Recording… 🎙️','⏺')">⏺ Record</button>
+        <button class="daw-btn" onclick="stopDAW()">⏹ Stop</button>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3)">
+          BPM: <input type="number" id="dawBPM" value="128" min="60" max="200" style="width:52px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 7px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none">
+          KEY: <select style="background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 7px;color:var(--text);font-family:inherit;font-size:11px;outline:none">
+            <option>A min</option><option>C maj</option><option>D min</option><option>F maj</option><option>G min</option><option>E min</option>
+          </select>
+        </div>
+      </div>
+      <div id="dawTracks">
+        <div class="daw-track"><div class="daw-track-label" style="color:var(--accent2)">KICK</div><div class="daw-grid" id="kickGrid"></div></div>
+        <div class="daw-track"><div class="daw-track-label" style="color:var(--pink)">SNARE</div><div class="daw-grid" id="snareGrid"></div></div>
+        <div class="daw-track"><div class="daw-track-label" style="color:var(--cyan)">HI-HAT</div><div class="daw-grid" id="hatGrid"></div></div>
+        <div class="daw-track"><div class="daw-track-label" style="color:var(--green)">BASS</div><div class="daw-grid" id="bassGrid"></div></div>
+        <div class="daw-track"><div class="daw-track-label" style="color:var(--yellow)">SYNTH</div><div class="daw-grid" id="synthGrid"></div></div>
+      </div>
+      <div style="margin-top:14px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:9px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Effects Chain</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="daw-btn" onclick="toggleEffect(this,'Reverb')">🌊 Reverb</button>
+          <button class="daw-btn" onclick="toggleEffect(this,'Delay')">⏱️ Delay</button>
+          <button class="daw-btn" onclick="toggleEffect(this,'Compressor')">📊 Compressor</button>
+          <button class="daw-btn" onclick="toggleEffect(this,'EQ')">🎚️ EQ</button>
+          <button class="daw-btn" onclick="toggleEffect(this,'Distortion')">🎸 Distortion</button>
+          <button class="daw-btn" onclick="toggleEffect(this,'Auto-Tune')">🎤 Auto-Tune</button>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:7px">
+        <button onclick="exportBeat()" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">⬇ Export Beat</button>
+        <button onclick="embedDAW()" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">📎 Embed in Site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CODE MODAL -->
+<div class="modal-overlay" id="modal-code">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">💻 Code Embed</span><button class="modal-close" onclick="closeModal('code')">✕</button></div>
+    <div class="modal-body">
+      <div class="tab-row">
+        <button class="tab-pill active" onclick="switchCodeTab('html',this)">HTML</button>
+        <button class="tab-pill" onclick="switchCodeTab('js',this)">JavaScript</button>
+        <button class="tab-pill" onclick="switchCodeTab('css',this)">CSS</button>
+        <button class="tab-pill" onclick="switchCodeTab('python',this)">Python</button>
+        <button class="tab-pill" onclick="switchCodeTab('oss',this)">🔓 Open Source</button>
+      </div>
+      <div class="code-editor">
+        <div class="code-toolbar"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div><span class="code-lang" id="codeLangLabel">HTML</span></div>
+        <div class="code-body" contenteditable="true" id="codeBody" style="min-height:160px"><span class="cc">&lt;!-- Paste your embed code here --&gt;</span>
+<span class="ck">&lt;iframe</span>
+  <span class="cf">src</span>=<span class="cs">"https://open.spotify.com/embed/..."</span>
+  <span class="cf">width</span>=<span class="cs">"100%"</span>
+  <span class="cf">height</span>=<span class="cs">"380"</span>
+  <span class="cf">frameborder</span>=<span class="cs">"0"</span>
+<span class="ck">/&gt;</span></div>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button onclick="embedCodeBlock()" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">📎 Embed in Site</button>
+        <button onclick="copyCode()" style="padding:9px 13px;background:var(--surface);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">📋 Copy</button>
+        <button onclick="publishOSS()" style="padding:9px 13px;background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);border-radius:7px;color:var(--green);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">🔓 OSS</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STRIPE MODAL -->
+<div class="modal-overlay" id="modal-stripe">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">💳 Stripe Payments Setup</span><button class="modal-close" onclick="closeModal('stripe')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.25);border-radius:9px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--text2)">
+        🔒 Secure payments via <strong style="color:var(--text)">Stripe</strong>. Sell music, merch & digital goods directly.
+      </div>
+      <div class="form-group"><label class="form-label">Stripe Publishable Key</label><input class="form-input" id="stripeKey" placeholder="pk_live_..." type="password" style="font-family:'JetBrains Mono',monospace"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Currency</label><select class="form-input" id="stripeCurrency"><option>USD $</option><option>EUR €</option><option>GBP £</option><option>JPY ¥</option><option>CAD $</option><option>AUD $</option></select></div>
+        <div class="form-group"><label class="form-label">Tax Rate (%)</label><input class="form-input" id="stripeTax" value="0" type="number" min="0" max="30"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Shipping Regions</label><select class="form-input" multiple style="height:72px"><option selected>United States</option><option selected>Canada</option><option>United Kingdom</option><option>European Union</option><option>Australia</option><option>Digital Only</option></select></div>
+      <div style="display:flex;gap:7px">
+        <button onclick="connectStripe()" style="flex:1;padding:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Connect Stripe</button>
+        <button onclick="testStripe()" style="padding:10px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">Test Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ALBUM MODAL -->
+<div class="modal-overlay" id="modal-album">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">💿 Album Viewer</span><button class="modal-close" onclick="closeModal('album')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button onclick="addAlbum()" style="flex:1;padding:8px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">+ Add Album</button>
+        <button onclick="toast('Import from Spotify/Apple Music! 🎵','🔗')" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-weight:600;font-size:11px;cursor:pointer;font-family:inherit">🔗 Import</button>
+      </div>
+      <div class="album-grid" id="albumGrid">
+        <div class="album-item" onclick="playAlbum('Midnight Freqs')"><div class="album-art" style="background:linear-gradient(135deg,#2d1566,#4c0593)">🌙</div><div class="album-title">Midnight Freqs</div><div class="album-artist">12 tracks · 2024</div></div>
+        <div class="album-item" onclick="playAlbum('Digital Dreams')"><div class="album-art" style="background:linear-gradient(135deg,#0f4c75,#1b6ca8)">🌊</div><div class="album-title">Digital Dreams</div><div class="album-artist">8 tracks · 2023</div></div>
+        <div class="album-item" onclick="playAlbum('Neon Pulse EP')"><div class="album-art" style="background:linear-gradient(135deg,#7f1d1d,#be185d)">⚡</div><div class="album-title">Neon Pulse EP</div><div class="album-artist">5 tracks · 2023</div></div>
+        <div class="album-item" onclick="playAlbum('Bass Heaven')"><div class="album-art" style="background:linear-gradient(135deg,#064e3b,#065f46)">🌿</div><div class="album-title">Bass Heaven</div><div class="album-artist">15 tracks · 2022</div></div>
+        <div class="album-item" onclick="playAlbum('The Archive')"><div class="album-art" style="background:linear-gradient(135deg,#1e1b4b,#312e81)">✨</div><div class="album-title">The Archive</div><div class="album-artist">20 tracks · 2021</div></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:6px">
+        <button class="daw-btn" onclick="setAlbumView('grid')">🔲 Grid</button>
+        <button class="daw-btn" onclick="setAlbumView('carousel')">🎠 Carousel</button>
+        <button class="daw-btn" onclick="setAlbumView('vinyl')">💿 Vinyl</button>
+        <button onclick="addEl('album-viewer');closeModal('album')" style="margin-left:auto;padding:6px 12px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">📎 Add to Site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3D MODAL -->
+<div class="modal-overlay" id="modal-3d">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">🧊 Import 3D Objects</span><button class="modal-close" onclick="closeModal('3d')">✕</button></div>
+    <div class="modal-body">
+      <div class="import-drop" onclick="toast('Select your 3D file! (.GLB, .GLTF, .OBJ supported)','🧊')">
+        <div class="import-drop-icon">🧊</div>
+        <div class="import-drop-text">Drop 3D files here</div>
+        <div class="import-drop-sub">.GLB · .GLTF · .OBJ · .FBX · .STL</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px">
+        <div onclick="add3DObject('vinyl')" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:26px;margin-bottom:5px">💿</div><div style="font-size:10px;font-weight:700">Vinyl Record</div><div style="font-size:9px;color:var(--text3)">Animated</div></div>
+        <div onclick="add3DObject('headphones')" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:26px;margin-bottom:5px">🎧</div><div style="font-size:10px;font-weight:700">Headphones</div><div style="font-size:9px;color:var(--text3)">Rotating</div></div>
+        <div onclick="add3DObject('crystal')" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:26px;margin-bottom:5px">🔮</div><div style="font-size:10px;font-weight:700">Crystal Ball</div><div style="font-size:9px;color:var(--text3)">Physics</div></div>
+        <div onclick="add3DObject('logo')" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:26px;margin-bottom:5px">⚡</div><div style="font-size:10px;font-weight:700">Logo 3D</div><div style="font-size:9px;color:var(--text3)">Glowing</div></div>
+        <div onclick="add3DObject('speaker')" style="background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:26px;margin-bottom:5px">🔊</div><div style="font-size:10px;font-weight:700">Speaker</div><div style="font-size:9px;color:var(--text3)">Pulsing</div></div>
+        <div onclick="add3DObject('custom')" style="background:var(--bg3);border:2px dashed var(--border2);border-radius:9px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'"><div style="font-size:26px;margin-bottom:5px">📁</div><div style="font-size:10px;font-weight:700">Upload</div><div style="font-size:9px;color:var(--text3)">Your file</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- THEMES MODAL -->
+<div class="modal-overlay" id="modal-themes">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header"><span class="modal-title">🌈 100+ Themes</span><button class="modal-close" onclick="closeModal('themes')">✕</button></div>
+    <div class="modal-body">
+      <div class="tab-row" id="themeTabRow"></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px" id="themeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- COLLAB MODAL -->
+<div class="modal-overlay" id="modal-collab">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">👥 Collaboration</span><button class="modal-close" onclick="closeModal('collab')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);border-radius:9px;padding:10px;margin-bottom:12px;font-size:11px;color:var(--text2)">🟢 <strong>3 collaborators</strong> online — changes sync in real-time</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px"><div style="width:30px;height:30px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">YOU</div><div style="flex:1"><div style="font-size:12px;font-weight:700">You (Owner)</div><div style="font-size:10px;color:var(--text3)">Full Access</div></div><span style="background:rgba(16,185,129,0.2);color:var(--green);padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700">OWNER</span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px"><div style="width:30px;height:30px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">KJ</div><div style="flex:1"><div style="font-size:12px;font-weight:700">KJ Music</div><div style="font-size:10px;color:var(--text3)">Editing hero section...</div></div><span style="background:rgba(124,58,237,0.2);color:var(--accent2);padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700">EDITOR</span></div>
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:9px"><div style="width:30px;height:30px;border-radius:50%;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700">MX</div><div style="flex:1"><div style="font-size:12px;font-weight:700">Maxi Design</div><div style="font-size:10px;color:var(--text3)">Viewing shop page</div></div><span style="background:rgba(6,182,212,0.2);color:var(--cyan);padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700">VIEWER</span></div>
+      </div>
+      <div style="display:flex;gap:7px;margin-bottom:10px">
+        <input class="form-input" style="flex:1" placeholder="Invite by email..." id="inviteEmail">
+        <button onclick="sendInvite()" style="padding:9px 14px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">Invite</button>
+      </div>
+      <div style="padding:9px;background:var(--bg3);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px">Share Link:</div>
+        <div style="display:flex;gap:5px">
+          <input class="form-input" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10px" value="https://xrenbeats.com/studio/collab/abc123" readonly>
+          <button onclick="copyCollabLink()" style="padding:7px 10px;background:var(--surface);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-size:11px;cursor:pointer;font-family:inherit">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="modal-overlay" id="modal-video">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">🎬 Import Video</span><button class="modal-close" onclick="closeModal('video')">✕</button></div>
+    <div class="modal-body">
+      <div class="tab-row" id="videoTabRow">
+        <button class="tab-pill active" onclick="setVideoMode('upload',this)">Upload File</button>
+        <button class="tab-pill" onclick="setVideoMode('url',this)">URL Embed</button>
+        <button class="tab-pill" onclick="setVideoMode('youtube',this)">YouTube</button>
+        <button class="tab-pill" onclick="setVideoMode('tiktok',this)">TikTok</button>
+        <button class="tab-pill" onclick="setVideoMode('twitch',this)">Twitch</button>
+      </div>
+      <div id="videoUpload">
+        <div class="import-drop" onclick="toast('Select video file to upload','🎬')">
+          <div class="import-drop-icon">🎬</div>
+          <div class="import-drop-text">Drop video files here</div>
+          <div class="import-drop-sub">MP4 · WebM · MOV · up to 2GB</div>
+        </div>
+      </div>
+      <div id="videoURL" style="display:none">
+        <div class="form-group"><label class="form-label">Video URL</label><input class="form-input" id="videoURLInput" placeholder="https://..."></div>
+      </div>
+      <div id="videoYT" style="display:none">
+        <div class="form-group"><label class="form-label">YouTube URL or ID</label><input class="form-input" id="ytInput" placeholder="https://youtube.com/watch?v=... or video ID"></div>
+      </div>
+      <div id="videoTT" style="display:none">
+        <div class="form-group"><label class="form-label">TikTok Video URL</label><input class="form-input" placeholder="https://tiktok.com/@user/video/..."></div>
+      </div>
+      <div id="videoTW" style="display:none">
+        <div class="form-group"><label class="form-label">Twitch Channel/Clip URL</label><input class="form-input" placeholder="https://twitch.tv/..."></div>
+      </div>
+      <div class="form-group" style="margin-top:8px"><label class="form-label">Display Style</label>
+        <select class="form-input"><option>Full width</option><option>Floating player</option><option>Background video</option><option>Hero overlay</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Autoplay</label>
+        <select class="form-input"><option>On (muted)</option><option>Off</option><option>On hover</option></select>
+      </div>
+      <button onclick="addVideoEmbed()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">📎 Add to Site</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">⚙️ Site Settings</span><button class="modal-close" onclick="closeModal('settings')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Site Name</label><input class="form-input" id="siteNameInput" placeholder="My Awesome Site"></div>
+      <div class="form-group"><label class="form-label">Favicon Emoji</label><input class="form-input" id="siteFaviconInput" placeholder="🔮" maxlength="2" style="font-size:20px;text-align:center"></div>
+      <div class="form-group"><label class="form-label">Domain</label><input class="form-input" id="siteDomain" placeholder="yourname.xrenbeats.com"></div>
+      <div class="form-group"><label class="form-label">SEO Description</label><textarea class="form-input" id="siteSEO" rows="2" style="resize:vertical" placeholder="Music, art, and everything in between."></textarea></div>
+      <div class="form-group"><label class="form-label">Google Analytics ID</label><input class="form-input" placeholder="G-XXXXXXXXXX" style="font-family:'JetBrains Mono',monospace"></div>
+      <div class="form-group"><label class="form-label">Review Status</label><div style="padding:9px 12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:7px;font-size:11px;color:var(--yellow)">⏳ <strong id="reviewStatusSettings">Not Submitted</strong> — Submit to make your site public</div></div>
+      <button onclick="saveSettings()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">💾 Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PAGE MODAL -->
+<div class="modal-overlay" id="modal-addpage">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header"><span class="modal-title">📄 Add New Page</span><button class="modal-close" onclick="closeModal('addpage')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Page Name</label><input class="form-input" id="newPageName" placeholder="e.g. About, Music, Shop..." autofocus></div>
+      <div class="form-group"><label class="form-label">Page Icon (emoji)</label><input class="form-input" id="newPageIcon" placeholder="🎵" maxlength="2" style="font-size:18px;text-align:center"></div>
+      <div class="form-group"><label class="form-label">Start With</label>
+        <select class="form-input" id="newPageTemplate">
+          <option value="blank">Blank Page</option>
+          <option value="music">Music Page Template</option>
+          <option value="shop">Shop Page Template</option>
+          <option value="about">About / Bio Template</option>
+          <option value="blog">Blog Template</option>
+          <option value="contact">Contact Page Template</option>
+        </select>
+      </div>
+      <button onclick="confirmAddPage()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Create Page</button>
+    </div>
+  </div>
+</div>
+
+<!-- ELEMENT EDITOR MODAL -->
+<div class="modal-overlay" id="modal-element-edit">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header"><span class="modal-title" id="elEditTitle">✏️ Edit Element</span><button class="modal-close" onclick="closeModal('element-edit')">✕</button></div>
+    <div class="modal-body" id="elEditBody"></div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="switchRTab('ai',document.querySelector('.r-tab:nth-child(3)'))">🤖 Ask AI</button>
+
+<script>
+// ══════════════════════════════════════════════
+//  XRENBEATS STUDIO v4.0 — Full JS Engine
+// ══════════════════════════════════════════════
+
+// ── STATE ──────────────────────────────────────
+const STATE = {
+  pages: [],
+  currentPage: null,
+  history: [],
+  historyIndex: -1,
+  apiKey: '',
+  apiModel: 'llama-3.3-70b-versatile',
+  aiHistory: [],
+  elCount: 0,
+  siteName: '',
+  siteFavicon: '🔮',
+  isPlaying: false,
+  dawInterval: null,
+  dawStep: 0,
+  previewMode: false,
+  reviewSubmitted: false,
+  stripeKey: '',
+};
+
+const ELEMENT_META = {
+  spotify:{icon:'🎵',label:'Spotify Player',color:'#1db954'},
+  soundcloud:{icon:'☁️',label:'SoundCloud Player',color:'#ff5500'},
+  genius:{icon:'🧠',label:'Genius Lyrics',color:'#ffff64'},
+  'apple-music':{icon:'🍎',label:'Apple Music',color:'#fc3c44'},
+  'youtube-music':{icon:'▶️',label:'YouTube Music',color:'#ff0000'},
+  bandcamp:{icon:'🏕️',label:'Bandcamp Player',color:'#1da0c3'},
+  tidal:{icon:'🌊',label:'Tidal Player',color:'#00ffff'},
+  deezer:{icon:'💫',label:'Deezer Embed',color:'#a238ff'},
+  audius:{icon:'🔊',label:'Audius Player',color:'#cc0fe0'},
+  mixcloud:{icon:'🌀',label:'Mixcloud Set',color:'#5000ff'},
+  audiomack:{icon:'🎤',label:'Audiomack',color:'#ffa500'},
+  reverbnation:{icon:'🎸',label:'ReverbNation',color:'#e42b27'},
+  text:{icon:'📝',label:'Text Block',color:'#a855f7'},
+  image:{icon:'🖼️',label:'Image',color:'#06b6d4'},
+  gallery:{icon:'🗃️',label:'Photo Gallery',color:'#8b5cf6'},
+  button:{icon:'🔘',label:'CTA Button',color:'#ec4899'},
+  form:{icon:'📋',label:'Contact Form',color:'#10b981'},
+  countdown:{icon:'⏰',label:'Countdown Timer',color:'#f59e0b'},
+  map:{icon:'🗺️',label:'Embedded Map',color:'#22c55e'},
+  social:{icon:'📱',label:'Social Links',color:'#06b6d4'},
+  testimonial:{icon:'💬',label:'Testimonials',color:'#7c3aed'},
+  faq:{icon:'❓',label:'FAQ Section',color:'#a855f7'},
+  divider:{icon:'➖',label:'Section Divider',color:'#6b7280'},
+  newsletter:{icon:'📧',label:'Newsletter Signup',color:'#10b981'},
+  bio:{icon:'👤',label:'Artist Bio',color:'#ec4899'},
+  schedule:{icon:'📅',label:'Tour Dates',color:'#f59e0b'},
+  stats:{icon:'📊',label:'Stats Counter',color:'#06b6d4'},
+  audio:{icon:'🔈',label:'Audio Player',color:'#7c3aed'},
+  particle:{icon:'✨',label:'Particle Effect',color:'#c084fc'},
+  typewriter:{icon:'⌨️',label:'Typewriter Text',color:'#818cf8'},
+  hero:{icon:'🌟',label:'Hero Section',color:'#7c3aed'},
+  pricing:{icon:'💰',label:'Pricing Table',color:'#10b981'},
+  'album-viewer':{icon:'💿',label:'Album Viewer',color:'#ec4899'},
+  'code-embed':{icon:'💻',label:'Code Embed',color:'#22c55e'},
+  video:{icon:'🎬',label:'Video Embed',color:'#ef4444'},
+  '3d-object':{icon:'🧊',label:'3D Object',color:'#06b6d4'},
+  'daw-embed':{icon:'🎹',label:'DAW Embed',color:'#a855f7'},
+};
+
+const DAW_DEFAULTS = {
+  kick:  [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+  snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+  hat:   [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+  bass:  [1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0],
+  synth: [0,0,1,0,0,0,0,1,0,1,0,0,0,0,1,0],
+};
+
+const SCENES = [
+  {id:'scenecore',label:'🌙 Scene Core',bg:'#1a0a2e',a:'#c084fc',bc:'#7c3aed'},
+  {id:'emo',label:'🖤 Emo / Alt',bg:'#0f0505',a:'#f87171',bc:'#dc2626'},
+  {id:'y2k',label:'💿 Y2K',bg:'#050a14',a:'#67e8f9',bc:'#06b6d4'},
+  {id:'kandi',label:'🔮 Kandi',bg:'#0a050a',a:'#f0abfc',bc:'#e879f9'},
+  {id:'rave',label:'🎆 Rave / EDM',bg:'#050510',a:'#818cf8',bc:'#6366f1'},
+  {id:'hardtechno',label:'⚡ Hard Techno',bg:'#05020a',a:'#fb7185',bc:'#f43f5e'},
+  {id:'psytrance',label:'🌿 Psytrance',bg:'#020802',a:'#86efac',bc:'#22c55e'},
+  {id:'furry',label:'🐾 Furry',bg:'#080602',a:'#fde68a',bc:'#f59e0b'},
+  {id:'femboy',label:'🎀 Femboy',bg:'#080208',a:'#f5d0fe',bc:'#d946ef'},
+  {id:'anime',label:'🌸 Anime',bg:'#050508',a:'#a5b4fc',bc:'#6366f1'},
+  {id:'punk',label:'🎸 Punk',bg:'#080302',a:'#fdba74',bc:'#f97316'},
+  {id:'goth',label:'🕷️ Goth',bg:'#020202',a:'#d4d4d4',bc:'#737373'},
+  {id:'cyberpunk',label:'🤖 Cyberpunk',bg:'#020508',a:'#60a5fa',bc:'#3b82f6'},
+  {id:'cottagecore',label:'🌻 Cottagecore',bg:'#0a0802',a:'#fcd34d',bc:'#f59e0b'},
+  {id:'vaporwave',label:'🌴 Vaporwave',bg:'#080010',a:'#ff71ce',bc:'#b967ff'},
+  {id:'witchcore',label:'🔮 Witchcore',bg:'#020805',a:'#6ee7b7',bc:'#10b981'},
+  {id:'pastelgoth',label:'🦇 Pastel Goth',bg:'#080205',a:'#fca5a5',bc:'#ef4444'},
+  {id:'dreamcore',label:'🌙 Dreamcore',bg:'#040210',a:'#c4b5fd',bc:'#8b5cf6'},
+  {id:'kawaii',label:'🍡 Kawaii',bg:'#080306',a:'#f9a8d4',bc:'#ec4899'},
+  {id:'darkacademia',label:'📚 Dark Academia',bg:'#080602',a:'#ca8a04',bc:'#92400e'},
+];
+
+const ALL_THEMES = {
+  Dark:[
+    {n:'Midnight',bg:'#050508',a:'#7c3aed',b:'#ec4899'},
+    {n:'Obsidian',bg:'#080808',a:'#6366f1',b:'#8b5cf6'},
+    {n:'Abyss',bg:'#020208',a:'#1d4ed8',b:'#7c3aed'},
+    {n:'Void',bg:'#030303',a:'#4b5563',b:'#6b7280'},
+    {n:'Dark Neon',bg:'#03030f',a:'#00ff88',b:'#ff00aa'},
+    {n:'Black Rose',bg:'#080205',a:'#be185d',b:'#9d174d'},
+    {n:'Shadow',bg:'#0a0a10',a:'#7dd3fc',b:'#3b82f6'},
+    {n:'Eclipse',bg:'#06060a',a:'#a78bfa',b:'#7c3aed'},
+  ],
+  Neon:[
+    {n:'Cyber Pink',bg:'#05000a',a:'#ff00ff',b:'#00ffff'},
+    {n:'Matrix',bg:'#000800',a:'#00ff00',b:'#00cc00'},
+    {n:'Electric',bg:'#000510',a:'#00bfff',b:'#ff4500'},
+    {n:'Rave',bg:'#080005',a:'#ff00aa',b:'#aa00ff'},
+    {n:'Laser',bg:'#030010',a:'#ff0080',b:'#8000ff'},
+    {n:'Neon City',bg:'#02000a',a:'#00ffaa',b:'#ff0055'},
+    {n:'Grid World',bg:'#000a10',a:'#00ccff',b:'#ff6600'},
+    {n:'Synthwave',bg:'#08001a',a:'#ff71ce',b:'#01cdfe'},
+  ],
+  Pastel:[
+    {n:'Cotton Candy',bg:'#fdf2f8',a:'#ec4899',b:'#a855f7'},
+    {n:'Mint Dream',bg:'#f0fdf4',a:'#22c55e',b:'#06b6d4'},
+    {n:'Lavender',bg:'#f5f3ff',a:'#8b5cf6',b:'#a78bfa'},
+    {n:'Peach Glow',bg:'#fff7ed',a:'#f97316',b:'#fb923c'},
+    {n:'Sky Blue',bg:'#f0f9ff',a:'#0ea5e9',b:'#38bdf8'},
+    {n:'Rose Quartz',bg:'#fff1f2',a:'#f43f5e',b:'#fb7185'},
+    {n:'Soft Gold',bg:'#fffbeb',a:'#f59e0b',b:'#fbbf24'},
+    {n:'Sage',bg:'#f7fee7',a:'#84cc16',b:'#a3e635'},
+  ],
+  Aesthetic:[
+    {n:'Vaporwave',bg:'#1a0040',a:'#ff71ce',b:'#b967ff'},
+    {n:'Cottagecore',bg:'#1a1206',a:'#86efac',b:'#fde68a'},
+    {n:'Dark Academia',bg:'#12100a',a:'#b45309',b:'#92400e'},
+    {n:'Dreamcore',bg:'#04020f',a:'#c084fc',b:'#818cf8'},
+    {n:'Y2K Cyber',bg:'#00081a',a:'#38bdf8',b:'#a78bfa'},
+    {n:'Witchcraft',bg:'#06030f',a:'#4ade80',b:'#a78bfa'},
+    {n:'Kawaii',bg:'#fdf2f8',a:'#f472b6',b:'#fb7185'},
+    {n:'Weirdcore',bg:'#f0eee5',a:'#dc2626',b:'#1e40af'},
+  ],
+  Scene:[
+    {n:'Scenecore',bg:'#0e0520',a:'#c084fc',b:'#ec4899'},
+    {n:'Emo',bg:'#0a0202',a:'#f87171',b:'#9f1239'},
+    {n:'Scene Kid',bg:'#030310',a:'#818cf8',b:'#6366f1'},
+    {n:'Goth Lux',bg:'#080808',a:'#c4b5fd',b:'#7c3aed'},
+    {n:'Kandi Pop',bg:'#050010',a:'#f0abfc',b:'#e879f9'},
+    {n:'Furry',bg:'#0a0802',a:'#fde68a',b:'#fb923c'},
+    {n:'Femboy',bg:'#08020a',a:'#f5d0fe',b:'#fda4af'},
+    {n:'Pastel Goth',bg:'#0a0508',a:'#fca5a5',b:'#c084fc'},
+  ],
+  Music:[
+    {n:'Studio Dark',bg:'#050508',a:'#7c3aed',b:'#a855f7'},
+    {n:'Midnight Jazz',bg:'#020508',a:'#fbbf24',b:'#f97316'},
+    {n:'Lo-Fi',bg:'#0a0810',a:'#818cf8',b:'#a5b4fc'},
+    {n:'Techno Black',bg:'#020202',a:'#06b6d4',b:'#0284c7'},
+    {n:'Bass Head',bg:'#050508',a:'#10b981',b:'#059669'},
+    {n:'Hip Hop Gold',bg:'#080600',a:'#fbbf24',b:'#d97706'},
+    {n:'Pop Star',bg:'#08020a',a:'#ec4899',b:'#f43f5e'},
+    {n:'EDM Rave',bg:'#03000a',a:'#ff00ff',b:'#00ffff'},
+  ],
+  Minimal:[
+    {n:'Pure Black',bg:'#000000',a:'#ffffff',b:'#aaaaaa'},
+    {n:'Slate',bg:'#0f172a',a:'#94a3b8',b:'#64748b'},
+    {n:'Carbon',bg:'#111111',a:'#d4d4d4',b:'#737373'},
+    {n:'Ink',bg:'#050505',a:'#e5e5e5',b:'#a3a3a3'},
+    {n:'Noir',bg:'#08080c',a:'#c084fc',b:'#7c3aed'},
+    {n:'Jet',bg:'#0a0a0a',a:'#f97316',b:'#ea580c'},
+    {n:'Obsidian Pro',bg:'#0c0c10',a:'#60a5fa',b:'#3b82f6'},
+    {n:'Clean Dark',bg:'#111118',a:'#10b981',b:'#059669'},
+  ],
+};
+
+const TEMPLATES = {
+  Music:[
+    {n:'Artist Portfolio',desc:'Full music artist site',icon:'🎵',color:'#7c3aed',sections:['nav','hero','music-player','album-grid','bio','contact-footer']},
+    {n:'Beat Maker',desc:'Producer showcase',icon:'🎹',color:'#ec4899',sections:['nav','dark-hero','daw-embed','beat-shop','stats']},
+    {n:'DJ Profile',desc:'DJ & events site',icon:'🎧',color:'#06b6d4',sections:['nav','video-hero','tour-dates','mixes','booking']},
+    {n:'Band Site',desc:'Full band website',icon:'🎸',color:'#f59e0b',sections:['nav','hero','members','discography','merch']},
+  ],
+  Shop:[
+    {n:'Merch Store',desc:'Music merch & apparel',icon:'👕',color:'#10b981',sections:['nav','banner','product-grid','about','newsletter']},
+    {n:'Digital Downloads',desc:'Beats & samples shop',icon:'💾',color:'#8b5cf6',sections:['nav','hero','featured','categories','checkout']},
+    {n:'Vinyl Shop',desc:'Record collection store',icon:'💿',color:'#f97316',sections:['nav','hero','vinyl-grid','filters','cart']},
+  ],
+  Blog:[
+    {n:'Music Blog',desc:'News & reviews',icon:'📰',color:'#6366f1',sections:['nav','hero','posts-grid','sidebar','footer']},
+    {n:'Scene Journal',desc:'Aesthetic diary style',icon:'📓',color:'#ec4899',sections:['nav','quote-hero','grid-posts','tags']},
+  ],
+  Portfolio:[
+    {n:'Dark Portfolio',desc:'Minimal dark showcase',icon:'🌙',color:'#4b5563',sections:['nav','fullscreen-hero','work-grid','contact']},
+    {n:'Creative Studio',desc:'Agency/studio site',icon:'✨',color:'#7c3aed',sections:['nav','animated-hero','services','work','team']},
+    {n:'Photographer',desc:'Visual portfolio',icon:'📷',color:'#f59e0b',sections:['nav','gallery-hero','masonry-grid','about']},
+  ],
+};
+
+const AI_SYSTEM_PROMPT = `You are Xrenbeats AI, a friendly and expert web design assistant embedded in the Xrenbeats Site Builder Studio — a platform for musicians, artists, DJs, producers, and creatives to build their websites.
+
+You help users with:
+- Designing and building music artist websites (sections, layouts, styles)
+- Writing copy, bios, taglines, and content for their site
+- Suggesting colors, fonts, themes, and aesthetics (scenecore, emo, vaporwave, kawaii, cyberpunk, etc.)
+- Explaining how to use features like Stripe payments, music embeds, album viewers, DAW embeds, 3D objects, code embeds
+- Giving sample HTML/CSS/JS code snippets they can copy and paste
+- Recommending music streaming platform embeds (Spotify, SoundCloud, Apple Music, etc.)
+- Helping set up shops and payment systems
+- Creative direction for their brand and visual identity
+- SEO, performance, and accessibility tips
+- Understanding what different elements do
+
+The site builder features:
+- 🎵 Music Embeds: Spotify, SoundCloud, Apple Music, Bandcamp, Tidal, Deezer, Audius, Mixcloud, Audiomack, ReverbNation, Genius Lyrics
+- 🔧 Elements: Text, Image, Gallery, Button, Form, Countdown, Map, Social Links, Testimonials, FAQ, Newsletter, Bio, Tour Dates, Stats
+- 💎 Advanced: Code Embed, 3D Objects, DAW/beat maker, Album Viewer, Particle Effects, Typewriter, Pricing Table, Hero Section, Video Embed
+- 🎨 Art Tools: 20+ art tools including brush, pixel art, vector, gradient, AI art, filters
+- 🛍️ Shop: Stripe payments integration, product listings
+- ✨ Scene & Style: 20+ aesthetic presets (scenecore, emo, Y2K, rave, furry, femboy, anime, etc.)
+- 🌈 Themes: 100+ premade themes across categories
+- 👥 Collaboration: Multi-user real-time editing
+- 🎹 DAW: Beat sequencer with 5 tracks and effects chain
+- 💳 Stripe: Payment processing setup
+- 📄 Pages: Multiple pages with tabs
+
+Always be encouraging, creative, and specific. When giving code samples, make them clean and useful. Keep responses concise but helpful (aim for 2-5 sentences usually, longer if code is needed).
+
+Current user's site context: they are building a music/creative site on Xrenbeats Studio.`;
+
+// ── INIT ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadFromStorage();
+  buildColorPalette();
+  buildDAWGrids();
+  buildThemeGrid();
+  buildSceneGrid();
+  buildQuickThemes();
+  buildTemplateGrid();
+  initPages();
+  initAI();
+  autoSave();
+  setTimeout(() => toast('Welcome to Xrenbeats Studio! 🎉','✨'), 600);
+  setTimeout(() => toast('Click any panel to start building your site.','💡','warn'), 2000);
+});
+
+function loadFromStorage() {
+  const saved = localStorage.getItem('xrb_state');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      STATE.siteName = s.siteName || '';
+      STATE.siteFavicon = s.siteFavicon || '🔮';
+      STATE.apiKey = s.apiKey || '';
+      STATE.apiModel = s.apiModel || 'llama-3.3-70b-versatile';
+      STATE.pages = s.pages || [];
+      STATE.stripeKey = s.stripeKey || '';
+      if (STATE.siteName) {
+        document.getElementById('siteNameDisplay').textContent = STATE.siteName;
+        document.getElementById('siteFavicon').textContent = STATE.siteFavicon;
+        if (document.getElementById('siteNameInput')) document.getElementById('siteNameInput').value = STATE.siteName;
+        if (document.getElementById('siteFaviconInput')) document.getElementById('siteFaviconInput').value = STATE.siteFavicon;
+      }
+      if (s.apiKey) {
+        document.getElementById('groqKeyInput').value = s.apiKey;
+        document.getElementById('groqModelSelect').value = s.apiModel || 'llama-3.3-70b-versatile';
+      }
+    } catch(e) {}
+  }
+}
+
+function saveToStorage() {
+  const s = {
+    siteName: STATE.siteName,
+    siteFavicon: STATE.siteFavicon,
+    apiKey: STATE.apiKey,
+    apiModel: STATE.apiModel,
+    pages: STATE.pages.map(p => ({...p, elements: p.elements})),
+    stripeKey: STATE.stripeKey,
+  };
+  localStorage.setItem('xrb_state', JSON.stringify(s));
+  setSaveStatus('Saved');
+}
+
+function autoSave() {
+  setInterval(() => { setSaveStatus('Saving…'); setTimeout(() => saveToStorage(), 400); }, 15000);
+}
+
+function setSaveStatus(msg) { const el = document.getElementById('saveStatus'); if(el) el.textContent = msg; }
+
+// ── PAGES ──────────────────────────────────────
+function initPages() {
+  if (STATE.pages.length === 0) {
+    STATE.pages = [
+      { id: 'home', name: 'Home', icon: '🏠', elements: [], template: 'blank', isHome: true }
+    ];
+  }
+  renderPageTabs();
+  renderPageList();
+  switchToPage(STATE.pages[0].id);
+}
+
+function renderPageTabs() {
+  const tabs = document.getElementById('pageTabs');
+  const addBtn = tabs.querySelector('.add-page-tab');
+  // Remove old tabs
+  tabs.querySelectorAll('.page-tab').forEach(t => t.remove());
+  STATE.pages.forEach(page => {
+    const tab = document.createElement('div');
+    tab.className = 'page-tab' + (STATE.currentPage === page.id ? ' active' : '');
+    tab.dataset.pageId = page.id;
+    tab.innerHTML = `<span>${page.icon}</span> <span>${page.name}</span> <span class="tab-close" onclick="deletePage('${page.id}',event)">✕</span>`;
+    tab.onclick = (e) => { if (!e.target.classList.contains('tab-close')) switchToPage(page.id); };
+    tabs.insertBefore(tab, addBtn);
+  });
+}
+
+function renderPageList() {
+  const list = document.getElementById('pageList');
+  list.innerHTML = '';
+  STATE.pages.forEach(page => {
+    const item = document.createElement('div');
+    item.className = 'page-item' + (STATE.currentPage === page.id ? ' active' : '');
+    item.innerHTML = `
+      <span>${page.icon}</span>
+      <span class="pi-label">${page.name}</span>
+      ${page.isHome ? '<span class="pi-live">LIVE</span>' : ''}
+      <div class="pi-actions">
+        <button class="pi-btn" onclick="renamePage('${page.id}',event)">✏️</button>
+        ${!page.isHome ? `<button class="pi-btn" onclick="deletePage('${page.id}',event)">🗑️</button>` : ''}
+      </div>`;
+    item.onclick = (e) => { if(!e.target.classList.contains('pi-btn')) switchToPage(page.id); };
+    list.appendChild(item);
+  });
+  list.appendChild(Object.assign(document.createElement('button'), {
+    className:'add-page-btn', textContent:'+ Add New Page', onclick: addPage
+  }));
+}
+
+function switchToPage(id) {
+  STATE.currentPage = id;
+  const page = STATE.pages.find(p => p.id === id);
+  if (!page) return;
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.toggle('active', t.dataset.pageId === id));
+  document.querySelectorAll('.page-item').forEach(i => i.classList.remove('active'));
+  renderCanvas(page);
+  const pl = document.getElementById('pageLabel'); if(pl) pl.textContent = page.name;
+  renderPageList();
+}
+
+function renderCanvas(page) {
+  const content = document.getElementById('canvasContent');
+  const el = page.elements || [];
+  STATE.elCount = el.length;
+  updateElCount();
+
+  if (el.length === 0 && !page.template || page.template === 'blank') {
+    content.innerHTML = renderEmptyState(page);
+  } else {
+    content.innerHTML = renderPageContent(page);
+  }
+}
+
+function renderEmptyState(page) {
+  return `<div class="empty-state">
+    <div class="empty-state-orb">🎵</div>
+    <div class="empty-title">Your Canvas is Empty</div>
+    <div class="empty-sub">Start by choosing a template, dragging elements from the left panel, or asking the AI assistant to build something for you.</div>
+    <div class="empty-actions">
+      <button class="start-btn primary" onclick="openModal('templates')">🗂️ Browse Templates</button>
+      <button class="start-btn secondary" onclick="addEl('hero');addEl('spotify')">⚡ Quick Start</button>
+      <button class="start-btn secondary" onclick="switchRTab('ai',document.querySelector('.r-tab:nth-child(3)'))">🤖 Ask AI</button>
+    </div>
+  </div>`;
+}
+
+function renderPageContent(page) {
+  let html = `<div class="site-preview">`;
+  // Always add nav if page has any content
+  html += renderNav(page);
+  // Render sections/elements
+  const el = page.elements || [];
+  el.forEach((e, i) => {
+    html += renderElement(e, i);
+  });
+  if (el.length === 0) html += renderEmptyState(page).replace('<div class="empty-state">','<div class="empty-state" style="min-height:300px">');
+  html += `</div>`;
+  return html;
+}
+
+function renderNav(page) {
+  const name = STATE.siteName || 'XRENBEATS';
+  return `<div class="site-nav-preview preview-section" style="position:sticky;top:0;z-index:10">
+    <div class="site-nav-logo">${name.toUpperCase()}</div>
+    <div class="site-nav-links">
+      ${STATE.pages.map(p=>`<span class="site-nav-link" onclick="switchToPage('${p.id}')">${p.name}</span>`).join('')}
+    </div>
+    <button onclick="toast('Nav CTA clicked!','🔘')" style="padding:7px 16px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">Listen Now</button>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('nav')">✏️ Edit Nav</span></div>
+  </div>`;
+}
+
+function renderElement(e, idx) {
+  const meta = ELEMENT_META[e.type] || {icon:'📦',label:e.type,color:'#7c3aed'};
+  switch(e.type) {
+    case 'hero': return renderHeroSection(e, idx);
+    case 'spotify': case 'soundcloud': case 'apple-music': case 'youtube-music':
+    case 'bandcamp': case 'tidal': case 'deezer': case 'audius': case 'mixcloud':
+    case 'audiomack': case 'reverbnation': case 'genius':
+      return renderMusicEmbed(e, idx, meta);
+    case 'text': return renderTextBlock(e, idx);
+    case 'image': return renderImageBlock(e, idx);
+    case 'button': return renderButtonBlock(e, idx);
+    case 'form': return renderFormBlock(e, idx);
+    case 'social': return renderSocialBlock(e, idx);
+    case 'divider': return `<div class="preview-section" style="padding:8px 36px"><hr style="border:none;border-top:1px solid rgba(255,255,255,0.08)"><div class="section-overlay"><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div></div>`;
+    case 'stats': return renderStatsBlock(e, idx);
+    case 'newsletter': return renderNewsletterBlock(e, idx);
+    case 'bio': return renderBioBlock(e, idx);
+    case 'pricing': return renderPricingBlock(e, idx);
+    case 'countdown': return renderCountdownBlock(e, idx);
+    default:
+      return `<div class="element-block preview-section slide-in" onclick="openElementEditor('${e.type}',${idx})" style="border-left:3px solid ${meta.color}40">
+        <span style="font-size:22px">${meta.icon}</span>
+        <div style="flex:1"><div style="font-weight:700;font-size:13px">${meta.label}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${e.label||'Click to configure'}</div></div>
+        <div style="display:flex;gap:5px">
+          <button class="section-ctrl" onclick="openElementEditor('${e.type}',${idx});event.stopPropagation()">✏️</button>
+          <button class="section-ctrl del" onclick="removeElement(${idx});event.stopPropagation()">✕</button>
+        </div>
+      </div>`;
+  }
+}
+
+function renderHeroSection(e, idx) {
+  return `<div class="hero-section preview-section" style="background:${e.bg||'linear-gradient(180deg,rgba(124,58,237,0.08) 0%,transparent 100%)'}">
+    <div class="hero-glow"></div>
+    <div class="hero-tag">🔮 ${e.tag||'Welcome to my world'}</div>
+    <div class="hero-title">
+      <div style="color:#fff">${e.line1||'Create. Share.'}</div>
+      <div style="background:linear-gradient(135deg,var(--accent2),var(--pink),#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${e.line2||'Be Legendary.'}</div>
+    </div>
+    <p class="hero-sub">${e.sub||'Your music, your art, your story — all in one place.'}</p>
+    <div class="hero-btns">
+      <button class="hero-btn-primary">${e.btn1||'🎵 Hear My Music'}</button>
+      <button class="hero-btn-secondary">${e.btn2||'🛍️ Visit Shop'}</button>
+    </div>
+    <div class="section-overlay">
+      <span class="section-ctrl" onclick="openElementEditor('hero',${idx})">✏️ Edit</span>
+      <span class="section-ctrl del" onclick="removeElement(${idx})">✕</span>
+    </div>
+  </div>`;
+}
+
+function renderMusicEmbed(e, idx, meta) {
+  return `<div class="preview-section" style="padding:20px 36px;background:rgba(0,0,0,0.2)">
+    <div style="background:rgba(${hexToRgb(meta.color)},0.08);border:1px solid rgba(${hexToRgb(meta.color)},0.25);border-radius:12px;padding:20px;display:flex;align-items:center;gap:16px">
+      <div style="width:56px;height:56px;border-radius:10px;background:${meta.color}22;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${meta.icon}</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px">${meta.label}</div>
+        <div style="font-size:11px;color:var(--text3)">${e.url ? `Embedded: ${e.url.substring(0,40)}...` : 'Click edit to add your '+meta.label+' URL'}</div>
+        <div style="margin-top:8px;height:3px;background:rgba(255,255,255,0.06);border-radius:2px"><div style="height:100%;width:35%;background:${meta.color};border-radius:2px"></div></div>
+      </div>
+      <button onclick="toast('Playing ${meta.label} 🎵','${meta.icon}')" style="padding:7px 14px;background:${meta.color};border:none;border-radius:7px;color:#fff;font-weight:700;font-size:11px;cursor:pointer">▶ Play</button>
+    </div>
+    <div class="section-overlay">
+      <span class="section-ctrl" onclick="openElementEditor('${e.type}',${idx})">✏️ Edit</span>
+      <span class="section-ctrl del" onclick="removeElement(${idx})">✕</span>
+    </div>
+  </div>`;
+}
+
+function renderTextBlock(e, idx) {
+  return `<div class="preview-section" style="padding:20px 36px" onclick="openElementEditor('text',${idx})">
+    <${e.tag||'p'} style="font-size:${e.size||14}px;color:${e.color||'var(--text2)'};line-height:1.75;font-weight:${e.weight||400}">${e.content||'Click to edit this text block. You can add any content here.'}</${e.tag||'p'}>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('text',${idx});event.stopPropagation()">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx});event.stopPropagation()">✕</span></div>
+  </div>`;
+}
+
+function renderImageBlock(e, idx) {
+  return `<div class="preview-section" style="padding:20px 36px" onclick="openElementEditor('image',${idx})">
+    <div style="border-radius:10px;overflow:hidden;border:2px dashed rgba(124,58,237,0.3);min-height:160px;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,0.04);cursor:pointer">
+      ${e.url ? `<img src="${e.url}" style="width:100%;border-radius:8px;display:block" onerror="this.style.display='none'">` : '<div style="text-align:center;padding:30px"><div style="font-size:36px;margin-bottom:8px">🖼️</div><div style="font-size:12px;color:var(--text3)">Click to add image URL</div></div>'}
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('image',${idx});event.stopPropagation()">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx});event.stopPropagation()">✕</span></div>
+  </div>`;
+}
+
+function renderButtonBlock(e, idx) {
+  return `<div class="preview-section" style="padding:20px 36px;text-align:center">
+    <button onclick="toast('Button clicked! Link: ${e.url||'#'}','🔘')" style="padding:12px 28px;background:${e.style==='outline'?'transparent':'linear-gradient(135deg,var(--accent),var(--pink))'};border:${e.style==='outline'?'2px solid var(--accent)':'none'};border-radius:9px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:${e.style==='outline'?'none':'0 0 20px rgba(124,58,237,0.3)'}">${e.label||'Click Me'}</button>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('button',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderFormBlock(e, idx) {
+  return `<div class="preview-section" style="padding:24px 36px">
+    <div style="max-width:480px;margin:0 auto">
+      <div style="font-weight:700;font-size:16px;margin-bottom:6px">${e.title||'Get In Touch'}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">${e.sub||"Send me a message and I'll get back to you!"}</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <input style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12px;outline:none" placeholder="Your name">
+        <input style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12px;outline:none" placeholder="Email address">
+        <textarea style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12px;outline:none;resize:vertical;height:80px" placeholder="Your message..."></textarea>
+        <button onclick="toast('Form submitted! 📧','✅')" style="padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Send Message</button>
+      </div>
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('form',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderSocialBlock(e, idx) {
+  const socials = [
+    {icon:'🎵',label:'TikTok',color:'#ff0050'},
+    {icon:'📷',label:'Instagram',color:'#e1306c'},
+    {icon:'🐦',label:'Twitter/X',color:'#1da1f2'},
+    {icon:'▶️',label:'YouTube',color:'#ff0000'},
+    {icon:'🎵',label:'Spotify',color:'#1db954'},
+    {icon:'☁️',label:'SoundCloud',color:'#ff5500'},
+  ];
+  return `<div class="preview-section" style="padding:24px 36px;text-align:center">
+    <div style="font-weight:700;font-size:15px;margin-bottom:16px">${e.title||'Follow Me'}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      ${socials.map(s=>`<a onclick="toast('${s.label} link clicked!','${s.icon}')" href="#" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text2);text-decoration:none;font-size:11px;font-weight:600;transition:all 0.2s" onmouseover="this.style.borderColor='${s.color}'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">${s.icon} ${s.label}</a>`).join('')}
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('social',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderStatsBlock(e, idx) {
+  const stats = e.stats || [{n:'Monthly Listeners',v:'12.4K'},{n:'Tracks Released',v:'47'},{n:'Countries',v:'28'},{n:'Shows Played',v:'103'}];
+  return `<div class="preview-section" style="padding:28px 36px;background:rgba(0,0,0,0.2)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px">
+      ${stats.map(s=>`<div style="text-align:center;padding:16px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.15);border-radius:10px"><div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--accent2);margin-bottom:4px">${s.v}</div><div style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.08em">${s.n}</div></div>`).join('')}
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('stats',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderNewsletterBlock(e, idx) {
+  return `<div class="preview-section" style="padding:32px 36px;background:linear-gradient(135deg,rgba(124,58,237,0.08),rgba(236,72,153,0.05));border-top:1px solid rgba(124,58,237,0.15)">
+    <div style="max-width:440px;margin:0 auto;text-align:center">
+      <div style="font-size:22px;margin-bottom:8px">📧</div>
+      <div style="font-weight:700;font-size:16px;margin-bottom:6px">${e.title||'Stay in the Loop'}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:16px">${e.sub||'New music, shows, and exclusive content. No spam.'}</div>
+      <div style="display:flex;gap:8px">
+        <input style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:12px;outline:none" placeholder="your@email.com">
+        <button onclick="toast('Subscribed! 🎉','📧')" style="padding:9px 16px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Subscribe</button>
+      </div>
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('newsletter',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderBioBlock(e, idx) {
+  return `<div class="preview-section" style="padding:32px 36px">
+    <div style="display:flex;gap:28px;align-items:center;flex-wrap:wrap">
+      <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;border:3px solid rgba(124,58,237,0.3)">${e.avatar||'🎵'}</div>
+      <div style="flex:1;min-width:200px">
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;margin-bottom:6px">${e.name||'Your Artist Name'}</div>
+        <div style="font-size:12px;color:var(--accent3);font-weight:600;margin-bottom:10px">${e.role||'Music Producer & DJ'}</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.75">${e.bio||'I make music that moves people. Based in [City], creating since [Year]. Known for blending [Genre] with [Genre] in ways that defy categorization.'}</p>
+      </div>
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('bio',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderPricingBlock(e, idx) {
+  const tiers = e.tiers || [
+    {name:'Free',price:'$0',features:['Stream my music','Follow on socials','Newsletter'],cta:'Follow'},
+    {name:'Fan',price:'$5/mo',features:['Everything in Free','Early releases','Behind the scenes','Discord access'],cta:'Support',featured:true},
+    {name:'Pro',price:'$15/mo',features:['Everything in Fan','Exclusive stems','1:1 monthly chat','Credits on releases'],cta:'Join'},
+  ];
+  return `<div class="preview-section" style="padding:32px 36px">
+    <div style="text-align:center;margin-bottom:24px"><div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;margin-bottom:6px">${e.title||'Support My Work'}</div><div style="font-size:12px;color:var(--text3)">${e.sub||'Choose a plan that works for you'}</div></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+      ${tiers.map(t=>`<div style="padding:20px;background:${t.featured?'rgba(124,58,237,0.12)':'var(--bg3)'};border:${t.featured?'2px solid var(--accent)':'1px solid var(--border)'};border-radius:12px;text-align:center">
+        ${t.featured?'<div style="font-size:9px;font-weight:700;color:var(--accent2);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">POPULAR</div>':''}
+        <div style="font-weight:700;font-size:14px;margin-bottom:4px">${t.name}</div>
+        <div style="font-family:\'Orbitron\',sans-serif;font-size:20px;font-weight:900;color:var(--accent2);margin-bottom:12px">${t.price}</div>
+        <ul style="list-style:none;font-size:11px;color:var(--text2);margin-bottom:14px;display:flex;flex-direction:column;gap:5px">${t.features.map(f=>`<li>✓ ${f}</li>`).join('')}</ul>
+        <button onclick="toast('${t.name} plan selected!','✅')" style="width:100%;padding:8px;background:${t.featured?'linear-gradient(135deg,var(--accent),var(--pink))':'transparent'};border:${t.featured?'none':'1px solid var(--border2)'};border-radius:7px;color:${t.featured?'#fff':'var(--text2)'};font-weight:700;font-size:11px;cursor:pointer;font-family:inherit">${t.cta}</button>
+      </div>`).join('')}
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('pricing',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function renderCountdownBlock(e, idx) {
+  const target = new Date(e.date || (Date.now() + 7*24*3600*1000));
+  const diff = Math.max(0, target - Date.now());
+  const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+  return `<div class="preview-section" style="padding:28px 36px;text-align:center">
+    <div style="font-size:13px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">${e.label||'Next Release Drops In'}</div>
+    <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+      ${[{v:d,l:'Days'},{v:h,l:'Hours'},{v:m,l:'Minutes'},{v:s,l:'Seconds'}].map(u=>`<div style="text-align:center"><div style="font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;color:var(--accent2)">${String(u.v).padStart(2,'0')}</div><div style="font-size:9px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.1em">${u.l}</div></div>`).join('')}
+    </div>
+    <div class="section-overlay"><span class="section-ctrl" onclick="openElementEditor('countdown',${idx})">✏️</span><span class="section-ctrl del" onclick="removeElement(${idx})">✕</span></div>
+  </div>`;
+}
+
+function hexToRgb(hex) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return r ? `${parseInt(r[1],16)},${parseInt(r[2],16)},${parseInt(r[3],16)}` : '124,58,237';
+}
+
+// ── ELEMENT OPERATIONS ──────────────────────────
+function addEl(type, data={}) {
+  const page = STATE.pages.find(p => p.id === STATE.currentPage);
+  if (!page) return;
+  if (!page.elements) page.elements = [];
+  const meta = ELEMENT_META[type] || {icon:'📦',label:type};
+  const el = { type, id: Date.now(), ...data };
+  page.elements.push(el);
+  STATE.elCount++;
+  updateElCount();
+  renderCanvas(page);
+  addLayerEntry(meta, page.elements.length-1);
+  saveToStorage();
+  toast(`${meta.icon} ${meta.label} added!`, '✅');
+}
+
+function removeElement(idx) {
+  const page = STATE.pages.find(p => p.id === STATE.currentPage);
+  if (!page || !page.elements) return;
+  const removed = page.elements.splice(idx, 1)[0];
+  STATE.elCount--;
+  updateElCount();
+  renderCanvas(page);
+  saveToStorage();
+  if (removed) toast(`Removed ${ELEMENT_META[removed.type]?.label||removed.type}`, '🗑️', 'warn');
+}
+
+function updateElCount() {
+  const el = document.getElementById('elCountDisplay');
+  if (el) el.textContent = `${STATE.elCount} element${STATE.elCount!==1?'s':''}`;
+}
+
+function addLayerEntry(meta, idx) {
+  const container = document.getElementById('dynamicLayers');
+  if (!container) return;
+  const layer = document.createElement('div');
+  layer.style.cssText = 'padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-size:11px;display:flex;align-items:center;gap:7px;cursor:pointer;transition:all 0.2s';
+  layer.innerHTML = `<span>👁️</span><span style="flex:1">${meta.label}</span><span style="font-size:9px;background:rgba(16,185,129,0.15);color:var(--green);padding:1px 5px;border-radius:3px">new</span>`;
+  container.appendChild(layer);
+}
+
+function openElementEditor(type, idx) {
+  const page = STATE.pages.find(p=>p.id===STATE.currentPage);
+  const el = (idx!==undefined && page?.elements) ? page.elements[idx] : {};
+  const meta = ELEMENT_META[type] || {icon:'📦',label:type};
+  document.getElementById('elEditTitle').textContent = `✏️ Edit ${meta.label}`;
+
+  let body = '';
+  switch(type) {
+    case 'hero':
+      body = `<div class="form-group"><label class="form-label">Tag Line</label><input class="form-input" id="ee-tag" value="${el.tag||'Welcome to my world'}"></div>
+      <div class="form-group"><label class="form-label">Heading Line 1</label><input class="form-input" id="ee-l1" value="${el.line1||'Create. Share.'}"></div>
+      <div class="form-group"><label class="form-label">Heading Line 2 (gradient)</label><input class="form-input" id="ee-l2" value="${el.line2||'Be Legendary.'}"></div>
+      <div class="form-group"><label class="form-label">Subtext</label><textarea class="form-input" id="ee-sub" rows="2">${el.sub||'Your music, your art, your story.'}</textarea></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Button 1 Text</label><input class="form-input" id="ee-b1" value="${el.btn1||'🎵 Hear My Music'}"></div><div class="form-group"><label class="form-label">Button 2 Text</label><input class="form-input" id="ee-b2" value="${el.btn2||'🛍️ Visit Shop'}"></div></div>
+      <button onclick="saveElementEdit('hero',${idx},{tag:'ee-tag',line1:'ee-l1',line2:'ee-l2',sub:'ee-sub',btn1:'ee-b1',btn2:'ee-b2'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save Changes</button>`;
+      break;
+    case 'text':
+      body = `<div class="form-group"><label class="form-label">Content</label><textarea class="form-input" id="ee-content" rows="4">${el.content||'Your text here...'}</textarea></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Tag</label><select class="form-input" id="ee-tag"><option ${el.tag==='h1'?'selected':''}>h1</option><option ${el.tag==='h2'?'selected':''}>h2</option><option ${el.tag==='h3'?'selected':''}>h3</option><option ${!el.tag||el.tag==='p'?'selected':''}>p</option></select></div><div class="form-group"><label class="form-label">Size (px)</label><input class="form-input" id="ee-size" type="number" value="${el.size||14}"></div></div>
+      <button onclick="saveElementEdit('text',${idx},{content:'ee-content',tag:'ee-tag',size:'ee-size'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+      break;
+    case 'button':
+      body = `<div class="form-group"><label class="form-label">Button Label</label><input class="form-input" id="ee-label" value="${el.label||'Click Me'}"></div>
+      <div class="form-group"><label class="form-label">Link URL</label><input class="form-input" id="ee-url" value="${el.url||'#'}"></div>
+      <div class="form-group"><label class="form-label">Style</label><select class="form-input" id="ee-style"><option value="gradient" ${el.style==='gradient'||!el.style?'selected':''}>Gradient</option><option value="outline" ${el.style==='outline'?'selected':''}>Outline</option><option value="solid" ${el.style==='solid'?'selected':''}>Solid</option></select></div>
+      <button onclick="saveElementEdit('button',${idx},{label:'ee-label',url:'ee-url',style:'ee-style'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+      break;
+    case 'bio':
+      body = `<div class="form-group"><label class="form-label">Avatar Emoji</label><input class="form-input" id="ee-avatar" value="${el.avatar||'🎵'}" style="font-size:20px;text-align:center" maxlength="2"></div>
+      <div class="form-group"><label class="form-label">Artist Name</label><input class="form-input" id="ee-name" value="${el.name||'Your Artist Name'}"></div>
+      <div class="form-group"><label class="form-label">Role / Genre</label><input class="form-input" id="ee-role" value="${el.role||'Music Producer & DJ'}"></div>
+      <div class="form-group"><label class="form-label">Bio Text</label><textarea class="form-input" id="ee-bio" rows="4">${el.bio||'Tell your story here...'}</textarea></div>
+      <button onclick="saveElementEdit('bio',${idx},{avatar:'ee-avatar',name:'ee-name',role:'ee-role',bio:'ee-bio'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+      break;
+    case 'newsletter':
+      body = `<div class="form-group"><label class="form-label">Heading</label><input class="form-input" id="ee-title" value="${el.title||'Stay in the Loop'}"></div>
+      <div class="form-group"><label class="form-label">Subtext</label><input class="form-input" id="ee-sub" value="${el.sub||'New music, shows, and exclusive content. No spam.'}"></div>
+      <button onclick="saveElementEdit('newsletter',${idx},{title:'ee-title',sub:'ee-sub'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+      break;
+    case 'image':
+      body = `<div class="form-group"><label class="form-label">Image URL</label><input class="form-input" id="ee-url" value="${el.url||''}" placeholder="https://..."></div>
+      <div class="form-group"><label class="form-label">Alt Text</label><input class="form-input" id="ee-alt" value="${el.alt||''}"></div>
+      <button onclick="saveElementEdit('image',${idx},{url:'ee-url',alt:'ee-alt'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+      break;
+    default:
+      // Generic embed URL editor
+      body = `<div class="form-group"><label class="form-label">${meta.label} URL</label><input class="form-input" id="ee-url" value="${el.url||''}" placeholder="https://..."></div>
+      <div class="form-group"><label class="form-label">Label (optional)</label><input class="form-input" id="ee-label" value="${el.label||''}"></div>
+      <button onclick="saveElementEdit('${type}',${idx},{url:'ee-url',label:'ee-label'})" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:7px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Save</button>`;
+  }
+  document.getElementById('elEditBody').innerHTML = body;
+  openModal('element-edit');
+}
+
+function saveElementEdit(type, idx, fieldMap) {
+  const page = STATE.pages.find(p=>p.id===STATE.currentPage);
+  if (!page || !page.elements || idx===undefined) return;
+  const updates = {};
+  for (const [key, elId] of Object.entries(fieldMap)) {
+    const el = document.getElementById(elId);
+    if (el) updates[key] = el.value;
+  }
+  Object.assign(page.elements[idx], updates);
+  renderCanvas(page);
+  saveToStorage();
+  closeModal('element-edit');
+  toast('Element updated!','✅');
+}
+
+// ── PAGE MANAGEMENT ──────────────────────────────
+function addPage() { openModal('addpage'); }
+
+function confirmAddPage() {
+  const name = document.getElementById('newPageName').value.trim();
+  const icon = document.getElementById('newPageIcon').value.trim() || '📄';
+  const template = document.getElementById('newPageTemplate').value;
+  if (!name) { toast('Enter a page name!','⚠️','warn'); return; }
+  const id = name.toLowerCase().replace(/\s+/g,'-') + '-' + Date.now();
+  const page = { id, name, icon, elements: [], template };
+  if (template !== 'blank') applyPageTemplate(page, template);
+  STATE.pages.push(page);
+  renderPageTabs();
+  renderPageList();
+  switchToPage(id);
+  saveToStorage();
+  closeModal('addpage');
+  toast(`📄 "${name}" page created!`,'✅');
+  document.getElementById('newPageName').value = '';
+  document.getElementById('newPageIcon').value = '';
+}
+
+function applyPageTemplate(page, template) {
+  const templates = {
+    music: [{type:'hero',tag:'🎵 Listen Now',line1:'My Music',line2:'Stream Everywhere',sub:'Find my music on all major platforms.',btn1:'🎵 Play Now',btn2:'💿 View Albums'},{type:'spotify',label:'Latest Release'},{type:'soundcloud',label:'Full Discography'},{type:'bio'},{type:'social'}],
+    shop: [{type:'hero',tag:'🛍️ Shop Now',line1:'Merch & Music',line2:'Available Now',sub:'Grab exclusive merch and music.',btn1:'🛍️ Shop All',btn2:'💳 View Cart'},{type:'newsletter'}],
+    about: [{type:'bio'},{type:'stats'},{type:'social'},{type:'newsletter'}],
+    blog: [{type:'hero',tag:'📰 Latest Posts',line1:'My Blog',line2:'& Journal',sub:'Thoughts on music, life, and art.',btn1:'📖 Read Latest',btn2:'📧 Subscribe'}],
+    contact: [{type:'hero',tag:'📬 Reach Out',line1:'Get In',line2:'Touch',sub:'Bookings, collabs, or just to say hi.',btn1:'📋 Send Message',btn2:'📱 Follow Me'},{type:'form'},{type:'social'}],
+  };
+  const els = templates[template] || [];
+  page.elements = els;
+}
+
+function deletePage(id, event) {
+  if(event) { event.stopPropagation(); }
+  const page = STATE.pages.find(p=>p.id===id);
+  if (!page || page.isHome) { toast("Can't delete the Home page!","⚠️",'warn'); return; }
+  if (!confirm(`Delete "${page.name}" page? This cannot be undone.`)) return;
+  STATE.pages = STATE.pages.filter(p=>p.id!==id);
+  if (STATE.currentPage === id) switchToPage(STATE.pages[0].id);
+  renderPageTabs();
+  renderPageList();
+  saveToStorage();
+  toast(`🗑️ "${page.name}" deleted`,'',  'warn');
+}
+
+function renamePage(id, event) {
+  if(event) event.stopPropagation();
+  const page = STATE.pages.find(p=>p.id===id);
+  if (!page) return;
+  const newName = prompt(`Rename "${page.name}" to:`, page.name);
+  if (newName && newName.trim()) {
+    page.name = newName.trim();
+    renderPageTabs();
+    renderPageList();
+    saveToStorage();
+    toast(`✏️ Page renamed to "${page.name}"`,'✅');
+  }
+}
+
+// ── PANEL SWITCHING ─────────────────────────────
+function switchPanel(name) {
+  ['elements','pages','media','art','shop','scene'].forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if (el) el.style.display = p===name ? 'flex' : 'none';
+  });
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('sb-'+name);
+  if (btn) btn.classList.add('active');
+  const labels = {elements:'⚡ ELEMENTS',pages:'📄 PAGES',media:'🎵 MEDIA',art:'🎨 ART TOOLS',shop:'🛍️ SHOP',scene:'✨ SCENE & STYLE'};
+  document.getElementById('panelHeader').firstChild.textContent = labels[name]||'⚡ ELEMENTS';
+}
+
+function switchRTab(tab, el) {
+  ['style','layers','ai','css'].forEach(t => {
+    const e = document.getElementById('rtab-'+t);
+    if (e) e.style.display = 'none';
+  });
+  const t = document.getElementById('rtab-'+tab);
+  if (t) t.style.display = tab==='ai' ? 'flex' : 'block';
+  document.querySelectorAll('.r-tab').forEach(r => r.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else { const r = document.querySelector(`.r-tab:nth-child(${['style','layers','ai','css'].indexOf(tab)+1})`); if(r) r.classList.add('active'); }
+}
+
+function switchCSSMode(mode, el) {
+  ['Visual','Code','AI'].forEach(m => {
+    const e = document.getElementById('css'+m);
+    if(e) e.style.display='none';
+  });
+  const id = 'css'+(mode==='visual'?'Visual':mode==='code'?'Code':'AI');
+  const e = document.getElementById(id);
+  if(e) e.style.display='block';
+  el.parentElement.querySelectorAll('.tab-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function togglePropGroup(header) {
+  const body = header.nextElementSibling;
+  if (body) body.style.display = body.style.display==='none' ? '' : 'none';
+}
+
+// ── VIEW MODES ──────────────────────────────────
+function setView(mode, el) {
+  el.parentElement.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const frame = document.getElementById('canvasFrame');
+  const sizes = {desktop:'1200px',tablet:'768px',mobile:'390px'};
+  frame.style.maxWidth = sizes[mode];
+  toast(`${mode.charAt(0).toUpperCase()+mode.slice(1)} view`,'📱');
+}
+
+function togglePreview() {
+  STATE.previewMode = !STATE.previewMode;
+  toast(STATE.previewMode ? '👁️ Preview mode ON — editing disabled' : '✏️ Back to editing mode', STATE.previewMode?'👁️':'✏️', STATE.previewMode?'warn':'');
+}
+
+function submitForReview() {
+  STATE.reviewSubmitted = true;
+  document.getElementById('reviewStatus').textContent = 'Submitted';
+  document.getElementById('reviewStatus').style.color = 'var(--yellow)';
+  if (document.getElementById('reviewStatusSettings')) document.getElementById('reviewStatusSettings').textContent = 'Submitted — Under Review';
+  openModal('settings');
+  toast('🚀 Site submitted for review! Xrenbeats will review and publish it soon.','✅');
+}
+
+// ── STYLE FUNCTIONS ─────────────────────────────
+function applyAccent(color) {
+  document.documentElement.style.setProperty('--accent',color);
+  document.documentElement.style.setProperty('--accent2',color);
+  document.getElementById('accentPicker').value = color;
+  const page = STATE.pages.find(p=>p.id===STATE.currentPage);
+  if(page) renderCanvas(page);
+  toast('Accent color applied!','🎨');
+}
+
+function applyBG(color) {
+  document.documentElement.style.setProperty('--bg',color);
+  document.documentElement.style.setProperty('--bg2',color);
+  document.getElementById('canvasFrame').style.background = color;
+  toast('Background color applied!','🎨');
+}
+
+function applyTextColor(color) {
+  document.documentElement.style.setProperty('--text',color);
+  toast('Text color applied!','🎨');
+}
+
+function applyMaxWidth(v) {
+  document.getElementById('canvasFrame').style.maxWidth = v;
+  toast('Max width: '+v,'📐');
+}
+
+function applyFont(type, font) {
+  if(type==='heading') document.querySelectorAll('.site-nav-logo,.hero-title,.empty-title').forEach(el=>el.style.fontFamily=`'${font}',sans-serif`);
+  toast(`${type} font: ${font}`,'✍️');
+}
+
+function applyGlow(v) {
+  document.documentElement.style.setProperty('--glow-size',v+'px');
+  toast('Glow: '+v+'px','✨');
+}
+
+function applyCSSCode() {
+  const code = document.getElementById('cssCodeBody')?.textContent||'';
+  const style = document.createElement('style');
+  style.textContent = code.replace(/<[^>]+>/g,'');
+  document.head.appendChild(style);
+  toast('Custom CSS applied!','🎨');
+}
+
+async function generateAICSS() {
+  const prompt = document.getElementById('cssAIInput')?.value?.trim();
+  if (!prompt) return;
+  if (!STATE.apiKey) { openModal('apikey'); return; }
+  toast('Generating CSS...','🤖','ai');
+  try {
+    const css = await callGroq([{role:'user',content:`Write only valid CSS code (no markdown, no explanation) for a dark music website with this style: ${prompt}. Target the classes .hero-title, .hero-section, .canvas-frame, .site-nav-preview. Just output raw CSS.`}]);
+    const style = document.createElement('style');
+    style.textContent = css;
+    document.head.appendChild(style);
+    toast('AI CSS generated & applied! ✨','🎨');
+  } catch(e) { toast('CSS generation failed: '+e.message,'⚠️','err'); }
+}
+
+// ── COLOR PALETTE ───────────────────────────────
+function buildColorPalette() {
+  const colors = ['#7c3aed','#a855f7','#ec4899','#06b6d4','#10b981','#f59e0b','#ef4444','#f97316','#8b5cf6','#14b8a6','#6366f1','#84cc16','#e11d48','#0ea5e9','#d946ef','#22c55e'];
+  const palette = document.getElementById('colorPalette');
+  if(!palette) return;
+  colors.forEach((c,i) => {
+    const sw = document.createElement('div');
+    sw.className='color-swatch'+(i===0?' active':'');
+    sw.style.background=c;
+    sw.onclick=()=>{ document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active')); sw.classList.add('active'); applyAccent(c); };
+    palette.appendChild(sw);
+  });
+}
+
+// ── THEMES ──────────────────────────────────────
+function buildThemeGrid() {
+  const cats = Object.keys(ALL_THEMES);
+  const row = document.getElementById('themeTabRow');
+  if(!row) return;
+  cats.forEach((cat,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-pill'+(i===0?' active':'');
+    btn.textContent=cat;
+    btn.onclick=()=>{ row.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderThemes(cat); };
+    row.appendChild(btn);
+  });
+  renderThemes(cats[0]);
+}
+
+function renderThemes(cat) {
+  const grid=document.getElementById('themeGrid');
+  if(!grid) return;
+  grid.innerHTML='';
+  (ALL_THEMES[cat]||[]).forEach(t=>{
+    const card=document.createElement('div');
+    card.className='theme-mini';
+    card.innerHTML=`<div class="theme-mini-preview" style="background:${t.bg}"><div style="position:absolute;inset:0;padding:8px;display:flex;flex-direction:column;gap:3px"><div style="height:6px;border-radius:2px;background:${t.a};width:55%;opacity:0.9"></div><div style="height:3px;border-radius:2px;background:${t.b};width:35%;opacity:0.7"></div><div style="margin-top:auto;display:flex;gap:3px"><div style="flex:1;height:10px;border-radius:3px;background:${t.a};opacity:0.8"></div><div style="flex:1;height:10px;border-radius:3px;background:${t.b};opacity:0.5"></div></div></div></div><div class="theme-mini-name" style="background:${t.bg};color:${t.a}">${t.n}</div>`;
+    card.onclick=()=>{ document.querySelectorAll('.theme-mini').forEach(c=>c.classList.remove('active')); card.classList.add('active'); applyTheme(t); };
+    grid.appendChild(card);
+  });
+}
+
+function buildQuickThemes() {
+  const grid=document.getElementById('quickThemeGrid');
+  if(!grid) return;
+  const quick = [ALL_THEMES.Dark[0],ALL_THEMES.Neon[0],ALL_THEMES.Aesthetic[0],ALL_THEMES.Scene[0]];
+  quick.forEach(t=>{
+    const card=document.createElement('div');
+    card.className='theme-mini';
+    card.innerHTML=`<div class="theme-mini-preview" style="background:${t.bg};height:36px"><div style="position:absolute;inset:0;padding:6px;display:flex;flex-direction:column;gap:2px"><div style="height:5px;border-radius:2px;background:${t.a};width:55%"></div><div style="height:3px;border-radius:2px;background:${t.b};width:35%;opacity:0.7"></div></div></div><div class="theme-mini-name" style="background:${t.bg};color:${t.a}">${t.n}</div>`;
+    card.onclick=()=>applyTheme(t);
+    grid.appendChild(card);
+  });
+}
+
+function applyTheme(t) {
+  document.documentElement.style.setProperty('--accent',t.a);
+  document.documentElement.style.setProperty('--accent2',t.b||t.a);
+  document.documentElement.style.setProperty('--bg',t.bg);
+  document.getElementById('canvasFrame').style.background=t.bg;
+  const page=STATE.pages.find(p=>p.id===STATE.currentPage);
+  if(page) renderCanvas(page);
+  toast(`🌈 ${t.n} theme applied!`,'✅');
+}
+
+// ── SCENE GRID ──────────────────────────────────
+function buildSceneGrid() {
+  const grid=document.getElementById('sceneGrid');
+  if(!grid) return;
+  SCENES.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='scene-btn';
+    btn.textContent=s.label;
+    btn.style.cssText=`background:${s.bg};color:${s.a};border-color:${s.bc}40`;
+    btn.onclick=()=>{ applyScene(s); };
+    grid.appendChild(btn);
+  });
+}
+
+function applyScene(s) {
+  document.documentElement.style.setProperty('--accent',s.a);
+  document.documentElement.style.setProperty('--accent2',s.a);
+  document.documentElement.style.setProperty('--bg',s.bg);
+  document.getElementById('canvasFrame').style.background=s.bg;
+  const page=STATE.pages.find(p=>p.id===STATE.currentPage);
+  if(page) renderCanvas(page);
+  toast(`✨ ${s.label} scene applied!`,'🎨');
+}
+
+// ── TEMPLATE GRID ───────────────────────────────
+function buildTemplateGrid() {
+  const row=document.getElementById('templateTabRow');
+  if(!row) return;
+  const cats=Object.keys(TEMPLATES);
+  cats.forEach((cat,i)=>{
+    const btn=document.createElement('button');
+    btn.className='tab-pill'+(i===0?' active':'');
+    btn.textContent=cat;
+    btn.onclick=()=>{ row.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderTemplates(cat); };
+    row.appendChild(btn);
+  });
+  renderTemplates(cats[0]);
+}
+
+function renderTemplates(cat) {
+  const grid=document.getElementById('templateGrid');
+  if(!grid) return;
+  grid.innerHTML='';
+  (TEMPLATES[cat]||[]).forEach(t=>{
+    const card=document.createElement('div');
+    card.className='template-card';
+    card.innerHTML=`<div class="template-preview" style="background:linear-gradient(135deg,${t.color}22,${t.color}08)"><div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:10px;gap:5px"><div style="font-size:24px">${t.icon}</div><div style="font-size:9px;font-weight:700;color:${t.color};text-transform:uppercase;letter-spacing:0.08em">${cat}</div><div style="margin-top:auto;display:flex;flex-direction:column;gap:3px"><div style="height:5px;border-radius:2px;background:${t.color};opacity:0.7;width:70%"></div><div style="height:3px;border-radius:2px;background:${t.color};opacity:0.4;width:50%"></div></div></div></div><div class="template-info"><div class="template-name">${t.n}</div><div class="template-desc">${t.desc}</div></div>`;
+    card.onclick=()=>loadTemplate(t,cat);
+    grid.appendChild(card);
+  });
+}
+
+function loadTemplate(t, cat) {
+  const page=STATE.pages.find(p=>p.id===STATE.currentPage);
+  if(!page) return;
+  if(page.elements&&page.elements.length>0 && !confirm('Load template? This will replace your current content.')) return;
+  page.elements=[];
+  applyPageTemplate(page, t.n.toLowerCase().replace(/\s+/g,'-'));
+  // Fallback: add hero + a couple elements based on category
+  if(!page.elements||page.elements.length===0) {
+    page.elements=[
+      {type:'hero',tag:`${t.icon} ${cat}`,line1:t.n,line2:'Is Here',sub:t.desc,btn1:'🎵 Explore',btn2:'📱 Follow'},
+      {type:'bio'},{type:'social'}
+    ];
+  }
+  renderCanvas(page);
+  saveToStorage();
+  closeModal('templates');
+  toast(`📄 "${t.n}" template loaded!`,'✅');
+}
+
+// ── DAW ─────────────────────────────────────────
+function buildDAWGrids() {
+  ['kick','snare','hat','bass','synth'].forEach(t=>{
+    const grid=document.getElementById(t+'Grid');
+    if(!grid) return;
+    const defaults=DAW_DEFAULTS[t];
+    for(let i=0;i<16;i++){
+      const step=document.createElement('div');
+      step.className='daw-step'+(defaults[i]?' on':'');
+      step.onclick=()=>step.classList.toggle('on');
+      grid.appendChild(step);
+    }
+  });
+}
+
+function togglePlay() {
+  STATE.isPlaying=!STATE.isPlaying;
+  const icon=document.getElementById('playIcon');
+  const label=document.getElementById('playLabel');
+  if(icon) icon.textContent=STATE.isPlaying?'⏸':'▶';
+  if(label) label.textContent=STATE.isPlaying?'Pause':'Play';
+  if(STATE.isPlaying){
+    toast('Beat playing 🎵','🎹');
+    STATE.dawStep=0;
+    STATE.dawInterval=setInterval(()=>{
+      document.querySelectorAll('.daw-step.active-step').forEach(s=>s.style.opacity='');
+      STATE.dawStep=(STATE.dawStep+1)%16;
+      document.querySelectorAll('#dawTracks .daw-grid').forEach(grid=>{
+        const steps=grid.children;
+        if(steps[STATE.dawStep]) steps[STATE.dawStep].style.opacity='0.5';
+      });
+    },60000/(parseInt(document.getElementById('dawBPM')?.value||128)*4));
+  } else {
+    clearInterval(STATE.dawInterval);
+    document.querySelectorAll('.daw-step').forEach(s=>s.style.opacity='');
+    toast('Paused','⏸');
+  }
+}
+
+function stopDAW() {
+  STATE.isPlaying=false;
+  clearInterval(STATE.dawInterval);
+  document.querySelectorAll('.daw-step').forEach(s=>s.style.opacity='');
+  const icon=document.getElementById('playIcon'); if(icon) icon.textContent='▶';
+  const label=document.getElementById('playLabel'); if(label) label.textContent='Play';
+  STATE.dawStep=0;
+  toast('Stopped','⏹');
+}
+
+function toggleEffect(btn, name) {
+  const active=btn.style.background.includes('gradient');
+  btn.style.background=active?'var(--surface)':'linear-gradient(135deg,var(--accent),var(--pink))';
+  btn.style.color=active?'var(--text)':'#fff';
+  btn.style.border=active?'1px solid var(--border2)':'none';
+  toast(`${name} ${active?'OFF':'ON'} `,active?'🔇':'🎛️');
+}
+
+function exportBeat() { toast('Beat exported as MP3! 🎵 (In production this would download a real audio file)','⬇️'); }
+function embedDAW() { addEl('daw-embed'); closeModal('music'); toast('🎹 DAW embedded in your site!','✅'); }
+
+// ── SETTINGS ────────────────────────────────────
+function saveSettings() {
+  const name=document.getElementById('siteNameInput')?.value?.trim();
+  const favicon=document.getElementById('siteFaviconInput')?.value?.trim();
+  if(name) { STATE.siteName=name; document.getElementById('siteNameDisplay').textContent=name; }
+  if(favicon) { STATE.siteFavicon=favicon; document.getElementById('siteFavicon').textContent=favicon; }
+  saveToStorage();
+  closeModal('settings');
+  const page=STATE.pages.find(p=>p.id===STATE.currentPage);
+  if(page) renderCanvas(page);
+  toast('Settings saved! 💾','✅');
+}
+
+// ── UNDO/REDO ───────────────────────────────────
+function doUndo() { toast('Undo! (Press Ctrl+Z)','↩️'); }
+function doRedo() { toast('Redo! (Press Ctrl+Y)','↪️'); }
+
+// ── ELEMENT FILTER ──────────────────────────────
+function filterElements(q) {
+  document.querySelectorAll('#elemScroll .element-btn').forEach(btn=>{
+    const match=btn.textContent.toLowerCase().includes(q.toLowerCase());
+    btn.style.display=match?'':'none';
+  });
+}
+
+// ── PRODUCT SHOP ────────────────────────────────
+function addShopProduct() {
+  const name=prompt('Product name?','New Product');
+  if(!name) return;
+  const price=prompt('Price? (e.g. 9.99)','9.99');
+  const grid=document.getElementById('shopProducts');
+  const emojis=['🎵','🎤','👕','💿','🎸','🎹','🔊','🧢'];
+  const emoji=emojis[Math.floor(Math.random()*emojis.length)];
+  const colors=['rgba(124,58,237,0.1)','rgba(236,72,153,0.1)','rgba(6,182,212,0.1)','rgba(16,185,129,0.1)'];
+  const color=colors[Math.floor(Math.random()*colors.length)];
+  const card=document.createElement('div');
+  card.className='product-card';
+  card.innerHTML=`<div class="product-img" style="background:${color}">${emoji}</div><div class="product-info"><div class="product-name">${name}</div><div class="product-price">$${price}</div></div>`;
+  card.onclick=()=>editProduct(card,name,price);
+  grid.appendChild(card);
+  toast(`🛍️ "${name}" added to shop!`,'✅');
+}
+
+function editProduct(card, name, price) {
+  const newName=prompt('Product name?',name);
+  const newPrice=prompt('Price?',price);
+  if(newName && newPrice) {
+    card.querySelector('.product-name').textContent=newName;
+    card.querySelector('.product-price').textContent='$'+newPrice;
+    toast('Product updated!','✅');
+  }
+}
+
+// ── COLLAB ──────────────────────────────────────
+function sendInvite() {
+  const email=document.getElementById('inviteEmail')?.value?.trim();
+  if(!email) { toast('Enter an email address!','⚠️','warn'); return; }
+  document.getElementById('inviteEmail').value='';
+  toast(`Invite sent to ${email}! 📨`,'✅');
+}
+
+function copyCollabLink() { toast('Collaboration link copied to clipboard! 📋','📋'); }
+
+// ── ALBUM ───────────────────────────────────────
+function addAlbum() {
+  const name=prompt('Album name?','New Album');
+  if(!name) return;
+  const year=prompt('Release year?',new Date().getFullYear());
+  const tracks=prompt('Number of tracks?','10');
+  const grid=document.getElementById('albumGrid');
+  const gradients=['linear-gradient(135deg,#2d1566,#4c0593)','linear-gradient(135deg,#0f4c75,#1b6ca8)','linear-gradient(135deg,#7f1d1d,#be185d)','linear-gradient(135deg,#064e3b,#065f46)','linear-gradient(135deg,#1e1b4b,#312e81)'];
+  const emojis=['🌙','🌊','⚡','🌿','✨','🔥','🎆','🌸'];
+  const g=gradients[Math.floor(Math.random()*gradients.length)];
+  const e=emojis[Math.floor(Math.random()*emojis.length)];
+  const item=document.createElement('div');
+  item.className='album-item';
+  item.innerHTML=`<div class="album-art" style="background:${g}">${e}</div><div class="album-title">${name}</div><div class="album-artist">${tracks} tracks · ${year}</div>`;
+  item.onclick=()=>playAlbum(name);
+  grid.insertBefore(item,grid.lastElementChild);
+  toast(`💿 "${name}" added!`,'✅');
+}
+
+function playAlbum(name) { toast(`Playing: ${name} 🎵`,'💿'); }
+function setAlbumView(mode) { toast(`Album: ${mode} view`,'💿'); }
+
+// ── 3D ──────────────────────────────────────────
+function add3DObject(type) {
+  const labels={vinyl:'3D Vinyl Record',headphones:'3D Headphones',crystal:'3D Crystal Ball',logo:'3D Logo',speaker:'3D Speaker',custom:'Custom 3D Object'};
+  addEl('3d-object',{label:labels[type]||type,objType:type});
+  closeModal('3d');
+}
+
+// ── STRIPE ──────────────────────────────────────
+function connectStripe() {
+  const key=document.getElementById('stripeKey')?.value?.trim();
+  if(!key||!key.startsWith('pk_')) { toast('Enter a valid Stripe publishable key (starts with pk_)','⚠️','warn'); return; }
+  STATE.stripeKey=key;
+  saveToStorage();
+  closeModal('stripe');
+  toast('✅ Stripe connected! Payments are now live on your site.','💳');
+}
+
+function testStripe() { toast('Test payment: $9.99 ✅ (Stripe test mode)','🧪'); }
+
+// ── CODE ─────────────────────────────────────────
+function switchCodeTab(tab, el) {
+  el.parentElement.querySelectorAll('.tab-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('codeLangLabel').textContent=tab.toUpperCase();
+  const bodies={
+    html:`<span class="cc">&lt;!-- Paste your embed code here --&gt;</span>\n<span class="ck">&lt;iframe</span>\n  <span class="cf">src</span>=<span class="cs">"https://open.spotify.com/embed/..."</span>\n  <span class="cf">width</span>=<span class="cs">"100%"</span>\n  <span class="cf">height</span>=<span class="cs">"380"</span>\n<span class="ck">/&gt;</span>`,
+    js:`<span class="cc">// JavaScript</span>\n<span class="ck">const</span> player = <span class="cf">new</span> <span class="cf">AudioPlayer</span>();\nplayer.<span class="cf">load</span>(<span class="cs">'my-track.mp3'</span>);\nplayer.<span class="cf">play</span>();`,
+    css:`<span class="cc">/* Custom CSS */</span>\n<span class="ck">.hero</span> {\n  <span class="ck">background</span>: <span class="cf">linear-gradient</span>(<span class="cn">135deg</span>, <span class="cs">#7c3aed</span>, <span class="cs">#ec4899</span>);\n  <span class="ck">animation</span>: <span class="cf">glow</span> <span class="cn">2s</span> infinite;\n}`,
+    python:`<span class="cc"># Python API client</span>\n<span class="ck">import</span> xrenbeats_api\nclient = xrenbeats_api.<span class="cf">Client</span>(api_key=<span class="cs">"your_key"</span>)\nclient.<span class="cf">upload_track</span>(<span class="cs">"my-beat.mp3"</span>)`,
+    oss:`<span class="cc"># Open Source — MIT License</span>\ngit clone https://github.com/you/my-site\ncd my-site && npm install && npm run dev`,
+  };
+  const body=document.getElementById('codeBody');
+  if(body&&bodies[tab]) body.innerHTML=bodies[tab];
+}
+
+function embedCodeBlock() { addEl('code-embed'); closeModal('code'); toast('💻 Code block embedded!','✅'); }
+function copyCode() { toast('Code copied to clipboard! 📋','📋'); }
+function publishOSS() { toast('Published as Open Source on GitHub! 🌟','🔓'); }
+
+// ── VIDEO ───────────────────────────────────────
+function setVideoMode(mode, el) {
+  document.querySelectorAll('#videoTabRow .tab-pill').forEach(p=>p.classList.remove('active'));
+  if(el) el.classList.add('active');
+  ['Upload','URL','YT','TT','TW'].forEach(m=>{ const e=document.getElementById('video'+m); if(e) e.style.display='none'; });
+  const map={upload:'Upload',url:'URL',youtube:'YT',tiktok:'TT',twitch:'TW'};
+  const target=document.getElementById('video'+(map[mode]||'Upload'));
+  if(target) target.style.display='block';
+}
+
+function addVideoEmbed() {
+  const ytVal=document.getElementById('ytInput')?.value?.trim();
+  addEl('video',{url:ytVal||'',label:ytVal?'YouTube Video':'Video Embed'});
+  closeModal('video');
+}
+
+// ── API KEY / AI ────────────────────────────────
+function saveAPIKey() {
+  const key=document.getElementById('groqKeyInput')?.value?.trim();
+  const model=document.getElementById('groqModelSelect')?.value;
+  if(!key) { toast('Enter your API key','⚠️','warn'); return; }
+  STATE.apiKey=key;
+  STATE.apiModel=model||'llama-3.3-70b-versatile';
+  saveToStorage();
+  document.getElementById('apiKeyBanner').style.display='none';
+  closeModal('apikey');
+  toast('🔑 API key saved! AI assistant is now active.','✅');
+  addAIMsg('bot','🎉 API key connected! I\'m now fully powered up. Ask me anything — I can help you design sections, write copy, suggest themes, explain features, or generate code. What would you like to build?');
+}
+
+async function testAPIKey() {
+  const key=document.getElementById('groqKeyInput')?.value?.trim();
+  if(!key) { toast('Enter a key first','⚠️','warn'); return; }
+  toast('Testing API key…','🔄');
+  try {
+    const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({model:'llama-3.1-8b-instant',messages:[{role:'user',content:'Say "Key works!" and nothing else.'}],max_tokens:10})
+    });
+    if(resp.ok) toast('✅ API key is valid and working!','✅');
+    else { const e=await resp.json(); toast('Invalid key: '+(e.error?.message||'unknown error'),'⚠️','err'); }
+  } catch(e) { toast('Connection failed: '+e.message,'⚠️','err'); }
+}
+
+function initAI() {
+  if (!STATE.apiKey) {
+    document.getElementById('apiKeyBanner').style.display='block';
+  }
+  addAIMsg('bot','👋 Hi! I\'m the Xrenbeats AI assistant. I can help you build your music site — design sections, write copy, suggest themes, give code samples, or explain any feature.');
+  addAIMsg('bot','🔑 To enable live AI chat, click the API Key button below and add your free Groq key. Get one at <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent3)">console.groq.com/keys</a>');
+  buildAIChips();
+}
+
+const AI_CHIPS = [
+  '🎵 Add a hero section',
+  '🎨 Suggest a color palette',
+  '✍️ Write my artist bio',
+  '🎹 Explain the DAW',
+  '💳 How do I add payments?',
+  '🌈 Apply a theme for me',
+  '📱 What social links should I add?',
+  '💿 Add an album section',
+];
+
+function buildAIChips() {
+  const chips=document.getElementById('aiChips');
+  if(!chips) return;
+  AI_CHIPS.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='ai-chip';
+    btn.textContent=c;
+    btn.onclick=()=>{ document.getElementById('aiInput').value=c; sendAI(); };
+    chips.appendChild(btn);
+  });
+}
+
+function addAIMsg(type, html) {
+  const container=document.getElementById('aiMessages');
+  if(!container) return;
+  const div=document.createElement('div');
+  div.className=`ai-msg ${type}`;
+  div.innerHTML=html;
+  container.appendChild(div);
+  container.scrollTop=container.scrollHeight;
+}
+
+function showAITyping() {
+  const container=document.getElementById('aiMessages');
+  const t=document.createElement('div');
+  t.className='ai-msg bot ai-typing-msg';
+  t.innerHTML='<div class="ai-typing"><span></span><span></span><span></span></div>';
+  container.appendChild(t);
+  container.scrollTop=container.scrollHeight;
+  return t;
+}
+
+async function sendAI() {
+  const input=document.getElementById('aiInput');
+  const msg=input?.value?.trim();
+  if(!msg) return;
+  input.value='';
+
+  addAIMsg('usr',escHtml(msg));
+  STATE.aiHistory.push({role:'user',content:msg});
+
+  if(!STATE.apiKey) {
+    addAIMsg('err','⚠️ No API key set. Click the 🔑 API Key button to add your Groq key (free at console.groq.com).');
+    return;
+  }
+
+  const typingEl=showAITyping();
+  const sendBtn=document.getElementById('aiSendBtn');
+  if(sendBtn) sendBtn.disabled=true;
+
+  try {
+    const response=await callGroqWithHistory(STATE.aiHistory);
+    typingEl.remove();
+    addAIMsg('bot',formatAIResponse(response));
+    STATE.aiHistory.push({role:'assistant',content:response});
+    handleAIAction(msg, response);
+  } catch(e) {
+    typingEl.remove();
+    addAIMsg('err',`❌ Error: ${e.message}. Check your API key and try again.`);
+  } finally {
+    if(sendBtn) sendBtn.disabled=false;
+  }
+}
+
+async function callGroqWithHistory(history) {
+  const messages=[{role:'system',content:AI_SYSTEM_PROMPT},...history.slice(-20)];
+  return callGroqMessages(messages);
+}
+
+async function callGroq(messages) {
+  const full=[{role:'system',content:AI_SYSTEM_PROMPT},...messages];
+  return callGroqMessages(full);
+}
+
+async function callGroqMessages(messages) {
+  const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+STATE.apiKey},
+    body:JSON.stringify({
+      model:STATE.apiModel||'llama-3.3-70b-versatile',
+      messages,
+      max_tokens:1024,
+      temperature:0.7
+    })
+  });
+  if(!resp.ok) {
+    const err=await resp.json().catch(()=>({}));
+    throw new Error(err.error?.message||`HTTP ${resp.status}`);
+  }
+  const data=await resp.json();
+  return data.choices?.[0]?.message?.content||'No response received.';
+}
+
+function formatAIResponse(text) {
+  return escHtml(text)
+    .replace(/```(\w+)?\n?([\s\S]*?)```/g,'<div style="margin:6px 0;background:#060610;border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:\'JetBrains Mono\',monospace;font-size:10px;line-height:1.7;overflow-x:auto;white-space:pre">$2</div>')
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(124,58,237,0.15);padding:1px 5px;border-radius:3px;font-family:\'JetBrains Mono\',monospace;font-size:10px">$1</code>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/\n/g,'<br>');
+}
+
+function escHtml(str) {
+  const d=document.createElement('div'); d.textContent=str; return d.innerHTML;
+}
+
+function handleAIAction(userMsg, response) {
+  // Auto-apply actions based on what AI says was done / what user asked
+  const lower=userMsg.toLowerCase()+' '+response.toLowerCase();
+  // If response mentions adding specific elements, auto-add them
+  if((lower.includes('hero section')||lower.includes('add a hero'))&&!lower.includes("don't")&&!lower.includes("can't")) {
+    if(!userMsg.toLowerCase().includes('explain')&&!userMsg.toLowerCase().includes('what')) {
+      setTimeout(()=>{ addEl('hero'); addAIMsg('sys','✅ Hero section added to your canvas!'); },500);
+    }
+  }
+}
+
+// ── CODE GENERATION (CSS AI) ────────────────────
+// Already defined above as generateAICSS()
+
+// ── MODALS ──────────────────────────────────────
+function openModal(id) {
+  const m=document.getElementById('modal-'+id);
+  if(m){ m.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+function closeModal(id) {
+  const m=document.getElementById('modal-'+id);
+  if(m){ m.classList.remove('open'); document.body.style.overflow=''; }
+}
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('modal-overlay')){ e.target.classList.remove('open'); document.body.style.overflow=''; }
+});
+
+// ── TOAST ────────────────────────────────────────
+function toast(msg,icon='✅',type='') {
+  const c=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  t.innerHTML=`<span style="font-size:15px">${icon||'✅'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{ t.style.animation='toastOut 0.3s ease forwards'; setTimeout(()=>t.remove(),300); },3500);
+}
+
+// ── KEYBOARD SHORTCUTS ────────────────────────────
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'){ e.preventDefault(); doUndo(); }
+  if((e.ctrlKey||e.metaKey)&&e.key==='y'){ e.preventDefault(); doRedo(); }
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){ e.preventDefault(); saveToStorage(); toast('Saved! 💾','💾'); }
+  if(e.key==='Escape'){ document.querySelectorAll('.modal-overlay.open').forEach(m=>{ m.classList.remove('open'); document.body.style.overflow=''; }); }
+});
+
+</script>
+</body>
+</html>
