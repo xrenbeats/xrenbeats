@@ -1,2 +1,2935 @@
-post to the community today!
-(site builder coming soon. email jace@xrenbeats.com to build your website for you and i will!)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xrenbeats — Site Builder Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050508;
+  --bg2: #0c0c14;
+  --bg3: #12121e;
+  --bg4: #1a1a2e;
+  --surface: #1e1e32;
+  --surface2: #252540;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --accent3: #c084fc;
+  --pink: #ec4899;
+  --cyan: #06b6d4;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --orange: #f97316;
+  --text: #f1f0ff;
+  --text2: #a8a3c4;
+  --text3: #6b6888;
+  --glow: 0 0 30px rgba(124,58,237,0.3);
+  --glow2: 0 0 60px rgba(124,58,237,0.15);
+  --radius: 10px;
+  --radius2: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* ── GRID BG ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── LAYOUT ── */
+.app { display: flex; height: 100vh; position: relative; z-index: 1; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 64px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 0;
+  gap: 4px;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 12px;
+  box-shadow: 0 0 20px rgba(124,58,237,0.5);
+  flex-shrink: 0;
+}
+
+.sidebar-divider {
+  width: 32px;
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.sidebar-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sidebar-btn:hover, .sidebar-btn.active {
+  background: var(--surface);
+  color: var(--accent3);
+}
+
+.sidebar-btn.active {
+  background: rgba(124,58,237,0.2);
+  color: var(--accent2);
+  box-shadow: 0 0 12px rgba(124,58,237,0.2);
+}
+
+.sidebar-btn .tooltip {
+  position: absolute;
+  left: calc(100% + 10px);
+  background: var(--surface2);
+  color: var(--text);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  border: 1px solid var(--border2);
+  z-index: 999;
+}
+
+.sidebar-btn:hover .tooltip { opacity: 1; }
+
+/* ── LEFT PANEL ── */
+.left-panel {
+  width: 280px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--accent2);
+  text-transform: uppercase;
+}
+
+.panel-search {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-search input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.panel-search input:focus { border-color: var(--accent); }
+.panel-search input::placeholder { color: var(--text3); }
+
+.panel-scroll { overflow-y: auto; flex: 1; }
+.panel-scroll::-webkit-scrollbar { width: 3px; }
+.panel-scroll::-webkit-scrollbar-track { background: transparent; }
+.panel-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.panel-section { padding: 10px 0; }
+
+.panel-section-label {
+  padding: 4px 14px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.element-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 0 10px;
+}
+
+.element-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text2);
+  font-size: 11px;
+  position: relative;
+  overflow: hidden;
+}
+
+.element-btn:hover {
+  border-color: var(--accent);
+  background: rgba(124,58,237,0.1);
+  color: var(--text);
+}
+
+.element-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.element-btn:hover::before { opacity: 1; }
+
+.element-btn .icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.element-btn.featured {
+  grid-column: span 2;
+  flex-direction: row;
+  text-align: left;
+  gap: 10px;
+  padding: 10px 12px;
+  border-color: rgba(124,58,237,0.3);
+  background: rgba(124,58,237,0.08);
+}
+
+.element-btn.featured .icon { font-size: 22px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-new { background: rgba(16,185,129,0.2); color: var(--green); }
+.badge-pro { background: rgba(245,158,11,0.2); color: var(--yellow); }
+.badge-ai { background: rgba(168,85,247,0.2); color: var(--accent2); }
+.badge-hot { background: rgba(239,68,68,0.2); color: var(--red); }
+
+/* ── CANVAS AREA ── */
+.canvas-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  height: 52px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  z-index: 50;
+}
+
+.site-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.site-name:hover { border-color: var(--accent); }
+
+.topbar-sep { width: 1px; height: 24px; background: var(--border); }
+
+.topbar-group { display: flex; align-items: center; gap: 4px; }
+
+.tb-btn {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tb-btn:hover { background: var(--surface); color: var(--text); border-color: var(--border); }
+
+.tb-btn.primary {
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 0 16px rgba(124,58,237,0.4);
+  padding: 0 14px;
+}
+
+.tb-btn.primary:hover {
+  box-shadow: 0 0 24px rgba(124,58,237,0.6);
+  transform: translateY(-1px);
+}
+
+.tb-btn.secondary {
+  background: var(--surface);
+  border-color: var(--border2);
+  color: var(--text);
+}
+
+.topbar-center { flex: 1; display: flex; justify-content: center; align-items: center; gap: 4px; }
+
+.view-toggle { display: flex; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 2px; }
+
+.view-btn {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.view-btn.active { background: var(--surface2); color: var(--text); }
+
+/* ── CANVAS ── */
+.canvas-wrapper {
+  flex: 1;
+  overflow: auto;
+  background: var(--bg3);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+}
+
+.canvas-frame {
+  width: 100%;
+  max-width: 1200px;
+  min-height: 800px;
+  background: #0a0a0f;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 80px rgba(0,0,0,0.8), 0 0 40px rgba(124,58,237,0.05);
+  animation: frameIn 0.4s ease;
+}
+
+@keyframes frameIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SITE HERO PREVIEW ── */
+.site-hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-nav-preview {
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(20px);
+}
+
+.site-nav-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent2), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.site-nav-links { display: flex; gap: 24px; }
+
+.site-nav-link {
+  font-size: 13px;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.site-nav-link:hover { color: #fff; }
+
+.site-hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 40px;
+  position: relative;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 100px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent3);
+  margin-bottom: 24px;
+  letter-spacing: 0.05em;
+}
+
+.hero-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.hero-title .line1 { color: #fff; }
+.hero-title .line2 {
+  background: linear-gradient(135deg, var(--accent2), var(--pink), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  max-width: 480px;
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+.hero-btn-primary {
+  padding: 13px 28px;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 0 30px rgba(124,58,237,0.4);
+  transition: all 0.3s;
+}
+
+.hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(124,58,237,0.6); }
+
+.hero-btn-secondary {
+  padding: 13px 28px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.hero-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+/* ── SECTION BLOCKS PREVIEW ── */
+.block-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+
+.block-card {
+  background: #0c0c18;
+  padding: 32px 28px;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.block-card:hover { background: #121220; }
+
+.block-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
+
+.block-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.block-card-desc {
+  font-size: 12px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.6;
+}
+
+/* ── RIGHT PANEL ── */
+.right-panel {
+  width: 296px;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.right-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.r-tab {
+  flex: 1;
+  padding: 11px 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text3);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.r-tab.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+.r-tab:hover { color: var(--text2); }
+
+.right-scroll { overflow-y: auto; flex: 1; padding: 12px; }
+.right-scroll::-webkit-scrollbar { width: 3px; }
+.right-scroll::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── PROPERTY GROUPS ── */
+.prop-group {
+  margin-bottom: 16px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.prop-group-header {
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.prop-group-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+.prop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.prop-label {
+  font-size: 11px;
+  color: var(--text3);
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.prop-input {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 9px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+}
+
+.prop-input:focus { border-color: var(--accent); }
+
+.prop-color {
+  width: 32px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+}
+
+.prop-select {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 9px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.prop-range { flex: 1; accent-color: var(--accent); }
+
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 4px;
+}
+
+.color-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.color-swatch:hover { transform: scale(1.15); }
+.color-swatch.active { border-color: #fff; }
+
+/* ── THEME CARDS ── */
+.theme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+
+.theme-card {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.theme-card:hover { transform: scale(1.02); }
+.theme-card.active { border-color: var(--accent2); }
+
+.theme-preview {
+  height: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-name {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 8px;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+/* ── TOOL PALETTE ── */
+.tool-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tool-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  font-size: 12px;
+}
+
+.tool-item:hover { border-color: var(--accent); background: rgba(124,58,237,0.08); color: var(--text); }
+
+.tool-item .icon { font-size: 16px; width: 20px; text-align: center; }
+.tool-item .label { flex: 1; }
+.tool-item .shortcut { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text3); background: var(--bg2); padding: 2px 5px; border-radius: 3px; }
+
+/* ── AI PANEL ── */
+.ai-chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ai-msg {
+  max-width: 90%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.ai-msg.assistant {
+  background: rgba(124,58,237,0.12);
+  border: 1px solid rgba(124,58,237,0.2);
+  align-self: flex-start;
+}
+
+.ai-msg.user {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  align-self: flex-end;
+  color: var(--text2);
+}
+
+.ai-input-row {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+}
+
+.ai-input {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
+  height: 60px;
+}
+
+.ai-input:focus { border-color: var(--accent); }
+
+.ai-send {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  align-self: flex-end;
+  transition: all 0.2s;
+}
+
+.ai-send:hover { transform: scale(1.05); box-shadow: 0 0 16px rgba(124,58,237,0.5); }
+
+/* ── MODALS ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 80px rgba(0,0,0,0.8), 0 0 30px rgba(124,58,237,0.1);
+  transform: translateY(20px);
+  transition: transform 0.25s ease;
+}
+
+.modal-overlay.open .modal { transform: translateY(0); }
+
+.modal-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover { background: var(--red); border-color: var(--red); color: #fff; }
+
+.modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+
+/* ── TABS ── */
+.tab-row {
+  display: flex;
+  gap: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tab-pill {
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  transition: all 0.2s;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.tab-pill.active { background: var(--surface2); color: var(--text); }
+
+/* ── PLATFORM GRID ── */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+}
+
+.platform-btn {
+  padding: 12px 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text2);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.platform-btn:hover { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--text); }
+.platform-btn .p-icon { font-size: 22px; }
+
+/* ── ART TOOLS GRID ── */
+.art-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 6px;
+}
+
+.art-tool-btn {
+  padding: 14px 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text2);
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.art-tool-btn:hover { border-color: var(--pink); background: rgba(236,72,153,0.1); color: var(--text); }
+.art-tool-btn .icon { font-size: 20px; display: block; margin-bottom: 6px; }
+
+/* ── SCENE TAGS ── */
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 6px;
+}
+
+.scene-btn {
+  padding: 14px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.scene-btn:hover { transform: scale(1.03); border-color: rgba(255,255,255,0.2); }
+
+/* ── STRIPE SECTION ── */
+.stripe-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+
+.form-label { font-size: 11px; color: var(--text3); font-weight: 500; }
+
+.form-input {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus { border-color: var(--accent); }
+
+/* ── STATUS BAR ── */
+.statusbar {
+  height: 28px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--text3);
+  flex-shrink: 0;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  flex-shrink: 0;
+}
+
+.status-item { display: flex; align-items: center; gap: 5px; }
+
+/* ── COLLABORATORS ── */
+.collab-avatars {
+  display: flex;
+  align-items: center;
+}
+
+.collab-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: -6px;
+}
+
+.collab-avatar:first-child { margin-left: 0; }
+
+/* ── NOTIFICATION TOAST ── */
+.toast-container {
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--green);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  animation: toastIn 0.3s ease;
+  max-width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toast.warn { border-left-color: var(--yellow); }
+.toast.error { border-left-color: var(--red); }
+.toast.ai { border-left-color: var(--accent2); }
+
+@keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(120%); opacity: 0; }
+}
+
+/* ── CODE EDITOR ── */
+.code-editor {
+  background: #0a0a0f;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.code-toolbar {
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.code-dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ff5f56; }
+.dot-y { background: #ffbd2e; }
+.dot-g { background: #27c93f; }
+
+.code-lang {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text3);
+}
+
+.code-body {
+  padding: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #e2e0ff;
+  white-space: pre;
+  overflow-x: auto;
+  min-height: 120px;
+  outline: none;
+}
+
+.code-keyword { color: var(--accent2); }
+.code-string { color: var(--green); }
+.code-comment { color: var(--text3); }
+.code-fn { color: var(--cyan); }
+.code-num { color: var(--orange); }
+
+/* ── DAW / MUSIC MAKER ── */
+.daw-grid {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 3px;
+}
+
+.daw-step {
+  height: 28px;
+  border-radius: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.daw-step.on { background: var(--accent2); border-color: var(--accent); box-shadow: 0 0 8px rgba(168,85,247,0.4); }
+.daw-step:hover { border-color: var(--accent3); }
+
+.daw-track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.daw-track-label {
+  width: 60px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+.daw-controls { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+
+.daw-btn {
+  padding: 7px 14px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.daw-btn.play { background: linear-gradient(135deg, var(--green), #059669); border: none; box-shadow: 0 0 16px rgba(16,185,129,0.3); }
+.daw-btn:hover { transform: translateY(-1px); }
+
+/* ── ALBUM VIEWER ── */
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.album-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.album-item:hover { transform: scale(1.04); }
+
+.album-art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 6px;
+}
+
+.album-title { font-size: 11px; font-weight: 600; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.album-artist { font-size: 10px; color: var(--text3); }
+
+/* ── 3D IMPORT AREA ── */
+.import-drop {
+  border: 2px dashed var(--border2);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 12px;
+}
+
+.import-drop:hover { border-color: var(--accent); background: rgba(124,58,237,0.05); }
+.import-drop-icon { font-size: 32px; margin-bottom: 8px; }
+.import-drop-text { font-size: 13px; color: var(--text2); }
+.import-drop-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* ── SHOP SECTION ── */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.product-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.product-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.product-img {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.product-info { padding: 8px 10px; }
+.product-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+.product-price { font-size: 13px; font-weight: 700; color: var(--green); }
+
+/* ── OPEN SOURCE VIEWER ── */
+.oss-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.oss-stats { display: flex; gap: 12px; margin-top: 12px; }
+
+.oss-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text2);
+  background: var(--bg3);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.spin { animation: spin 1s linear infinite; }
+.pulse-dot { animation: pulse 2s infinite; }
+
+/* ── FLOATING ACTION ── */
+.fab {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--accent), var(--pink));
+  border: none;
+  border-radius: 100px;
+  padding: 12px 24px;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(124,58,237,0.5);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+
+.fab:hover { transform: translateX(-50%) translateY(-3px); box-shadow: 0 12px 48px rgba(124,58,237,0.7); }
+
+/* ── SCROLLBARS ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .left-panel { display: none; }
+  .right-panel { width: 240px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOAST CONTAINER ── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ── APP SHELL ── -->
+<div class="app">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+    <div class="logo-icon">XR</div>
+
+    <button class="sidebar-btn active" onclick="switchPanel('elements')" id="sb-elements">
+      ➕<span class="tooltip">Elements</span>
+    </button>
+    <button class="sidebar-btn" onclick="switchPanel('pages')" id="sb-pages">
+      📄<span class="tooltip">Pages</span>
+    </button>
+    <button class="sidebar-btn" onclick="switchPanel('media')" id="sb-media">
+      🎵<span class="tooltip">Media</span>
+    </button>
+    <button class="sidebar-btn" onclick="switchPanel('art')" id="sb-art">
+      🎨<span class="tooltip">Art Tools</span>
+    </button>
+    <button class="sidebar-btn" onclick="switchPanel('shop')" id="sb-shop">
+      🛍️<span class="tooltip">Shop</span>
+    </button>
+    <button class="sidebar-btn" onclick="switchPanel('scene')" id="sb-scene">
+      ✨<span class="tooltip">Scene & Style</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="sidebar-btn" onclick="openModal('music')" id="sb-daw">
+      🎹<span class="tooltip">Music Maker DAW</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('collab')" id="sb-collab">
+      👥<span class="tooltip">Collaboration</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('3d')" id="sb-3d">
+      🧊<span class="tooltip">3D Objects</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('code')" id="sb-code">
+      💻<span class="tooltip">Code Editor</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('oss')" id="sb-oss">
+      🔓<span class="tooltip">Open Source</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('stripe')" id="sb-stripe">
+      💳<span class="tooltip">Stripe Payments</span>
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="sidebar-btn" onclick="openModal('themes')" id="sb-themes">
+      🌈<span class="tooltip">100+ Themes</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('album')" id="sb-album">
+      💿<span class="tooltip">Album Viewer</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('video')" id="sb-video">
+      🎬<span class="tooltip">Import Video</span>
+    </button>
+    <button class="sidebar-btn" onclick="openModal('settings')" id="sb-settings">
+      ⚙️<span class="tooltip">Settings</span>
+    </button>
+  </div>
+
+  <!-- ── LEFT PANEL ── -->
+  <div class="left-panel" id="leftPanel">
+    <div class="panel-header">⚡ ELEMENTS</div>
+
+    <!-- Elements Panel -->
+    <div id="panel-elements">
+      <div class="panel-search"><input type="text" placeholder="Search elements..." oninput="filterElements(this.value)"></div>
+      <div class="panel-scroll" id="elementsScroll">
+
+        <div class="panel-section">
+          <div class="panel-section-label">🎵 Music Embeds</div>
+          <div class="element-grid">
+            <button class="element-btn featured" onclick="addElement('spotify')">
+              <span class="icon">🎵</span>
+              <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start">
+                <span style="font-weight:600;color:var(--text)">Spotify</span>
+                <span class="badge badge-hot">HOT</span>
+              </div>
+            </button>
+            <button class="element-btn" onclick="addElement('soundcloud')">
+              <span class="icon">☁️</span>SoundCloud
+            </button>
+            <button class="element-btn" onclick="addElement('genius')">
+              <span class="icon">🧠</span>Genius Lyrics
+            </button>
+            <button class="element-btn" onclick="addElement('apple-music')">
+              <span class="icon">🍎</span>Apple Music
+            </button>
+            <button class="element-btn" onclick="addElement('youtube-music')">
+              <span class="icon">▶️</span>YT Music
+            </button>
+            <button class="element-btn" onclick="addElement('bandcamp')">
+              <span class="icon">🏕️</span>Bandcamp
+            </button>
+            <button class="element-btn" onclick="addElement('tidal')">
+              <span class="icon">🌊</span>Tidal
+            </button>
+            <button class="element-btn" onclick="addElement('deezer')">
+              <span class="icon">💫</span>Deezer
+            </button>
+            <button class="element-btn" onclick="addElement('audius')">
+              <span class="icon">🔊</span>Audius
+            </button>
+            <button class="element-btn" onclick="addElement('mixcloud')">
+              <span class="icon">🌀</span>Mixcloud
+            </button>
+            <button class="element-btn" onclick="addElement('audiomack')">
+              <span class="icon">🎤</span>Audiomack
+            </button>
+            <button class="element-btn" onclick="addElement('reverbnation')">
+              <span class="icon">🎸</span>ReverbNation
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-label">🔧 Essential Tools</div>
+          <div class="element-grid">
+            <button class="element-btn featured" onclick="openModal('ai-assistant')">
+              <span class="icon">🤖</span>
+              <div style="display:flex;flex-direction:column;gap:2px;align-items:flex-start">
+                <span style="font-weight:600;color:var(--text)">AI Assistant</span>
+                <span class="badge badge-ai">AI</span>
+              </div>
+            </button>
+            <button class="element-btn" onclick="addElement('text')">
+              <span class="icon">📝</span>Text Block
+            </button>
+            <button class="element-btn" onclick="addElement('image')">
+              <span class="icon">🖼️</span>Image
+            </button>
+            <button class="element-btn" onclick="addElement('gallery')">
+              <span class="icon">🗃️</span>Gallery
+            </button>
+            <button class="element-btn" onclick="addElement('button')">
+              <span class="icon">🔘</span>Button
+            </button>
+            <button class="element-btn" onclick="addElement('form')">
+              <span class="icon">📋</span>Contact Form
+            </button>
+            <button class="element-btn" onclick="addElement('countdown')">
+              <span class="icon">⏰</span>Countdown
+            </button>
+            <button class="element-btn" onclick="addElement('map')">
+              <span class="icon">🗺️</span>Map
+            </button>
+            <button class="element-btn" onclick="addElement('social')">
+              <span class="icon">📱</span>Social Links
+            </button>
+            <button class="element-btn" onclick="addElement('testimonial')">
+              <span class="icon">💬</span>Testimonials
+            </button>
+            <button class="element-btn" onclick="addElement('faq')">
+              <span class="icon">❓</span>FAQ
+            </button>
+            <button class="element-btn" onclick="addElement('divider')">
+              <span class="icon">➖</span>Divider
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-label">💎 Advanced</div>
+          <div class="element-grid">
+            <button class="element-btn" onclick="openModal('code')">
+              <span class="icon">💻</span>Code Embed
+            </button>
+            <button class="element-btn" onclick="addElement('audio')">
+              <span class="icon">🔈</span>Audio Import
+            </button>
+            <button class="element-btn" onclick="openModal('video')">
+              <span class="icon">🎬</span>Video Import
+            </button>
+            <button class="element-btn" onclick="openModal('3d')">
+              <span class="icon">🧊</span>3D Object
+            </button>
+            <button class="element-btn" onclick="openModal('album')">
+              <span class="icon">💿</span>Album View
+            </button>
+            <button class="element-btn" onclick="openModal('music')">
+              <span class="icon">🎹</span>DAW Embed
+            </button>
+            <button class="element-btn badge-new" onclick="addElement('particle')">
+              <span class="icon">✨</span>Particles
+            </button>
+            <button class="element-btn" onclick="addElement('typewriter')">
+              <span class="icon">⌨️</span>Typewriter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pages Panel -->
+    <div id="panel-pages" style="display:none">
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <div class="panel-section-label">📄 Pages</div>
+          <div style="padding:0 10px;display:flex;flex-direction:column;gap:4px">
+            <div onclick="toast('Viewing Home page','✅')" style="padding:10px 12px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+              🏠 Home <span style="font-size:10px;background:var(--accent);padding:2px 6px;border-radius:4px;color:#fff">LIVE</span>
+            </div>
+            <div onclick="toast('Viewing Music page','🎵')" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">🎵 Music</div>
+            <div onclick="toast('Viewing Shop page','🛍️')" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">🛍️ Shop</div>
+            <div onclick="toast('Viewing About page','ℹ️')" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">ℹ️ About</div>
+            <div onclick="toast('Viewing Blog page','📰')" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer">📰 Blog</div>
+            <button onclick="toast('New page added!','📄')" style="margin-top:8px;width:100%;padding:9px;background:transparent;border:1px dashed var(--border2);border-radius:8px;color:var(--text3);cursor:pointer;font-family:inherit;font-size:12px">+ Add Page</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media Panel -->
+    <div id="panel-media" style="display:none">
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <div class="panel-section-label">🎵 Your Media</div>
+          <div style="padding:0 10px">
+            <div class="import-drop" onclick="toast('Upload audio files','🎵')" style="padding:20px">
+              <div class="import-drop-icon">🎵</div>
+              <div class="import-drop-text">Drop audio files</div>
+              <div class="import-drop-sub">MP3, WAV, FLAC, OGG</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px">
+                🎵 <span style="flex:1">my-track.mp3</span> <span style="color:var(--text3);font-size:10px">3:42</span>
+              </div>
+              <div style="padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px">
+                🎵 <span style="flex:1">ambient-loop.wav</span> <span style="color:var(--text3);font-size:10px">1:15</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Art Panel -->
+    <div id="panel-art" style="display:none">
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <div class="panel-section-label">🎨 Art Tools (20+)</div>
+          <div class="art-tools-grid" style="padding:0 10px">
+            <button class="art-tool-btn" onclick="toast('Brush tool activated','🖌️')"><span class="icon">🖌️</span>Brush</button>
+            <button class="art-tool-btn" onclick="toast('Pixel art editor open','🎮')"><span class="icon">🎮</span>Pixel Art</button>
+            <button class="art-tool-btn" onclick="toast('Vector editor ready','✏️')"><span class="icon">✏️</span>Vector</button>
+            <button class="art-tool-btn" onclick="toast('Color mixer loaded','🎨')"><span class="icon">🎨</span>Color Mix</button>
+            <button class="art-tool-btn" onclick="toast('Gradient tool active','🌈')"><span class="icon">🌈</span>Gradient</button>
+            <button class="art-tool-btn" onclick="toast('Stamp tool ready','🔤')"><span class="icon">🔤</span>Stamp</button>
+            <button class="art-tool-btn" onclick="toast('Glitter effect on','✨')"><span class="icon">✨</span>Glitter</button>
+            <button class="art-tool-btn" onclick="toast('Neon glow mode on','💜')"><span class="icon">💜</span>Neon Glow</button>
+            <button class="art-tool-btn" onclick="toast('Sticker pack open','🌸')"><span class="icon">🌸</span>Stickers</button>
+            <button class="art-tool-btn" onclick="toast('Layer panel ready','🗂️')"><span class="icon">🗂️</span>Layers</button>
+            <button class="art-tool-btn" onclick="toast('Filter gallery open','🔮')"><span class="icon">🔮</span>Filters</button>
+            <button class="art-tool-btn" onclick="toast('Eraser tool on','🧹')"><span class="icon">🧹</span>Eraser</button>
+            <button class="art-tool-btn" onclick="toast('Clone stamp ready','🔄')"><span class="icon">🔄</span>Clone</button>
+            <button class="art-tool-btn" onclick="toast('Text tool ready','🔡')"><span class="icon">🔡</span>Text Art</button>
+            <button class="art-tool-btn" onclick="toast('Pattern fill ready','🔲')"><span class="icon">🔲</span>Pattern</button>
+            <button class="art-tool-btn" onclick="toast('AI art generation!','🤖')"><span class="icon">🤖</span>AI Art</button>
+            <button class="art-tool-btn" onclick="toast('ASCII art tool on','⌨️')"><span class="icon">⌨️</span>ASCII</button>
+            <button class="art-tool-btn" onclick="toast('Emoji art pack open','😄')"><span class="icon">😄</span>Emoji Art</button>
+            <button class="art-tool-btn" onclick="toast('Warp tool active','🌀')"><span class="icon">🌀</span>Warp</button>
+            <button class="art-tool-btn" onclick="toast('Background remover on','✂️')"><span class="icon">✂️</span>BG Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shop Panel -->
+    <div id="panel-shop" style="display:none">
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <div class="panel-section-label">🛍️ Shop Maker</div>
+          <div style="padding:0 10px;display:flex;flex-direction:column;gap:8px">
+            <button onclick="openModal('stripe')" style="width:100%;padding:12px;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(236,72,153,0.2));border:1px solid rgba(124,58,237,0.4);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;font-weight:600">
+              💳 Connect Stripe Payments
+            </button>
+            <button onclick="toast('Product added!','🛍️')" style="width:100%;padding:10px;background:var(--bg3);border:1px dashed var(--border2);border-radius:10px;color:var(--text3);font-family:inherit;font-size:12px;cursor:pointer">
+              + Add Product
+            </button>
+            <div class="product-grid">
+              <div class="product-card" onclick="toast('Editing product','✏️')">
+                <div class="product-img" style="background:rgba(124,58,237,0.1)">🎵</div>
+                <div class="product-info">
+                  <div class="product-name">Beat Pack Vol. 1</div>
+                  <div class="product-price">$9.99</div>
+                </div>
+              </div>
+              <div class="product-card" onclick="toast('Editing product','✏️')">
+                <div class="product-img" style="background:rgba(236,72,153,0.1)">👕</div>
+                <div class="product-info">
+                  <div class="product-name">Merch Tee</div>
+                  <div class="product-price">$24.99</div>
+                </div>
+              </div>
+              <div class="product-card" onclick="toast('Editing product','✏️')">
+                <div class="product-img" style="background:rgba(6,182,212,0.1)">💿</div>
+                <div class="product-info">
+                  <div class="product-name">Full Album</div>
+                  <div class="product-price">$14.99</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scene Panel -->
+    <div id="panel-scene" style="display:none">
+      <div class="panel-scroll">
+        <div class="panel-section">
+          <div class="panel-section-label">✨ Scene & Style (20+)</div>
+          <div class="scene-grid" style="padding:0 10px">
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a0a2e,#2d1566);color:#c084fc;border-color:#7c3aed" onclick="applyScene('scenecore')">🌙 Scene Core</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0f0a0a,#1a0a10);color:#f87171;border-color:#dc2626" onclick="applyScene('emo')">🖤 Emo / Alt</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a1a2e,#0a2e1a);color:#67e8f9;border-color:#06b6d4" onclick="applyScene('y2k')">💿 Y2K</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a0a1a,#2e1a2e);color:#f0abfc;border-color:#e879f9" onclick="applyScene('kandi')">🔮 Kandi</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a0a1a,#1a0a3e);color:#818cf8;border-color:#6366f1" onclick="applyScene('rave1')">🎆 Rave / EDM</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a0a0a,#2e0a2e);color:#fb7185;border-color:#f43f5e" onclick="applyScene('rave2')">⚡ Hard Techno</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a1a0a,#1a3e0a);color:#86efac;border-color:#22c55e" onclick="applyScene('rave3')">🌿 Psytrance</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a1a0a,#2e2e0a);color:#fde68a;border-color:#f59e0b" onclick="applyScene('furry')">🐾 Furry</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#2e0a2e,#1a0a2e);color:#f5d0fe;border-color:#d946ef" onclick="applyScene('femboy')">🎀 Femboy</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);color:#a5b4fc;border-color:#6366f1" onclick="applyScene('anime')">🌸 Anime</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a0a0a,#2e1a0a);color:#fdba74;border-color:#f97316" onclick="applyScene('punk')">🎸 Punk</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a0a0a,#1a1a1a);color:#d4d4d4;border-color:#737373" onclick="applyScene('goth')">🕷️ Goth</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a1a2e,#001a40);color:#60a5fa;border-color:#3b82f6" onclick="applyScene('cyberpunk')">🤖 Cyberpunk</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#2e1a0a,#3e2a0a);color:#fcd34d;border-color:#f59e0b" onclick="applyScene('cottagecore')">🌻 Cottagecore</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#1a0a1a,#3e0a2e);color:#e879f9;border-color:#a855f7" onclick="applyScene('vaporwave')">🌴 Vaporwave</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a2e2e,#0a1a2e);color:#6ee7b7;border-color:#10b981" onclick="applyScene('witchcore')">🔮 Witchcore</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#2e0a0a,#1a0a0a);color:#fca5a5;border-color:#ef4444" onclick="applyScene('pastelgoth')">🦇 Pastel Goth</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a0a2e,#1a1a0a);color:#c4b5fd;border-color:#8b5cf6" onclick="applyScene('dreamcore')">🌙 Dreamcore</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#2e1a1a,#1a0a2e);color:#f9a8d4;border-color:#ec4899" onclick="applyScene('kawaii')">🍡 Kawaii</button>
+            <button class="scene-btn" style="background:linear-gradient(135deg,#0a0a0a,#2e0a0a);color:#f87171;border-color:#b91c1c" onclick="applyScene('darkacademia')">📚 Dark Academia</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CANVAS AREA ── -->
+  <div class="canvas-area">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="site-name" onclick="toast('Click to rename site','✏️')">
+        <span>🔮</span>
+        <span id="siteName">My Xrenbeats Site</span>
+        <span style="color:var(--text3);font-size:10px">▼</span>
+      </div>
+
+      <div class="topbar-sep"></div>
+
+      <div class="topbar-group">
+        <button class="tb-btn" onclick="toast('Undo!','↩️')">↩ Undo</button>
+        <button class="tb-btn" onclick="toast('Redo!','↪️')">↪ Redo</button>
+      </div>
+
+      <div class="topbar-sep"></div>
+
+      <div class="topbar-center">
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="setView('desktop',this)">🖥 Desktop</button>
+          <button class="view-btn" onclick="setView('tablet',this)">📱 Tablet</button>
+          <button class="view-btn" onclick="setView('mobile',this)">📲 Mobile</button>
+        </div>
+      </div>
+
+      <div class="topbar-sep"></div>
+
+      <!-- Collab avatars -->
+      <div class="collab-avatars">
+        <div class="collab-avatar" style="background:#7c3aed;color:#fff;font-size:10px">YOU</div>
+        <div class="collab-avatar" style="background:#ec4899;color:#fff;font-size:10px">KJ</div>
+        <div class="collab-avatar" style="background:#06b6d4;color:#fff;font-size:10px">MX</div>
+      </div>
+
+      <div class="topbar-sep"></div>
+
+      <button class="tb-btn secondary" onclick="toast('Preview mode activated!','👁️')">👁 Preview</button>
+      <button class="tb-btn primary" onclick="toast('🚀 Submitting for review... Xrenbeats will review your site!','✨')">🚀 Submit for Review</button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <div class="canvas-frame" id="canvasFrame">
+        <div class="site-hero">
+          <!-- Nav -->
+          <div class="site-nav-preview">
+            <div class="site-nav-logo" id="navLogo">XRENBEATS</div>
+            <div class="site-nav-links">
+              <span class="site-nav-link">Music</span>
+              <span class="site-nav-link">Shop</span>
+              <span class="site-nav-link">About</span>
+              <span class="site-nav-link">Contact</span>
+            </div>
+            <button onclick="toast('Nav button clicked!','🔘')" style="padding:8px 18px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Listen Now</button>
+          </div>
+
+          <!-- Hero -->
+          <div class="site-hero-content">
+            <div class="hero-glow"></div>
+            <div class="hero-tag">🔮 Welcome to my world</div>
+            <div class="hero-title">
+              <div class="line1">Create. Share.</div>
+              <div class="line2">Be Legendary.</div>
+            </div>
+            <p class="hero-sub" id="heroSub">Your music, your art, your story — all in one place. Powered by Xrenbeats Studio.</p>
+            <div class="hero-btns">
+              <button class="hero-btn-primary" onclick="toast('CTA clicked!','🎵')">🎵 Hear My Music</button>
+              <button class="hero-btn-secondary" onclick="toast('Shop opened!','🛍️')">🛍️ Visit Shop</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature blocks -->
+        <div class="block-row">
+          <div class="block-card" onclick="toast('Clicked Music block!','🎵')" style="cursor:pointer">
+            <div class="block-card-icon" style="background:rgba(124,58,237,0.15)">🎵</div>
+            <div class="block-card-title">Music</div>
+            <div class="block-card-desc">Stream my latest releases on every platform.</div>
+          </div>
+          <div class="block-card" onclick="openModal('stripe')" style="cursor:pointer">
+            <div class="block-card-icon" style="background:rgba(16,185,129,0.15)">🛍️</div>
+            <div class="block-card-title">Shop</div>
+            <div class="block-card-desc">Merch, beats, and exclusives available now.</div>
+          </div>
+          <div class="block-card" onclick="openModal('album')" style="cursor:pointer">
+            <div class="block-card-icon" style="background:rgba(236,72,153,0.15)">💿</div>
+            <div class="block-card-title">Discography</div>
+            <div class="block-card-desc">Browse every album, EP, and single.</div>
+          </div>
+        </div>
+
+        <!-- Dropped elements -->
+        <div id="droppedElements" style="padding:20px;display:flex;flex-direction:column;gap:12px;min-height:60px"></div>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="statusbar">
+      <div class="status-item">
+        <div class="status-dot pulse-dot"></div>
+        <span>Autosaved</span>
+      </div>
+      <span>|</span>
+      <span id="elementCount">8 elements</span>
+      <span>|</span>
+      <span id="pageLabel">Home Page</span>
+      <span>|</span>
+      <span>⚡ Xrenbeats Studio v3.0</span>
+      <span style="margin-left:auto">Review: <span style="color:var(--yellow);font-weight:600">Pending</span></span>
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+    <div class="right-tabs">
+      <div class="r-tab active" onclick="switchRTab('style',this)">STYLE</div>
+      <div class="r-tab" onclick="switchRTab('layer',this)">LAYERS</div>
+      <div class="r-tab" onclick="switchRTab('ai',this)">AI ✦</div>
+      <div class="r-tab" onclick="switchRTab('css',this)">CSS</div>
+    </div>
+
+    <!-- Style Tab -->
+    <div class="right-scroll" id="rtab-style">
+      <div class="prop-group">
+        <div class="prop-group-header">🎨 Colors</div>
+        <div class="prop-group-body">
+          <div class="color-palette" id="colorPalette"></div>
+          <div class="prop-row">
+            <span class="prop-label">BG Color</span>
+            <input type="color" class="prop-color" value="#050508" onchange="toast('Color applied!','🎨')">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Accent</span>
+            <input type="color" class="prop-color" value="#7c3aed" onchange="applyAccent(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-group">
+        <div class="prop-group-header">📐 Layout</div>
+        <div class="prop-group-body">
+          <div class="prop-row">
+            <span class="prop-label">Width</span>
+            <input class="prop-input" type="text" value="100%" style="width:70px">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Padding</span>
+            <input class="prop-input" type="text" value="40px" style="width:70px">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Radius</span>
+            <input type="range" class="prop-range" min="0" max="32" value="10" oninput="toast('Radius: '+this.value+'px','📐')">
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-group">
+        <div class="prop-group-header">✍️ Typography</div>
+        <div class="prop-group-body">
+          <div class="prop-row">
+            <span class="prop-label">Font</span>
+            <select class="prop-select" onchange="toast('Font changed!','✍️')">
+              <option>Orbitron</option>
+              <option>Space Grotesk</option>
+              <option>JetBrains Mono</option>
+              <option>Inter</option>
+              <option>Playfair Display</option>
+              <option>Bebas Neue</option>
+              <option>Pacifico</option>
+            </select>
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Size</span>
+            <input type="range" class="prop-range" min="8" max="120" value="16" oninput="toast('Size: '+this.value+'px','✍️')">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Weight</span>
+            <select class="prop-select" onchange="toast('Weight applied!','✍️')">
+              <option>300</option><option>400</option><option selected>600</option><option>700</option><option>900</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="prop-group">
+        <div class="prop-group-header">✨ Effects</div>
+        <div class="prop-group-body">
+          <div class="prop-row">
+            <span class="prop-label">Glow</span>
+            <input type="range" class="prop-range" min="0" max="60" value="30" oninput="toast('Glow: '+this.value+'px','✨')">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Blur</span>
+            <input type="range" class="prop-range" min="0" max="40" value="0" oninput="toast('Blur: '+this.value+'px','🌫️')">
+          </div>
+          <div class="prop-row">
+            <span class="prop-label">Opacity</span>
+            <input type="range" class="prop-range" min="0" max="100" value="100" oninput="toast('Opacity: '+this.value+'%','👁️')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layers Tab -->
+    <div class="right-scroll" id="rtab-layer" style="display:none">
+      <div style="display:flex;flex-direction:column;gap:4px;padding:4px">
+        <div style="padding:9px 12px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer">
+          <span>👁️</span><span style="flex:1">Hero Section</span><span style="color:var(--text3);font-size:10px">lock</span>
+        </div>
+        <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer">
+          <span>👁️</span><span style="flex:1">Navigation</span>
+        </div>
+        <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer">
+          <span>👁️</span><span style="flex:1">Feature Cards</span>
+        </div>
+        <div style="padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer">
+          <span>👁️</span><span style="flex:1">Music Player</span>
+        </div>
+        <div id="dynamicLayers"></div>
+      </div>
+    </div>
+
+    <!-- AI Tab -->
+    <div id="rtab-ai" style="display:none;height:100%;display:none;flex-direction:column">
+      <div style="padding:10px;border-bottom:1px solid var(--border)">
+        <div style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--accent3)">
+          🤖 <strong>AI Assistant</strong> — describe changes and I'll build them
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px" id="aiMessages">
+        <div class="ai-msg assistant">✨ Hey! I'm your Xrenbeats AI assistant. Tell me what you'd like to change on your site, add new sections, generate content, or get design ideas!</div>
+        <div class="ai-msg assistant">Try: "Add a dark purple glow to the hero" or "Make a Spotify embed with my favorite playlist"</div>
+      </div>
+      <div style="padding:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px">
+        <textarea id="aiPromptBox" class="ai-input" placeholder="Ask AI anything about your site..."></textarea>
+        <button onclick="sendAI()" style="padding:8px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">✨ Generate</button>
+      </div>
+    </div>
+
+    <!-- CSS Tab -->
+    <div class="right-scroll" id="rtab-css" style="display:none">
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Mode:</div>
+        <div class="tab-row">
+          <button class="tab-pill active" onclick="switchCSSMode('visual',this)">Visual</button>
+          <button class="tab-pill" onclick="switchCSSMode('code',this)">Raw CSS</button>
+          <button class="tab-pill" onclick="switchCSSMode('ai',this)">AI CSS</button>
+        </div>
+      </div>
+      <div id="cssVisual">
+        <div class="prop-group">
+          <div class="prop-group-header">🎨 Theme CSS</div>
+          <div class="prop-group-body">
+            <div class="prop-row">
+              <span class="prop-label">--primary</span>
+              <input class="prop-input" value="#7c3aed" style="font-family:'JetBrains Mono',monospace">
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">--bg</span>
+              <input class="prop-input" value="#050508" style="font-family:'JetBrains Mono',monospace">
+            </div>
+            <div class="prop-row">
+              <span class="prop-label">--font</span>
+              <input class="prop-input" value="'Orbitron'" style="font-family:'JetBrains Mono',monospace">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="cssCode" style="display:none">
+        <div class="code-editor">
+          <div class="code-toolbar">
+            <div class="code-dot dot-r"></div>
+            <div class="code-dot dot-y"></div>
+            <div class="code-dot dot-g"></div>
+            <span class="code-lang">CSS</span>
+          </div>
+          <div class="code-body" contenteditable="true"><span class="code-comment">/* Custom CSS */</span>
+<span class="code-keyword">:root</span> {
+  <span class="code-keyword">--accent</span>: <span class="code-string">#7c3aed</span>;
+  <span class="code-keyword">--font</span>: <span class="code-string">'Orbitron'</span>;
+}
+
+<span class="code-keyword">.hero-title</span> {
+  <span class="code-keyword">font-size</span>: <span class="code-num">64px</span>;
+  <span class="code-keyword">animation</span>: <span class="code-fn">fadeIn</span> <span class="code-num">0.5s</span> ease;
+}</div>
+        </div>
+      </div>
+      <div id="cssAI" style="display:none">
+        <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px;font-size:12px;color:var(--text2);margin-bottom:10px">
+          Describe the style you want and AI will write the CSS for you.
+        </div>
+        <textarea class="ai-input" style="height:70px;width:100%" placeholder="e.g. make the hero glow neon pink with a grid background..."></textarea>
+        <button onclick="toast('CSS generated by AI! Applied to your site ✨','🤖')" style="margin-top:8px;width:100%;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">⚡ Generate CSS</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+
+<!-- Music DAW Modal -->
+<div class="modal-overlay" id="modal-music">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <span class="modal-title">🎹 Music Maker / DAW Studio</span>
+      <button class="modal-close" onclick="closeModal('music')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:16px;display:flex;align-items:center;gap:10px">
+        <div class="daw-btn play" onclick="togglePlay()"><span id="playIcon">▶</span> <span id="playLabel">Play</span></div>
+        <div class="daw-btn" onclick="toast('Recording...','🎙️')">⏺ Record</div>
+        <div class="daw-btn" onclick="toast('Stopped','⏹️')">⏹ Stop</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3)">
+          BPM: <input type="number" value="128" min="60" max="200" style="width:56px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:12px;outline:none">
+          KEY: <select style="background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;color:var(--text);font-family:inherit;font-size:12px;outline:none">
+            <option>A min</option><option>C maj</option><option>D min</option><option>F maj</option><option>G min</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="dawTracks">
+        <div class="daw-track">
+          <div class="daw-track-label" style="color:var(--accent2)">KICK</div>
+          <div class="daw-grid" id="kickGrid"></div>
+        </div>
+        <div class="daw-track">
+          <div class="daw-track-label" style="color:var(--pink)">SNARE</div>
+          <div class="daw-grid" id="snareGrid"></div>
+        </div>
+        <div class="daw-track">
+          <div class="daw-track-label" style="color:var(--cyan)">HI-HAT</div>
+          <div class="daw-grid" id="hatGrid"></div>
+        </div>
+        <div class="daw-track">
+          <div class="daw-track-label" style="color:var(--green)">BASS</div>
+          <div class="daw-grid" id="bassGrid"></div>
+        </div>
+        <div class="daw-track">
+          <div class="daw-track-label" style="color:var(--yellow)">SYNTH</div>
+          <div class="daw-grid" id="synthGrid"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase">Effects Chain</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="daw-btn" onclick="toast('Reverb active','🌊')">🌊 Reverb</button>
+          <button class="daw-btn" onclick="toast('Delay active','⏱️')">⏱️ Delay</button>
+          <button class="daw-btn" onclick="toast('Compressor active','📊')">📊 Compressor</button>
+          <button class="daw-btn" onclick="toast('Equalizer open','🎚️')">🎚️ EQ</button>
+          <button class="daw-btn" onclick="toast('Distortion on','🎸')">🎸 Distortion</button>
+          <button class="daw-btn" onclick="toast('Auto-tune on','🎤')">🎤 Auto-Tune</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button onclick="toast('Beat exported as MP3!','🎵')" style="flex:1;padding:11px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">⬇ Export Beat</button>
+        <button onclick="toast('DAW embedded in site!','✅')" style="flex:1;padding:11px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit">📎 Embed in Site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Code Modal -->
+<div class="modal-overlay" id="modal-code">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">💻 Code Embed + Open Source Viewer</span>
+      <button class="modal-close" onclick="closeModal('code')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-row">
+        <button class="tab-pill active" onclick="switchCodeTab('html',this)">HTML</button>
+        <button class="tab-pill" onclick="switchCodeTab('js',this)">JavaScript</button>
+        <button class="tab-pill" onclick="switchCodeTab('css',this)">CSS</button>
+        <button class="tab-pill" onclick="switchCodeTab('python',this)">Python</button>
+        <button class="tab-pill" onclick="switchCodeTab('oss',this)">🔓 Open Source</button>
+      </div>
+      <div class="code-editor">
+        <div class="code-toolbar">
+          <div class="code-dot dot-r"></div>
+          <div class="code-dot dot-y"></div>
+          <div class="code-dot dot-g"></div>
+          <span class="code-lang" id="codeLangLabel">HTML</span>
+        </div>
+        <div class="code-body" contenteditable="true" id="codeBody"><span class="code-comment">&lt;!-- Embed any code --&gt;</span>
+<span class="code-keyword">&lt;div</span> <span class="code-fn">class</span>=<span class="code-string">"my-widget"</span><span class="code-keyword">&gt;</span>
+  <span class="code-keyword">&lt;iframe</span>
+    <span class="code-fn">src</span>=<span class="code-string">"https://open.spotify.com/embed/..."</span>
+    <span class="code-fn">width</span>=<span class="code-string">"100%"</span>
+    <span class="code-fn">height</span>=<span class="code-string">"380"</span>
+    <span class="code-fn">frameborder</span>=<span class="code-string">"0"</span>
+  <span class="code-keyword">/&gt;</span>
+<span class="code-keyword">&lt;/div&gt;</span></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button onclick="toast('Code embedded in site!','✅')" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">📎 Embed in Site</button>
+        <button onclick="toast('Code copied to clipboard!','📋')" style="padding:10px 16px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">📋 Copy</button>
+        <button onclick="toast('Published as open source on GitHub! 🌟','🔓')" style="padding:10px 16px;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);border-radius:8px;color:var(--green);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">🔓 Publish OSS</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stripe Modal -->
+<div class="modal-overlay" id="modal-stripe">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">💳 Stripe Payments Setup</span>
+      <button class="modal-close" onclick="closeModal('stripe')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;color:var(--text2)">
+        🔒 Secure payments powered by <strong style="color:var(--text)">Stripe</strong>. Sell music, merch, and digital goods directly on your site.
+      </div>
+      <div class="stripe-form">
+        <div class="form-group">
+          <label class="form-label">Stripe Publishable Key</label>
+          <input class="form-input" placeholder="pk_live_..." type="password">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Currency</label>
+            <select class="form-input" style="cursor:pointer">
+              <option>USD $</option><option>EUR €</option><option>GBP £</option><option>JPY ¥</option><option>CAD $</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tax Rate (%)</label>
+            <input class="form-input" value="0" type="number" min="0" max="30">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Shipping Regions</label>
+          <select class="form-input" multiple style="height:80px;cursor:pointer">
+            <option selected>United States</option>
+            <option selected>Canada</option>
+            <option>United Kingdom</option>
+            <option>European Union</option>
+            <option>Australia</option>
+            <option>Digital Only (No Shipping)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="toast('✅ Stripe connected! Payments are live on your site.','💳')" style="flex:1;padding:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Connect Stripe</button>
+          <button onclick="toast('Test payment successful! $9.99 charged.','🧪')" style="padding:12px 16px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:13px;cursor:pointer;font-family:inherit">Test Payment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Album Modal -->
+<div class="modal-overlay" id="modal-album">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">💿 Album Viewer</span>
+      <button class="modal-close" onclick="closeModal('album')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:10px;margin-bottom:14px">
+        <button onclick="toast('Album added!','💿')" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">+ Add Album</button>
+        <button onclick="toast('Import from Spotify/Apple Music!','🎵')" style="padding:9px 14px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">🔗 Import</button>
+      </div>
+      <div class="album-grid">
+        <div class="album-item" onclick="toast('Playing: Midnight Frequencies 🎵','💿')">
+          <div class="album-art" style="background:linear-gradient(135deg,#2d1566,#4c0593)">🌙</div>
+          <div class="album-title">Midnight Freqs</div>
+          <div class="album-artist">12 tracks · 2024</div>
+        </div>
+        <div class="album-item" onclick="toast('Playing: Digital Dreams 🎵','💿')">
+          <div class="album-art" style="background:linear-gradient(135deg,#0f4c75,#1b6ca8)">🌊</div>
+          <div class="album-title">Digital Dreams</div>
+          <div class="album-artist">8 tracks · 2023</div>
+        </div>
+        <div class="album-item" onclick="toast('Playing: Neon Pulse 🎵','💿')">
+          <div class="album-art" style="background:linear-gradient(135deg,#7f1d1d,#be185d)">⚡</div>
+          <div class="album-title">Neon Pulse EP</div>
+          <div class="album-artist">5 tracks · 2023</div>
+        </div>
+        <div class="album-item" onclick="toast('Playing: Bass Heaven 🎵','💿')">
+          <div class="album-art" style="background:linear-gradient(135deg,#064e3b,#065f46)">🌿</div>
+          <div class="album-title">Bass Heaven</div>
+          <div class="album-artist">15 tracks · 2022</div>
+        </div>
+        <div class="album-item" onclick="toast('Playing: The Archive 🎵','💿')">
+          <div class="album-art" style="background:linear-gradient(135deg,#1e1b4b,#312e81)">✨</div>
+          <div class="album-title">The Archive</div>
+          <div class="album-artist">20 tracks · 2021</div>
+        </div>
+        <div class="album-item" onclick="toast('Upload new album art!','🖼️')" style="border:2px dashed var(--border2);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1;cursor:pointer">
+          <span style="font-size:24px">➕</span>
+          <span style="font-size:10px;color:var(--text3);margin-top:4px">Add</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Display Style</div>
+        <div style="display:flex;gap:6px">
+          <button onclick="toast('Grid view active','🔲')" class="daw-btn" style="font-size:11px">🔲 Grid</button>
+          <button onclick="toast('Carousel view active','🎠')" class="daw-btn" style="font-size:11px">🎠 Carousel</button>
+          <button onclick="toast('List view active','📋')" class="daw-btn" style="font-size:11px">📋 List</button>
+          <button onclick="toast('Vinyl mode active 🎵','💿')" class="daw-btn" style="font-size:11px">💿 Vinyl</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 3D Modal -->
+<div class="modal-overlay" id="modal-3d">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🧊 Import 3D Objects</span>
+      <button class="modal-close" onclick="closeModal('3d')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="import-drop" onclick="toast('Select 3D file to import!','🧊')">
+        <div class="import-drop-icon">🧊</div>
+        <div class="import-drop-text">Drop 3D files here to import</div>
+        <div class="import-drop-sub">.GLB · .GLTF · .OBJ · .FBX · .STL · .3DS</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+        <div onclick="toast('3D Vinyl added to site!','💿')" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:28px;margin-bottom:6px">💿</div>
+          <div style="font-size:11px;font-weight:600">Vinyl Record</div>
+          <div style="font-size:10px;color:var(--text3)">Animated</div>
+        </div>
+        <div onclick="toast('3D Headphones added!','🎧')" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:28px;margin-bottom:6px">🎧</div>
+          <div style="font-size:11px;font-weight:600">Headphones</div>
+          <div style="font-size:10px;color:var(--text3)">Rotating</div>
+        </div>
+        <div onclick="toast('3D Crystal Ball added!','🔮')" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:28px;margin-bottom:6px">🔮</div>
+          <div style="font-size:11px;font-weight:600">Crystal Ball</div>
+          <div style="font-size:10px;color:var(--text3)">Physics</div>
+        </div>
+        <div onclick="toast('3D Logo added!','⚡')" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:28px;margin-bottom:6px">⚡</div>
+          <div style="font-size:11px;font-weight:600">Logo 3D</div>
+          <div style="font-size:10px;color:var(--text3)">Glowing</div>
+        </div>
+        <div onclick="toast('3D Speaker added!','🔊')" style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="font-size:28px;margin-bottom:6px">🔊</div>
+          <div style="font-size:11px;font-weight:600">Speaker</div>
+          <div style="font-size:10px;color:var(--text3)">Pulsing</div>
+        </div>
+        <div onclick="toast('Custom 3D imported!','🧊')" style="background:var(--bg3);border:2px dashed var(--border2);border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)'">
+          <div style="font-size:28px;margin-bottom:6px">📁</div>
+          <div style="font-size:11px;font-weight:600">Upload</div>
+          <div style="font-size:10px;color:var(--text3)">Your file</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Themes Modal -->
+<div class="modal-overlay" id="modal-themes">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <span class="modal-title">🌈 100+ Premade Themes</span>
+      <button class="modal-close" onclick="closeModal('themes')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-row" id="themeTabRow"></div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Collab Modal -->
+<div class="modal-overlay" id="modal-collab">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">👥 Multi-User Collaboration</span>
+      <button class="modal-close" onclick="closeModal('collab')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text2)">
+        🟢 <strong>3 collaborators</strong> are online right now — changes sync in real-time
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">YOU</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">You (Owner)</div><div style="font-size:11px;color:var(--text3)">Full Access</div></div>
+          <span style="background:rgba(16,185,129,0.2);color:var(--green);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">OWNER</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#ec4899;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">KJ</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">KJ Music</div><div style="font-size:11px;color:var(--text3)">Editing hero section...</div></div>
+          <span style="background:rgba(124,58,237,0.2);color:var(--accent2);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">EDITOR</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:#06b6d4;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">MX</div>
+          <div style="flex:1"><div style="font-size:13px;font-weight:600">Maxi Design</div><div style="font-size:11px;color:var(--text3)">Viewing shop page</div></div>
+          <span style="background:rgba(6,182,212,0.2);color:var(--cyan);padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700">VIEWER</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <input class="form-input" style="flex:1" placeholder="Invite by email...">
+        <button onclick="toast('Invite sent!','📨')" style="padding:10px 16px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">Invite</button>
+      </div>
+      <div style="margin-top:10px;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Share Link:</div>
+        <div style="display:flex;gap:6px">
+          <input class="form-input" style="flex:1;font-family:'JetBrains Mono',monospace;font-size:11px" value="https://xrenbeats.com/studio/collaborate/abc123" readonly>
+          <button onclick="toast('Link copied!','📋')" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-size:12px;cursor:pointer;font-family:inherit">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Open Source Modal -->
+<div class="modal-overlay" id="modal-oss">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🔓 Open Source Viewer</span>
+      <button class="modal-close" onclick="closeModal('oss')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="oss-header">
+        <span style="font-size:24px">🔓</span>
+        <div>
+          <div style="font-size:14px;font-weight:700">my-xrenbeats-site</div>
+          <div style="font-size:11px;color:var(--text3)">Public Repository · MIT License</div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <span class="oss-stat">⭐ 42</span>
+          <span class="oss-stat">🍴 8</span>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em">Files</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;gap:10px;cursor:pointer" onclick="toast('Viewing index.html','💻')">
+            <span>📄</span><span style="color:var(--cyan)">index.html</span><span style="color:var(--text3);margin-left:auto">4.2 KB</span>
+          </div>
+          <div style="padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;gap:10px;cursor:pointer" onclick="toast('Viewing styles.css','💻')">
+            <span>🎨</span><span style="color:var(--pink)">styles.css</span><span style="color:var(--text3);margin-left:auto">8.1 KB</span>
+          </div>
+          <div style="padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;gap:10px;cursor:pointer" onclick="toast('Viewing app.js','💻')">
+            <span>⚡</span><span style="color:var(--yellow)">app.js</span><span style="color:var(--text3);margin-left:auto">12.4 KB</span>
+          </div>
+          <div style="padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;gap:10px;cursor:pointer" onclick="toast('Viewing README','📖')">
+            <span>📖</span><span style="color:var(--green)">README.md</span><span style="color:var(--text3);margin-left:auto">2.1 KB</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button onclick="toast('Code cloned locally!','⬇️')" style="flex:1;padding:10px;background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-weight:600;font-size:12px;cursor:pointer;font-family:inherit">⬇ Clone</button>
+        <button onclick="toast('Opened on GitHub!','🌐')" style="flex:1;padding:10px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit">🌐 View on GitHub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Video Modal -->
+<div class="modal-overlay" id="modal-video">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">🎬 Import Video</span>
+      <button class="modal-close" onclick="closeModal('video')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-row">
+        <button class="tab-pill active" onclick="toast('Upload file mode','📁')">Upload File</button>
+        <button class="tab-pill" onclick="toast('URL embed mode','🔗')">URL Embed</button>
+        <button class="tab-pill" onclick="toast('YouTube mode','▶️')">YouTube</button>
+        <button class="tab-pill" onclick="toast('TikTok mode','🎵')">TikTok</button>
+        <button class="tab-pill" onclick="toast('Twitch mode','💜')">Twitch</button>
+      </div>
+      <div class="import-drop" onclick="toast('Select video to upload!','🎬')">
+        <div class="import-drop-icon">🎬</div>
+        <div class="import-drop-text">Drop video files here</div>
+        <div class="import-drop-sub">MP4 · WebM · MOV · MKV · AVI · up to 2GB</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
+        <div class="form-group">
+          <label class="form-label">Autoplay</label>
+          <select class="form-input">
+            <option>On (muted)</option><option>Off</option><option>On hover</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Display</label>
+          <select class="form-input">
+            <option>Full width</option><option>Floating</option><option>Background</option><option>Hero overlay</option>
+          </select>
+        </div>
+        <button onclick="toast('Video embedded in site! 🎬','✅')" style="padding:12px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">📎 Add to Site</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">⚙️ Site Settings</span>
+      <button class="modal-close" onclick="closeModal('settings')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="form-group">
+          <label class="form-label">Site Name</label>
+          <input class="form-input" id="siteNameInput" value="My Xrenbeats Site">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Domain</label>
+          <input class="form-input" placeholder="yourname.xrenbeats.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Site Description (SEO)</label>
+          <textarea class="form-input" rows="2" style="resize:vertical">Music, art, and everything in between.</textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Review Status</label>
+          <div style="padding:10px 14px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;font-size:12px;color:var(--yellow)">
+            ⏳ <strong>Pending Review</strong> — Xrenbeats will review your site before it goes public
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Favicon</label>
+          <div class="import-drop" style="padding:16px" onclick="toast('Upload favicon!','🖼️')">
+            <div style="font-size:20px">🖼️</div>
+            <div class="import-drop-text" style="font-size:12px">Upload Favicon (PNG/SVG)</div>
+          </div>
+        </div>
+        <button onclick="saveSiteSettings()" style="padding:12px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">💾 Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI Assistant Modal (fullscreen) -->
+<div class="modal-overlay" id="modal-ai-assistant">
+  <div class="modal" style="max-width:600px;max-height:70vh">
+    <div class="modal-header">
+      <span class="modal-title">🤖 AI Site Assistant</span>
+      <button class="modal-close" onclick="closeModal('ai-assistant')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;height:400px">
+      <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-bottom:10px" id="aiModalMessages">
+        <div class="ai-msg assistant">✨ I'm your Xrenbeats AI! I can build sections, write copy, suggest themes, generate color palettes, add music embeds, and more. What do you want to create?</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button onclick="quickAI('Add a neon music player section')" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit">🎵 Add music player</button>
+          <button onclick="quickAI('Make the hero section glow purple')" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit">💜 Purple glow hero</button>
+          <button onclick="quickAI('Add a shop grid with 4 products')" style="padding:5px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text2);font-size:11px;cursor:pointer;font-family:inherit">🛍️ Add shop section</button>
+        </div>
+        <div style="display:flex;gap:6px">
+          <input class="ai-input" id="aiModalInput" style="flex:1;height:44px" placeholder="Tell AI what to build...">
+          <button onclick="sendModalAI()" style="width:44px;height:44px;background:linear-gradient(135deg,var(--accent),var(--pink));border:none;border-radius:8px;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAB ── -->
+<button class="fab" onclick="openModal('ai-assistant')">🤖 Ask AI to Build</button>
+
+<script>
+// ── STATE ──
+let elemCount = 8;
+let isPlaying = false;
+const dawStates = { kick:{}, snare:{}, hat:{}, bass:{}, synth:{} };
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  buildColorPalette();
+  buildDAWGrids();
+  buildThemeGrid();
+  setTimeout(() => toast('Welcome to Xrenbeats Studio! 🎉 Start building your site.','✨'), 800);
+});
+
+// ── PANEL SWITCHING ──
+function switchPanel(name) {
+  const panels = ['elements','pages','media','art','shop','scene'];
+  panels.forEach(p => {
+    const el = document.getElementById('panel-'+p);
+    if(el) el.style.display = p === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('sb-'+name);
+  if(btn) btn.classList.add('active');
+  const header = document.querySelector('.panel-header');
+  const labels = {elements:'⚡ ELEMENTS',pages:'📄 PAGES',media:'🎵 MEDIA',art:'🎨 ART TOOLS',shop:'🛍️ SHOP',scene:'✨ SCENE & STYLE'};
+  if(header) header.textContent = labels[name] || '⚡ ELEMENTS';
+}
+
+// ── RIGHT TAB SWITCHING ──
+function switchRTab(tab, el) {
+  ['style','layer','ai','css'].forEach(t => {
+    const el2 = document.getElementById('rtab-'+t);
+    if(el2) el2.style.display = 'none';
+  });
+  const target = document.getElementById('rtab-'+tab);
+  if(target) target.style.display = tab === 'ai' ? 'flex' : 'block';
+  document.querySelectorAll('.r-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ── CSS MODE ──
+function switchCSSMode(mode, el) {
+  ['visual','code','ai'].forEach(m => {
+    const el2 = document.getElementById('css'+m.charAt(0).toUpperCase()+m.slice(1));
+    if(el2) el2.style.display = 'none';
+  });
+  const id = 'css' + mode.charAt(0).toUpperCase() + mode.slice(1);
+  const el2 = document.getElementById(id);
+  if(el2) el2.style.display = 'block';
+  el.parentElement.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function switchCodeTab(tab, el) {
+  el.parentElement.querySelectorAll('.tab-pill').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const label = document.getElementById('codeLangLabel');
+  if(label) label.textContent = tab.toUpperCase();
+  const bodies = {
+    html: `<span class="code-comment">&lt;!-- Embed any code --&gt;</span>\n<span class="code-keyword">&lt;div</span> <span class="code-fn">class</span>=<span class="code-string">"my-widget"</span><span class="code-keyword">&gt;\n&lt;/div&gt;</span>`,
+    js: `<span class="code-comment">// JavaScript embed</span>\n<span class="code-keyword">const</span> player = <span class="code-fn">new</span> <span class="code-fn">AudioPlayer</span>();\nplayer.<span class="code-fn">load</span>(<span class="code-string">'my-track.mp3'</span>);\nplayer.<span class="code-fn">play</span>();`,
+    css: `<span class="code-comment">/* Custom styles */</span>\n<span class="code-keyword">.hero</span> {\n  <span class="code-keyword">background</span>: <span class="code-fn">linear-gradient</span>(<span class="code-num">135deg</span>, <span class="code-string">#7c3aed</span>, <span class="code-string">#ec4899</span>);\n  <span class="code-keyword">animation</span>: <span class="code-fn">glow</span> <span class="code-num">2s</span> infinite;\n}`,
+    python: `<span class="code-comment"># Python script</span>\n<span class="code-keyword">import</span> xrenbeats_api\n\nclient = xrenbeats_api.<span class="code-fn">Client</span>(api_key=<span class="code-string">"your_key"</span>)\nclient.<span class="code-fn">upload_track</span>(<span class="code-string">"my-beat.mp3"</span>)`,
+    oss: `<span class="code-comment"># Open Source Repository</span>\n<span class="code-comment"># MIT License — free to fork & remix</span>\n\ngit clone https://github.com/you/my-site\ncd my-site\nnpm install\nnpm run dev`
+  };
+  const body = document.getElementById('codeBody');
+  if(body && bodies[tab]) body.innerHTML = bodies[tab];
+}
+
+// ── VIEW MODES ──
+function setView(mode, el) {
+  el.parentElement.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  const frame = document.getElementById('canvasFrame');
+  const sizes = { desktop: '100%', tablet: '768px', mobile: '390px' };
+  frame.style.maxWidth = sizes[mode];
+  toast('Viewing in '+mode+' mode','📱');
+}
+
+// ── ADD ELEMENT ──
+function addElement(type) {
+  elemCount++;
+  document.getElementById('elementCount').textContent = elemCount + ' elements';
+  const container = document.getElementById('droppedElements');
+  const el = document.createElement('div');
+  el.style.cssText = 'padding:16px 20px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);border-radius:10px;font-size:13px;cursor:pointer;position:relative;animation:fadeSlideIn 0.3s ease;display:flex;align-items:center;gap:10px';
+
+  const icons = { spotify:'🎵', soundcloud:'☁️', genius:'🧠', text:'📝', image:'🖼️', gallery:'🗃️', button:'🔘', form:'📋', countdown:'⏰', map:'🗺️', social:'📱', testimonial:'💬', faq:'❓', divider:'➖', audio:'🔈', particle:'✨', typewriter:'⌨️', 'apple-music':'🍎', 'youtube-music':'▶️', bandcamp:'🏕️', tidal:'🌊', deezer:'💫', audius:'🔊', mixcloud:'🌀', audiomack:'🎤', reverbnation:'🎸' };
+  const labels = { spotify:'Spotify Player', soundcloud:'SoundCloud Player', genius:'Genius Lyrics Widget', text:'Text Block', image:'Image Element', gallery:'Photo Gallery', button:'Call-to-Action Button', form:'Contact Form', countdown:'Countdown Timer', map:'Embedded Map', social:'Social Media Links', testimonial:'Testimonials', faq:'FAQ Section', divider:'Section Divider', audio:'Audio Player', particle:'Particle Effect', typewriter:'Typewriter Text', 'apple-music':'Apple Music Player', 'youtube-music':'YouTube Music', bandcamp:'Bandcamp Player', tidal:'Tidal Player', deezer:'Deezer Embed', audius:'Audius Player', mixcloud:'Mixcloud Set', audiomack:'Audiomack Player', reverbnation:'ReverbNation Widget' };
+
+  el.innerHTML = `
+    <span style="font-size:20px">${icons[type]||'📦'}</span>
+    <span style="font-weight:600;flex:1">${labels[type]||type}</span>
+    <button onclick="this.parentElement.remove();elemCount--;document.getElementById('elementCount').textContent=elemCount+' elements'" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:6px;color:#ef4444;width:24px;height:24px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center">✕</button>
+  `;
+
+  const style = document.createElement('style');
+  style.textContent = '@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}';
+  document.head.appendChild(style);
+
+  container.appendChild(el);
+
+  // Update layers
+  const layerContainer = document.getElementById('dynamicLayers');
+  if(layerContainer) {
+    const layer = document.createElement('div');
+    layer.style.cssText = 'padding:9px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px';
+    layer.innerHTML = `<span>👁️</span><span style="flex:1">${labels[type]||type}</span><span style="color:var(--text3);font-size:10px;background:rgba(124,58,237,0.2);padding:1px 5px;border-radius:3px">new</span>`;
+    layerContainer.appendChild(layer);
+  }
+
+  toast((icons[type]||'📦')+' '+( labels[type]||type)+' added to your site!','✅');
+}
+
+// ── MODALS ──
+function openModal(id) {
+  const modal = document.getElementById('modal-'+id);
+  if(modal) { modal.classList.add('open'); document.body.style.overflow='hidden'; }
+}
+
+function closeModal(id) {
+  const modal = document.getElementById('modal-'+id);
+  if(modal) { modal.classList.remove('open'); document.body.style.overflow=''; }
+}
+
+document.addEventListener('click', e => {
+  if(e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+// ── TOAST ──
+function toast(msg, icon='✅', type='') {
+  const container = document.getElementById('toastContainer');
+  const t = document.createElement('div');
+  t.className = 'toast' + (type ? ' '+type : '');
+  t.innerHTML = `<span style="font-size:16px">${icon}</span><span>${msg}</span>`;
+  container.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'toastOut 0.3s ease forwards';
+    setTimeout(() => t.remove(), 300);
+  }, 3200);
+}
+
+// ── SCENE APPLY ──
+function applyScene(scene) {
+  const scenes = {
+    scenecore: { accent: '#a855f7', bg: '#050508', name: 'Scene Core' },
+    emo: { accent: '#dc2626', bg: '#0a0505', name: 'Emo / Alt' },
+    y2k: { accent: '#06b6d4', bg: '#050a1a', name: 'Y2K' },
+    kandi: { accent: '#e879f9', bg: '#0a050a', name: 'Kandi' },
+    rave1: { accent: '#6366f1', bg: '#050508', name: 'Rave / EDM' },
+    rave2: { accent: '#f43f5e', bg: '#080205', name: 'Hard Techno' },
+    rave3: { accent: '#22c55e', bg: '#020a04', name: 'Psytrance' },
+    furry: { accent: '#f59e0b', bg: '#080602', name: 'Furry' },
+    femboy: { accent: '#d946ef', bg: '#080208', name: 'Femboy' },
+    anime: { accent: '#6366f1', bg: '#050508', name: 'Anime' },
+    vaporwave: { accent: '#a855f7', bg: '#050210', name: 'Vaporwave' },
+    cyberpunk: { accent: '#3b82f6', bg: '#020508', name: 'Cyberpunk' },
+    kawaii: { accent: '#ec4899', bg: '#080306', name: 'Kawaii' },
+    goth: { accent: '#737373', bg: '#020202', name: 'Goth' },
+    witchcore: { accent: '#10b981', bg: '#020805', name: 'Witchcore' },
+    dreamcore: { accent: '#8b5cf6', bg: '#040210', name: 'Dreamcore' },
+  };
+  const s = scenes[scene] || { name: scene, accent: '#7c3aed' };
+  document.documentElement.style.setProperty('--accent', s.accent);
+  document.documentElement.style.setProperty('--accent2', s.accent);
+  toast('✨ ' + s.name + ' theme applied to your site!', '🎨');
+}
+
+// ── COLOR PALETTE ──
+function buildColorPalette() {
+  const colors = ['#7c3aed','#a855f7','#ec4899','#06b6d4','#10b981','#f59e0b','#ef4444','#f97316','#8b5cf6','#14b8a6','#6366f1','#84cc16','#e11d48','#0ea5e9','#d946ef','#22c55e'];
+  const palette = document.getElementById('colorPalette');
+  if(!palette) return;
+  colors.forEach((c, i) => {
+    const swatch = document.createElement('div');
+    swatch.className = 'color-swatch';
+    swatch.style.background = c;
+    swatch.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+      swatch.classList.add('active');
+      applyAccent(c);
+    };
+    if(i === 0) swatch.classList.add('active');
+    palette.appendChild(swatch);
+  });
+}
+
+function applyAccent(color) {
+  document.documentElement.style.setProperty('--accent', color);
+  toast('Accent color applied!', '🎨');
+}
+
+// ── DAW ──
+function buildDAWGrids() {
+  const tracks = ['kick','snare','hat','bass','synth'];
+  const defaults = {
+    kick: [1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0],
+    snare:[0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+    hat:  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+    bass: [1,0,0,1,0,0,1,0,0,0,1,0,0,1,0,0],
+    synth:[0,0,1,0,0,0,0,1,0,1,0,0,0,0,1,0]
+  };
+  tracks.forEach(t => {
+    const grid = document.getElementById(t+'Grid');
+    if(!grid) return;
+    for(let i=0;i<16;i++) {
+      const step = document.createElement('div');
+      step.className = 'daw-step' + (defaults[t][i] ? ' on' : '');
+      step.onclick = () => {
+        step.classList.toggle('on');
+        dawStates[t][i] = step.classList.contains('on');
+      };
+      grid.appendChild(step);
+    }
+  });
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const icon = document.getElementById('playIcon');
+  const label = document.getElementById('playLabel');
+  if(icon) icon.textContent = isPlaying ? '⏸' : '▶';
+  if(label) label.textContent = isPlaying ? 'Pause' : 'Play';
+  if(isPlaying) toast('Beat is playing 🎵','🎹');
+  else toast('Beat paused','⏸');
+}
+
+// ── THEMES ──
+function buildThemeGrid() {
+  const cats = ['Dark','Neon','Pastel','Aesthetic','Scene','Music','Art','Minimal'];
+  const tabRow = document.getElementById('themeTabRow');
+  if(tabRow) {
+    cats.forEach((c,i) => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-pill' + (i===0?' active':'');
+      btn.textContent = c;
+      btn.onclick = () => {
+        document.querySelectorAll('#themeTabRow .tab-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderThemes(c);
+      };
+      tabRow.appendChild(btn);
+    });
+  }
+  renderThemes('Dark');
+}
+
+const THEMES = {
+  Dark: [
+    {name:'Midnight',bg:'#050508',a:'#7c3aed',b:'#ec4899'},
+    {name:'Obsidian',bg:'#0a0a0a',a:'#6366f1',b:'#8b5cf6'},
+    {name:'Abyss',bg:'#020208',a:'#1d4ed8',b:'#7c3aed'},
+    {name:'Void',bg:'#030303',a:'#374151',b:'#6b7280'},
+    {name:'Dark Neon',bg:'#05050f',a:'#00ff88',b:'#ff00aa'},
+    {name:'Black Rose',bg:'#0a0205',a:'#be185d',b:'#9d174d'},
+    {name:'Shadow',bg:'#0c0c10',a:'#7dd3fc',b:'#3b82f6'},
+    {name:'Eclipse',bg:'#08080c',a:'#a78bfa',b:'#7c3aed'},
+  ],
+  Neon: [
+    {name:'Cyber Pink',bg:'#05000a',a:'#ff00ff',b:'#00ffff'},
+    {name:'Matrix',bg:'#000800',a:'#00ff00',b:'#00cc00'},
+    {name:'Electric',bg:'#000510',a:'#00bfff',b:'#ff4500'},
+    {name:'Rave',bg:'#0a0005',a:'#ff00aa',b:'#aa00ff'},
+    {name:'Laser',bg:'#050010',a:'#ff0080',b:'#8000ff'},
+    {name:'Neon City',bg:'#02000a',a:'#00ffaa',b:'#ff0055'},
+    {name:'Grid World',bg:'#000a10',a:'#00ccff',b:'#ff6600'},
+    {name:'Synthwave',bg:'#08001a',a:'#ff71ce',b:'#01cdfe'},
+  ],
+  Pastel: [
+    {name:'Cotton Candy',bg:'#fdf2f8',a:'#ec4899',b:'#a855f7'},
+    {name:'Mint Dream',bg:'#f0fdf4',a:'#22c55e',b:'#06b6d4'},
+    {name:'Lavender',bg:'#f5f3ff',a:'#8b5cf6',b:'#a78bfa'},
+    {name:'Peach Glow',bg:'#fff7ed',a:'#f97316',b:'#fb923c'},
+    {name:'Sky Blue',bg:'#f0f9ff',a:'#0ea5e9',b:'#38bdf8'},
+    {name:'Rose Quartz',bg:'#fff1f2',a:'#f43f5e',b:'#fb7185'},
+    {name:'Soft Gold',bg:'#fffbeb',a:'#f59e0b',b:'#fbbf24'},
+    {name:'Sage',bg:'#f7fee7',a:'#84cc16',b:'#a3e635'},
+  ],
+  Aesthetic: [
+    {name:'Vaporwave',bg:'#1a0040',a:'#ff71ce',b:'#b967ff'},
+    {name:'Cottagecore',bg:'#1a1206',a:'#86efac',b:'#fde68a'},
+    {name:'Dark Academia',bg:'#12100a',a:'#b45309',b:'#92400e'},
+    {name:'Dreamcore',bg:'#04020f',a:'#c084fc',b:'#818cf8'},
+    {name:'Y2K Cyber',bg:'#00081a',a:'#38bdf8',b:'#a78bfa'},
+    {name:'Witchcraft',bg:'#06030f',a:'#4ade80',b:'#a78bfa'},
+    {name:'Kawaii',bg:'#fdf2f8',a:'#f472b6',b:'#fb7185'},
+    {name:'Weirdcore',bg:'#f5f0e8',a:'#dc2626',b:'#1e40af'},
+  ],
+};
+
+function renderThemes(cat) {
+  const grid = document.getElementById('themeGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  const themes = THEMES[cat] || THEMES.Dark;
+  themes.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'theme-card';
+    card.innerHTML = `
+      <div class="theme-preview" style="background:${t.bg}">
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:8px;gap:4px">
+          <div style="height:8px;border-radius:3px;background:${t.a};width:60%;opacity:0.9"></div>
+          <div style="height:4px;border-radius:2px;background:${t.b};width:40%;opacity:0.7"></div>
+          <div style="height:4px;border-radius:2px;background:${t.a};width:80%;opacity:0.4;margin-top:2px"></div>
+          <div style="margin-top:auto;display:flex;gap:4px">
+            <div style="height:12px;border-radius:4px;flex:1;background:${t.a};opacity:0.8"></div>
+            <div style="height:12px;border-radius:4px;flex:1;background:${t.b};opacity:0.5"></div>
+          </div>
+        </div>
+      </div>
+      <div class="theme-name" style="background:${t.bg};color:${t.a}">${t.name}</div>
+    `;
+    card.onclick = () => {
+      document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      document.documentElement.style.setProperty('--accent', t.a);
+      document.documentElement.style.setProperty('--accent2', t.b);
+      toast('🌈 ' + t.name + ' theme applied!', '✅');
+    };
+    grid.appendChild(card);
+  });
+}
+
+// ── AI ──
+function sendAI() {
+  const box = document.getElementById('aiPromptBox');
+  if(!box || !box.value.trim()) return;
+  const msg = box.value.trim();
+  box.value = '';
+  const container = document.getElementById('aiMessages');
+  if(!container) return;
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = msg;
+  container.appendChild(userMsg);
+  container.scrollTop = container.scrollHeight;
+
+  setTimeout(() => {
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-msg assistant';
+    aiMsg.innerHTML = getAIResponse(msg);
+    container.appendChild(aiMsg);
+    container.scrollTop = container.scrollHeight;
+    toast('AI responded!','🤖','ai');
+  }, 700);
+}
+
+function sendModalAI() {
+  const input = document.getElementById('aiModalInput');
+  if(!input || !input.value.trim()) return;
+  quickAI(input.value.trim());
+  input.value = '';
+}
+
+function quickAI(prompt) {
+  const container = document.getElementById('aiModalMessages');
+  if(!container) return;
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = prompt;
+  container.appendChild(userMsg);
+
+  setTimeout(() => {
+    const aiMsg = document.createElement('div');
+    aiMsg.className = 'ai-msg assistant';
+    aiMsg.innerHTML = '✨ ' + getAIResponse(prompt);
+    container.appendChild(aiMsg);
+    container.scrollTop = container.scrollHeight;
+    toast('AI built it for you! Check your canvas.','🤖','ai');
+  }, 800);
+}
+
+function getAIResponse(msg) {
+  const lower = msg.toLowerCase();
+  if(lower.includes('hero')) return '🎨 Redesigned the hero section with a glowing gradient and animated title. Applied your accent color as a radial glow effect.';
+  if(lower.includes('music') || lower.includes('player')) return '🎵 Added a floating music player with Spotify embed, waveform visualizer, and track controls. You can swap the playlist URL in settings.';
+  if(lower.includes('shop') || lower.includes('product')) return '🛍️ Generated a 3-column product grid with your pricing, hover effects, and Stripe checkout buttons. Connect your Stripe key to go live!';
+  if(lower.includes('color') || lower.includes('purple') || lower.includes('pink')) return '🎨 Applied the color change across your site. I updated the CSS variables, glow effects, and button gradients to match.';
+  if(lower.includes('scene') || lower.includes('emo') || lower.includes('anime')) return '✨ Applied the aesthetic theme! Updated fonts, colors, animations, and added matching decorative elements.';
+  if(lower.includes('glow')) return '💜 Added neon glow effects to the hero title, buttons, and card borders. The pulse animation is set to 2s loop.';
+  return '⚡ Got it! I\'ve analyzed your site and can make that change. Applying now — check your canvas for the updates!';
+}
+
+// ── SETTINGS SAVE ──
+function saveSiteSettings() {
+  const input = document.getElementById('siteNameInput');
+  if(input) {
+    document.getElementById('siteName').textContent = input.value;
+    document.getElementById('navLogo').textContent = input.value.toUpperCase();
+  }
+  closeModal('settings');
+  toast('Site settings saved! 💾','✅');
+}
+
+// ── FILTER ELEMENTS ──
+function filterElements(q) {
+  document.querySelectorAll('.element-btn').forEach(btn => {
+    const matches = btn.textContent.toLowerCase().includes(q.toLowerCase());
+    btn.style.display = matches ? '' : 'none';
+  });
+}
+
+// ── KEYBOARD SHORTCUTS ──
+document.addEventListener('keydown', e => {
+  if((e.ctrlKey||e.metaKey) && e.key==='z') { e.preventDefault(); toast('Undone!','↩️'); }
+  if((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); toast('Saved! ✅','💾'); }
+  if((e.ctrlKey||e.metaKey) && e.shiftKey && e.key==='P') { e.preventDefault(); openModal('themes'); }
+  if(e.key==='Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+      m.classList.remove('open');
+      document.body.style.overflow='';
+    });
+  }
+});
+</script>
+</body>
+</html>
