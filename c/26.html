@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grate-O-Matic Soundboard</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #ef4444;
+            --accent-hover: #dc2626;
+            --text: #f8fafc;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sound-btn {
+            background-color: var(--card-bg);
+            border: 2px solid #334155;
+            color: var(--text);
+            padding: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .sound-btn:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            background-color: #273549;
+        }
+
+        .sound-btn:active {
+            transform: translateY(1px);
+        }
+
+        .stop-btn {
+            width: 100%;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+
+        .stop-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Grate-O-Matic</h1>
+        <p class="subtitle">Pure, mathematically generated auditory chaos.</p>
+
+        <div class="grid">
+            <button class="sound-btn" onclick="playSound('mosquito')">🦟 Mosquito Buzz</button>
+            <button class="sound-btn" onclick="playSound('feedback')">🔊 Mic Feedback</button>
+            <button class="sound-btn" onclick="playSound('dialup')">📟 Dial-Up Glitch</button>
+            <button class="sound-btn" onclick="playSound('siren')">🚨 Emergency Siren</button>
+            <button class="sound-btn" onclick="playSound('chalkboard')">📉 Chalkboard Scratch</button>
+            <button class="sound-btn" onclick="playSound('dumb')">🤤 "The Most Annoying Sound"</button>
+        </div>
+
+        <button class="stop-btn" onclick="stopAllSounds()">⏹️ STOP ALL NOISE</button>
+
+        <footer>Click responsibly. Ensure your system volume isn't at 100%.</footer>
+    </div>
+
+    <script>
+        // Global audio context and tracker for active nodes
+        let audioCtx = null;
+        let activeNodes = [];
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function trackNode(node) {
+            activeNodes.push(node);
+        }
+
+        function stopAllSounds() {
+            activeNodes.forEach(node => {
+                try { node.stop(); } catch(e) {}
+            });
+            activeNodes = [];
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const now = audioCtx.currentTime;
+
+            // Master volume control for safety
+            const masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.15, now); // Caps max volume to prevent blowing out speakers
+            masterGain.connect(audioCtx.destination);
+
+            if (type === 'mosquito') {
+                // High-pitched sawtooth with rapid pitch modulation (vibrato) to mimic wings
+                const osc = audioCtx.createOscillator();
+                const lfo = audioCtx.createOscillator();
+                const lfoGain = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(880, now); // High pitch
+
+                lfo.frequency.setValueAtTime(35, now); // Rapid wing-flapping modulation
+                lfoGain.gain.setValueAtTime(40, now);
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                osc.connect(masterGain);
+
+                lfo.start(now);
+                osc.start(now);
+                osc.stop(now + 2.5);
+                trackNode(osc);
+                trackNode(lfo);
+
+            } else if (type === 'feedback') {
+                // High piercing sine wave that builds up slowly, just like real microphone feedback
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2800, now); // Piercing high frequency
+
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.4, now + 0.8); // Swell effect
+                gainNode.gain.setValueAtTime(0.4, now + 2.0);
+                gainNode.gain.linearRampToValueAtTime(0, now + 2.5); // Fade out
+
+                osc.connect(gainNode);
+                gainNode.connect(masterGain);
+
+                osc.start(now);
+                osc.stop(now + 2.5);
+                trackNode(osc);
+
+            } else if (type === 'dialup') {
+                // Harsh square waves shifting randomly between frequencies to simulate old modems
+                const osc = audioCtx.createOscillator();
+                osc.type = 'square';
+                
+                const duration = 3.0;
+                osc.frequency.setValueAtTime(700, now);
+                
+                // Program random pitch jumps every 0.1 seconds
+                for (let t = 0; t < duration; t += 0.15) {
+                    const randomFreq = 400 + Math.random() * 1200;
+                    osc.frequency.setValueAtTime(randomFreq, now + t);
+                }
+
+                osc.connect(masterGain);
+                osc.start(now);
+                osc.stop(now + duration);
+                trackNode(osc);
+
+            } else if (type === 'siren') {
+                // Alternating high-low dramatic sweep
+                const osc = audioCtx.createOscillator();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(600, now);
+
+                // Create a smooth sweep back and forth
+                osc.frequency.linearRampToValueAtTime(1100, now + 0.5);
+                osc.frequency.linearRampToValueAtTime(600, now + 1.0);
+                osc.frequency.linearRampToValueAtTime(1100, now + 1.5);
+                osc.frequency.linearRampToValueAtTime(600, now + 2.0);
+
+                osc.connect(masterGain);
+                osc.start(now);
+                osc.stop(now + 2.2);
+                trackNode(osc);
+
+            } else if (type === 'chalkboard') {
+                // High-frequency harsh sound combined with random jitter
+                const osc = audioCtx.createOscillator();
+                const filter = audioCtx.createBiquadFilter();
+                
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(4000, now); // Extreme high pitch
+
+                // Rapidly randomize the frequency to create a scratching texture
+                for (let t = 0; t < 2.0; t += 0.05) {
+                    osc.frequency.setValueAtTime(3800 + Math.random() * 600, now + t);
+                }
+
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(2000, now);
+
+                osc.connect(filter);
+                filter.connect(masterGain);
+                
+                osc.start(now);
+                osc.stop(now + 2.0);
+                trackNode(osc);
+
+            } else if (type === 'dumb') {
+
+                const osc = audioCtx.createOscillator();
+                const lfo = audioCtx.createOscillator();
+                const lfoGain = audioCtx.createGain();
+
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, now);
+
+                lfo.frequency.setValueAtTime(8, now); // Violent shaking speed
+                lfoGain.gain.setValueAtTime(150, now); // Shifting range
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(osc.frequency);
+                osc.connect(masterGain);
+
+                lfo.start(now);
+                osc.start(now);
+                osc.stop(now + 3.0);
+                trackNode(osc);
+                trackNode(lfo);
+            }
+        }
+    </script>
+</body>
+</html>
