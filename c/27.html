@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Djdoodledoo Test</title>
+    <!-- localForage for easy IndexedDB usage -->
+    <script src="https://cloudflare.com"></script>
+
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; background-color: #f9f9f9; }
+        .container { margin-top: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        /* DJCaptcha Styling */
+        .dj-captcha-box { 
+            margin: 15px 0; 
+            padding: 15px; 
+            border: 2px dashed #007bff; 
+            border-radius: 6px; 
+            background-color: #f0f7ff; 
+        }
+        .dj-captcha-header { font-weight: bold; color: #007bff; margin-top: 0; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .dj-question { font-size: 1.1em; font-weight: bold; margin-bottom: 10px; background: #e2e8f0; padding: 6px; border-radius: 4px; display: inline-block; }
+        .dj-input { padding: 6px; width: 120px; border: 1px solid #aaa; border-radius: 4px; font-size: 1em; }
+        .refresh-btn { font-size: 0.8em; padding: 2px 6px; cursor: pointer; }
+
+        input[type="file"] { margin: 10px 0; }
+        button.action-btn { background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button.action-btn:hover { background-color: #218838; }
+        button.refresh-list-btn { background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 1em; margin-left: 5px;}
+        button.refresh-list-btn:hover { background-color: #5a6268; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Local File Manager (Max 500MB)</h2>
+        
+        <!-- DJCaptcha System Structure -->
+        <div class="dj-captcha-box">
+            <div class="dj-captcha-header">
+                <span>🔒 DJCaptcha Security</span>
+                <button type="button" class="refresh-btn" onclick="generateCaptcha()">🔄 New Challenge</button>
+            </div>
+            <div id="captcha-question" class="dj-question">Loading...</div>
+            <br>
+            <input type="text" id="captcha-answer" class="dj-input" placeholder="Your Answer">
+        </div>
+
+        <input type="file" id="file-input">
+        <br>
+        <button class="action-btn" onclick="uploadFile()">Save File Safely</button>
+        <button class="refresh-list-btn" onclick="loadFiles()">Refresh List</button>
+
+        <h3>Saved Offline Files:</h3>
+        <ul id="file-list"></ul>
+    </div>
+
+    <script>
+        // 1. Dataset containing exactly 50 distinct challenge configurations
+        const djCaptchaDatabase = [
+            { q: "What is 2 + 2?", a: "4" }, { q: "What is 5 + 3?", a: "8" },
+            { q: "What is 10 - 4?", a: "6" }, { q: "What is 3 * 3?", a: "9" },
+            { q: "What is 12 / 4?", a: "3" }, { q: "What is 7 + 6?", a: "13" },
+            { q: "What is 15 - 7?", a: "8" }, { q: "What is 4 * 5?", a: "20" },
+            { q: "What is 20 / 5?", a: "4" }, { q: "What is 9 + 9?", a: "18" },
+            { q: "What is 14 - 6?", a: "8" }, { q: "What is 6 * 3?", a: "18" },
+            { q: "What is 18 / 2?", a: "9" }, { q: "What is 11 + 5?", a: "16" },
+            { q: "What is 13 - 9?", a: "4" }, { q: "What is 7 * 2?", a: "14" },
+            { q: "What is 25 / 5?", a: "5" }, { q: "What is 8 + 8?", a: "16" },
+            { q: "What is 16 - 7?", a: "9" }, { q: "What is 5 * 5?", a: "25" },
+            { q: "What is 30 / 6?", a: "5" }, { q: "What is 12 + 8?", a: "20" },
+            { q: "What is 22 - 11?", a: "11" }, { q: "What is 4 * 4?", a: "16" },
+            { q: "What is 24 / 3?", a: "8" }, { q: "What is 15 + 5?", a: "20" },
+            { q: "What is 19 - 5?", a: "14" }, { q: "What is 6 * 2?", a: "12" },
+            { q: "What is 40 / 5?", a: "8" }, { q: "What is 3 + 9?", a: "12" },
+            { q: "What is 17 - 8?", a: "9" }, { q: "What is 7 * 3?", a: "21" },
+            { q: "What is 36 / 6?", a: "6" }, { q: "What is 14 + 4?", a: "18" },
+            { q: "What is 25 - 10?", a: "15" }, { q: "What is 8 * 2?", a: "16" },
+            { q: "What is 45 / 9?", a: "5" }, { q: "What is 6 + 7?", a: "13" },
+            { q: "What is 30 - 15?", a: "15" }, { q: "What is 9 * 2?", a: "18" },
+            { q: "What is 50 / 5?", a: "10" }, { q: "What is 13 + 7?", a: "20" },
+            { q: "What is 28 - 14?", a: "14" }, { q: "What is 10 * 2?", a: "20" },
+            { q: "What is 16 / 4?", a: "4" }, { q: "What is 18 + 3?", a: "21" },
+            { q: "What is 40 - 20?", a: "20" }, { q: "What is 3 * 5?", a: "15" },
+            { q: "What is 64 / 8?", a: "8" }, { q: "Type the word: APPLE", a: "apple" }
+        ];
+
+        let currentCaptchaIndex = 0;
+
+        // Initialize localForage database instance
+        const fileStorage = localForage.createInstance({
+            name: "fileSystemDB",
+            storeName: "files",
+            description: "Stores local files up to 500MB"
+        });
+
+        // Run updates setup on window load
+        window.addEventListener("DOMContentLoaded", () => {
+            generateCaptcha();
+            loadFiles();
+        });
+
+        // 2. DJCaptcha Engine Logic
+        function generateCaptcha() {
+            currentCaptchaIndex = Math.floor(Math.random() * djCaptchaDatabase.length);
+            document.getElementById('captcha-question').innerText = djCaptchaDatabase[currentCaptchaIndex].q;
+            document.getElementById('captcha-answer').value = '';
+        }
+
+        function verifyCaptcha() {
+            const userAnswer = document.getElementById('captcha-answer').value.trim().toLowerCase();
+            const correctAnswer = djCaptchaDatabase[currentCaptchaIndex].a.toLowerCase();
+            
+            if (userAnswer === correctAnswer) {
+                return true;
+            } else {
+                alert("Incorrect DJCaptcha answer! Access denied.");
+                generateCaptcha(); // Force refresh to prevent brute-force
+                return false;
+            }
+        }
+
+        // 3. File upload execution flow
+        async function uploadFile() {
+            // Validate challenge block
+            if (!verifyCaptcha()) return;
+
+            const fileInput = document.getElementById('file-input');
+            const files = fileInput.files;
+            if (files.length === 0) return alert("Please select a file.");
+            const file = files[0];
+
+            try {
+                // Determine cumulative database tracking constraints
+                const keys = await fileStorage.keys();
+                let totalSize = file.size;
+                for (const key of keys) {
+                    const item = await fileStorage.getItem(key);
+                    if (item) totalSize += item.size;
+                }
+
+                // Verify constraints compliance limit (500MB calculated in Bytes)
+                if (totalSize > 524288000) { 
+                    return alert("Storage quota exceeded! Cannot cross 500MB.");
+                }
+
+                // Convert payload data stream sequence safely to IndexedDB
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const fileData = {
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: e.target.result 
+                    };
+                    await fileStorage.setItem(file.name, fileData);
+                    alert("File successfully saved to IndexedDB!");
+                    
+                    // Force a new validation sequence state
+                    generateCaptcha();
+                    loadFiles();
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                alert("Error processing upload stream: " + err);
+            }
+        }
+
+        // 4. Interface render data lists engine
+        async function loadFiles() {
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+            try {
+                const keys = await fileStorage.keys();
+                for (const key of keys) {
+                    const file = await fileStorage.getItem(key);
+                    if (file) {
+                        const li = document.createElement('li');
+                        li.innerText = `${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} MB)`;
+                        fileList.appendChild(li);
+                    }
+                }
+            } catch(err) {
+                console.error("Failed to read items layout storage map configuration", err);
+            }
+        }
+    </script>
+</body>
+</html>
