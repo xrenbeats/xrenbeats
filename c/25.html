@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJDoodleDoo's Official Soundboard</title>
+    <style>
+        /* Base Theme Fallbacks (Default: Dark/Slate) */
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #334155;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin: 10px 0;
+            color: var(--accent);
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        /* Controls / Secret Code Section */
+        .controls-panel {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        select, input, .btn {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            background-color: var(--bg);
+            color: var(--text);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input {
+            cursor: text;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        .btn-accent:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Sound Sections */
+        .section-title {
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 5px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sound-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .sound-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border);
+            color: var(--text);
+            padding: 25px 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .sound-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .sound-card:active {
+            transform: translateY(1px);
+        }
+
+        .global-actions {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .stop-btn {
+            width: 100%;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .stop-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>DJDoodleDoo's Trash Studio</h1>
+            <p>Custom Beats, Chaotic Noises, and Dynamic Themes</p>
+        </header>
+
+        <!-- Configuration Control Panel -->
+        <div class="controls-panel">
+            <label for="themeSelect">Theme:</label>
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="default">Default Dark</option>
+                <option value="light">Plain Light</option>
+                <option value="retro">8-Bit Arcade</option>
+            </select>
+
+            <div id="unlockContainer">
+                <input type="text" id="secretCodeInput" placeholder="Enter Secret Code...">
+                <button class="btn btn-accent" onclick="checkSecretCode()">Unlock Themes</button>
+            </div>
+        </div>
+
+        <!-- Category 1: Trash Sounds -->
+        <div class="section-title">🗑️ Trash Sounds</div>
+        <div class="sound-grid">
+            <!-- ADJUST THE FILE NAMES INSIDE THE playSound('') FUNCTION BELOW -->
+            <button class="sound-card" onclick="playSound('audio/trash1.mp3')">Metal Bin Slam</button>
+            <button class="sound-card" onclick="playSound('audio/trash2.mp3')">Glass Shatter</button>
+            <button class="sound-card" onclick="playSound('audio/dumpster.mp3')">Dumpster Dive</button>
+            <button class="sound-card" onclick="playSound('audio/crumple.mp3')">Paper Crumple</button>
+        </div>
+
+        <!-- Category 2: DJDoodleDoo Original Tracks -->
+        <div class="section-title">🎵 DJDoodleDoo  Tracks</div>
+        <div class="sound-grid">
+            <!-- ADJUST THESE TO MATCH YOUR ACTUAL MUSIC FILE NAMES -->
+            <button class="sound-card" onclick="playSound('audio/trippylatin.mp3')">Trippy Latin Music For Babies to go to Sleep for.</button>
+            <button class="sound-card" onclick="playSound('audio/ambitious.mp3')">Ambitius Taco Beieng</button>
+            <button class="sound-card" onclick="playSound('audio/androidbeat.mp3')">ANDROID BEAT</button>
+            <button class="sound-card" onclick="playSound('audio/bentrap.mp3')">BEN BEAT</button>
+            <button class="sound-card" onclick="playSound('audio/highpitch.mp3')">High Pitch Eee!</button>
+            <button class="sound-card" onclick="playSound('audio/goofyahhflanger.mp3')">Goofy Ahh Flanger #1</button>
+            <button class="sound-card" onclick="playSound('audio/goofyahhflangerv2.mp3')">Goofy Ahh Flanger #2</button>
+            <button class="sound-card" onclick="playSound('audio/alignment.mp3')">Alignment (Special Bing! :)</button>
+            <button class="sound-card" onclick="playSound('audio/carhornbeat.mp3')">Car Horn Ahh Audio Beat</button>
+        </div>
+
+        <div class="global-actions">
+            <button class="stop-btn" onclick="stopAllAudio()">⏹️ STOP ALL AUDIO</button>
+        </div>
+    </div>
+
+    <script>
+        // --- AUDIO ENGINE ---
+        let activeAudioObjects = [];
+
+        function playSound(audioFilePath) {
+            // Creates a dynamic audio instance referencing your GitHub Pages directory structure
+            const audio = new Audio(audioFilePath);
+            activeAudioObjects.push(audio);
+            
+            audio.play().catch(error => {
+                console.error("Audio failed to play. Check your file path or user interactions rules:", error);
+                alert("Could not load file: " + audioFilePath + "\nMake sure it is uploaded to your 'audio' folder exactly with this filename!");
+            });
+
+            // Clean up reference when sound finishes
+            audio.onended = () => {
+                activeAudioObjects = activeAudioObjects.filter(item => item !== audio);
+            };
+        }
+
+        function stopAllAudio() {
+            activeAudioObjects.forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+            activeAudioObjects = [];
+        }
+
+        // --- THEME DATABASE (25+ Themes) ---
+        const themeMap = {
+            // Standard Base Themes
+            default: { bg: '#0f172a', cardBg: '#1e293b', text: '#f8fafc', accent: '#3b82f6', accentHover: '#2563eb', border: '#334155' },
+            light: { bg: '#f1f5f9', cardBg: '#ffffff', text: '#0f172a', accent: '#0284c7', accentHover: '#0369a1', border: '#cbd5e1' },
+            retro: { bg: '#111111', cardBg: '#222222', text: '#00ff00', accent: '#ff00ff', accentHover: '#cc00cc', border: '#00ff00' },
+            
+            // Secret Unlocked Premium Themes (25 Additions)
+            femboy: { bg: '#fff0f5', cardBg: '#ffffff', text: '#4a3b4e', accent: '#ffb6c1', accentHover: '#ff91a4', border: '#e6e6fa' },
+            matrix: { bg: '#000000', cardBg: '#050505', text: '#39ff14', accent: '#00ff00', accentHover: '#00cc00', border: '#113311' },
+            cyberpunk: { bg: '#001219', cardBg: '#0a1128', text: '#00f5d4', accent: '#f72585', accentHover: '#b5179e', border: '#7209b7' },
+            vaporwave: { bg: '#2b003c', cardBg: '#470068', text: '#00f0ff', accent: '#ff007f', accentHover: '#ff55bb', border: '#7b009a' },
+            goth: { bg: '#0d0d0d', cardBg: '#1a1a1a', text: '#e0e0e0', accent: '#660000', accentHover: '#440000', border: '#333333' },
+            bubblegum: { bg: '#ffdeeb', cardBg: '#ffffff', text: '#d63384', accent: '#ff85a2', accentHover: '#f06292', border: '#f8bbd0' },
+            ocean: { bg: '#03045e', cardBg: '#023e8a', text: '#caf0f8', accent: '#00b4d8', accentHover: '#0096c7', border: '#0077b6' },
+            forest: { bg: '#143601', cardBg: '#1a4301', text: '#aad576', accent: '#538d22', accentHover: '#245501', border: '#245501' },
+            sunset: { bg: '#2b0f54', cardBg: '#ab3e5b', text: '#f7d070', accent: '#e25f38', accentHover: '#ff7e5f', border: '#ab3e5b' },
+            toxic: { bg: '#1a1c1a', cardBg: '#2d332d', text: '#76ff03', accent: '#ccff00', accentHover: '#99cc00', border: '#4caf50' },
+            vampire: { bg: '#150000', cardBg: '#2a0000', text: '#ffffff', accent: '#990000', accentHover: '#ff0000', border: '#4a0000' },
+            lavender: { bg: '#f3e8ff', cardBg: '#ffffff', text: '#581c87', accent: '#a855f7', accentHover: '#9333ea', border: '#e9d5ff' },
+            ice: { bg: '#f0fdfa', cardBg: '#ccfbf1', text: '#115e59', accent: '#0d9488', accentHover: '#0f766e', border: '#99f6e4' },
+            coffee: { bg: '#3e2723', cardBg: '#4e342e', text: '#d7ccc8', accent: '#8d6e63', accentHover: '#6d4c41', border: '#5d4037' },
+            banana: { bg: '#fffde7', cardBg: '#fff9c4', text: '#5d4037', accent: '#fbc02d', accentHover: '#f57f17', border: '#fff59d' },
+            pumpkin: { bg: '#281505', cardBg: '#3d1f05', text: '#ffcc80', accent: '#ff9800', accentHover: '#f57c00', border: '#e65100' },
+            mint: { bg: '#e8f5e9', cardBg: '#ffffff', text: '#1b5e20', accent: '#4caf50', accentHover: '#388e3c', border: '#c8e6c9' },
+            space: { bg: '#020208', cardBg: '#0b0c10', text: '#c5c6c7', accent: '#66fcf1', accentHover: '#45a29e', border: '#1f2833' },
+            desert: { bg: '#f4eade', cardBg: '#e7d8c9', text: '#634832', accent: '#b07d62', accentHover: '#8b5e4c', border: '#dfc7b2' },
+            flamingo: { bg: '#fff0f3', cardBg: '#ffe5ec', text: '#c9184a', accent: '#ff758f', accentHover: '#ff4d6d', border: '#ffb3c1' },
+            glitch: { bg: '#1a1a24', cardBg: '#252538', text: '#00ffff', accent: '#ff0055', accentHover: '#ff00aa', border: '#00ffaa' },
+            cottoncandy: { bg: '#e8f0fe', cardBg: '#ffffff', text: '#6366f1', accent: '#f472b6', accentHover: '#38bdf8', border: '#c084fc' },
+            honey: { bg: '#fffbeb', cardBg: '#fef3c7', text: '#78350f', accent: '#f59e0b', accentHover: '#d97706', border: '#fde68a' },
+            military: { bg: '#2b3a1a', cardBg: '#3f522d', text: '#f5f5f5', accent: '#606c38', accentHover: '#283618', border: '#4f5d37' },
+            crimson: { bg: '#1c0a0a', cardBg: '#2d1212', text: '#fca5a5', accent: '#ef4444', accentHover: '#b91c1c', border: '#7f1d1d' },
+            blueprint: { bg: '#0a2463', cardBg: '#1e3a8a', text: '#ffffff', accent: '#3b82f6', accentHover: '#60a5fa', border: '#2563eb' }
+        };
+
+        function changeTheme(themeKey) {
+            const selected = themeMap[themeKey] || themeMap.default;
+            const root = document.documentElement;
+            
+            // Dynamically rewrite CSS injection variables
+            root.style.setProperty('--bg', selected.bg);
+            root.style.setProperty('--card-bg', selected.cardBg);
+            root.style.setProperty('--text', selected.text);
+            root.style.setProperty('--accent', selected.accent);
+            root.style.setProperty('--accent-hover', selected.accentHover);
+            root.style.setProperty('--border', selected.border);
+        }
+
+        // --- SECRET EASTER EGG METHOD ---
+        function checkSecretCode() {
+            const inputVal = document.getElementById('secretCodeInput').value.trim();
+            const selectEl = document.getElementById('themeSelect');
+            
+            if (inputVal === "NOTSECRET1234") {
+                // Remove the lock panel UI element entirely
+                document.getElementById('unlockContainer').classList.add('hidden');
+                
+                // Array elements to dynamically push into select option nodes
+                const premiumOptions = [
+                    { value: 'femboy', label: '🌸 Femboy Aesthetic' },
+                    { value: 'matrix', label: '📟 Digital Matrix' },
+                    { value: 'cyberpunk', label: '🌆 Cyberpunk Neon' },
+                    { value: 'vaporwave', label: '🔮 Vaporwave Glitch' },
+                    { value: 'goth', label: '🖤 Dark Goth/Emo' },
+                    { value: 'bubblegum', label: '🧼 Bubblegum Pop' },
+                    { value: 'ocean', label: '🌊 Ocean Depths' },
+                    { value: 'forest', label: '🌲 Deep Woods' },
+                    { value: 'sunset', label: '🌇 Horizon Sunset' },
+                    { value: 'toxic', label: '☣️ Radioactive Slime' },
+                    { value: 'vampire', label: '🧛 Dracula Red' },
+                    { value: 'lavender', label: '🔮 Royal Lavender' },
+                    { value: 'ice', label: '❄️ Glacial Ice' },
+                    { value: 'coffee', label: '☕ Espresso Lounge' },
+                    { value: 'banana', label: '🍌 Yellow Split' },
+                    { value: 'pumpkin', label: '🎃 Spooky Carving' },
+                    { value: 'mint', label: '🌿 Spearmint Fresh' },
+                    { value: 'space', label: '🌌 Deep Cosmos' },
+                    { value: 'desert', label: '🏜️ Sahara Dust' },
+                    { value: 'flamingo', label: '🦩 Hot Pink' },
+                    { value: 'glitch', label: '👾 System Malfunction' },
+                    { value: 'cottoncandy', label: '🍭 Cotton Candy Clouds' },
+                    { value: 'honey', label: '🍯 Bumble Honey' },
+                    { value: 'military', label: '🪖 Olive Camo' },
+                    { value: 'crimson', label: '🩸 Blood Crimson' },
+                    { value: 'blueprint', label: '📐 Architect Blueprint' }
+                ];
+
+                premiumOptions.forEach(opt => {
+                    const el = document.createElement('option');
+                    el.value = opt.value;
+                    el.textContent = opt.label;
+                    selectEl.appendChild(el);
+                });
+
+                alert("🔓 Access granted! 26 premium design engines unlocked.");
+            } else {
+                alert("❌ Verification signature failed.");
+            }
+        }
+    </script>
+</body>
+</html>
