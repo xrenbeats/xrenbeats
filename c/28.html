@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Built with Xren Studio</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        .container { max-width: 500px; margin: auto; padding: 20px; border: 2px dashed #ccc; border-radius: 10px; }
+        input { margin: 20px 0; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Audio to WAV Converter</h2>
+        <input type="file" id="audioFile" accept="audio/*">
+        <br>
+        <button id="convertBtn">Convert & Download WAV</button>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('audioFile');
+        const convertBtn = document.getElementById('convertBtn');
+
+        convertBtn.addEventListener('click', async () => {
+            if (!fileInput.files.length) {
+                alert('Please select an audio file first!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const arrayBuffer = await file.arrayBuffer();
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            try {
+                // Decode the uploaded audio file
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                // Create an offline context for rendering the WAV
+                const offlineContext = new OfflineAudioContext(
+                    audioBuffer.numberOfChannels,
+                    audioBuffer.length,
+                    audioBuffer.sampleRate
+                );
+
+                const source = offlineContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(offlineContext.destination);
+                source.start(0);
+
+                // Render the audio into an audio buffer
+                const renderedBuffer = await offlineContext.startRendering();
+                
+                // Convert the buffer to a WAV Blob and download
+                const wavBlob = bufferToWav(renderedBuffer);
+                const url = URL.createObjectURL(wavBlob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name.replace(/\.[^/.]+$/, "") + '.wav';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+            } catch (e) {
+                alert('Error processing audio file. Make sure it is a valid audio format.');
+            }
+        });
+
+        // Helper function to convert AudioBuffer to WAV Blob
+        function bufferToWav(buffer) {
+            const numOfChannels = buffer.numberOfChannels;
+            const length = buffer.length * numOfChannels * 2;
+            const bufferData = new ArrayBuffer(44 + length);
+            const view = new DataView(bufferData);
+            let channels = [];
+            let offset = 0;
+            let pos = 0;
+
+            // Write WAV identifier
+            function writeString(str) {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(pos++, str.charCodeAt(i));
+                }
+            }
+
+            writeString('RIFF');
+            view.setUint32(pos, 36 + length, true); pos += 4;
+            writeString('WAVE');
+            writeString('fmt ');
+            view.setUint32(pos, 16, true); pos += 4; // Subchunk1Size
+            view.setUint16(pos, 1, true); pos += 2; // AudioFormat (1 = PCM)
+            view.setUint16(pos, numOfChannels, true); pos += 2;
+            view.setUint32(pos, buffer.sampleRate, true); pos += 4;
+            view.setUint32(pos, buffer.sampleRate * 2 * numOfChannels, true); pos += 4; // ByteRate
+            view.setUint16(pos, numOfChannels * 2, true); pos += 2; // BlockAlign
+            view.setUint16(pos, 16, true); pos += 2; // BitsPerSample
+            writeString('data');
+            view.setUint32(pos, length, true); pos += 4;
+
+            // Write interleaved PCM data
+            for (let i = 0; i < buffer.numberOfChannels; i++) {
+                channels.push(buffer.getChannelData(i));
+            }
+
+            while (pos < 44 + length) {
+                for (let i = 0; i < numOfChannels; i++) {
+                    // Clamp to -1 to 1 and convert to 16-bit PCM
+                    let sample = channels[i][offset];
+                    sample = sample < 0 ? sample * 32768 : sample * 32767;
+                    view.setInt16(pos, sample, true);
+                    pos += 2;
+                }
+                offset++;
+            }
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+    </script>
+</body>
+</html>
