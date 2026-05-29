@@ -2,159 +2,74 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slaps to MP3 Converter (GitHub Pages Edition)</title>
+    <title>DJdoodledoo's Slaps.com Audio Tool</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; background-color: #121212; color: #fff; margin-top: 50px; }
-        .container { max-width: 500px; margin: auto; padding: 30px; background: #1e1e1e; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        input[type="text"] { width: 90%; padding: 12px; margin: 15px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #fff; font-size: 14px; }
-        button { width: 95%; padding: 14px; font-size: 16px; background-color: #ff4757; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background-color: #ff6b81; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
-        #status { margin-top: 20px; color: #ffa502; font-weight: bold; font-size: 14px; white-space: pre-line; }
+        body { font-family: sans-serif; text-align: center; background-color: #121212; color: #fff; padding-top: 50px; }
+        .box { max-width: 450px; margin: auto; padding: 25px; background: #1e1e1e; border-radius: 8px; border: 1px solid #333; }
+        input { width: 90%; padding: 10px; margin: 15px 0; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; }
+        button { width: 95%; padding: 12px; background: #ff4757; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #ff6b81; }
+        #log { margin-top: 20px; color: #ffa502; font-size: 14px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>Slaps to MP3 Converter</h2>
-        <p style="color: #aaa; font-size: 13px;">Runs entirely in your browser via GitHub Pages.</p>
-        
-        <input type="text" id="trackUrl" placeholder="Paste link (e.g., https://slaps.com)" value="https://slaps.com">
-        <br>
-        
-        <button id="convertBtn">Fetch & Convert to MP3</button>
-        <div id="status">Ready to process.</div>
+    <div class="box">
+        <h3>Slaps Audio Converter by Djdoodledoo</h3>
+        <p style="color: #aaa; font-size: 12px;">Extracts direct audio streams completely client-side.</p>
+        <input type="text" id="urlInput" value="https://slaps.com">
+        <button id="goBtn">Extract & Open Audio</button>
+        <div id="log">Ready</div>
     </div>
 
-    <!-- Load standalone pure JS MP3 Encoder (Safe for GitHub Pages) -->
-    <script src="https://cloudflare.com"></script>
-
     <script>
-        document.getElementById('convertBtn').addEventListener('click', async () => {
-            const trackUrl = document.getElementById('trackUrl').value.trim();
-            const status = document.getElementById('status');
-            const convertBtn = document.getElementById('convertBtn');
+        document.getElementById('goBtn').onclick = function() {
+            var targetUrl = document.getElementById('urlInput').value.trim();
+            var log = document.getElementById('log');
             
-            if (!trackUrl) return alert('Please input a valid track URL!');
-            
-            convertBtn.disabled = true;
-            status.style.color = "#ffa502";
-            status.innerText = "Connecting to proxy and fetching page data...";
-
-            try {
-                // 1. Bypass CORS using an open-source public proxy wrapper
-                const proxyUrl = "https://allorigins.win" + encodeURIComponent(trackUrl);
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error("Proxy server failed to respond.");
-                
-                const data = await response.json();
-                const htmlText = data.contents;
-
-                // Check if Cloudflare blocked the public proxy
-                if (htmlText.includes("cloudflare") || htmlText.includes("Just a moment")) {
-                    throw new Error("Cloudflare blocked the public proxy server.\nPure HTML conversion is not possible right now.\nConsider using a local Node.js server to bypass this.");
-                }
-
-                status.innerText = "Analyzing track metadata structures...";
-
-                // 2. Locate the specific JSON payload containing the audio source
-                const jsonMarker = '<script id="__NEXT_DATA__" type="application/json">';
-                const startIndex = htmlText.indexOf(jsonMarker);
-                if (startIndex === -1) throw new Error("Could not find data payload. Verify the link is a track page.");
-                
-                const dataStart = startIndex + jsonMarker.length;
-                const dataEnd = htmlText.indexOf('</script>', dataStart);
-                const jsonText = htmlText.substring(dataStart, dataEnd);
-                const parsedData = JSON.parse(jsonText);
-
-                // Safely dig into Next.js page state tree for the source stream
-                const trackData = parsedData.props?.pageProps?.track;
-                const rawAudioUrl = trackData?.audio_url || trackData?.source_url;
-
-                if (!rawAudioUrl) throw new Error("Could not extract raw audio CDN link from page state.");
-
-                status.innerText = "Downloading raw audio data stream...";
-                
-                // Fetch the binary stream through proxy to prevent cross-origin blocks
-                const streamProxy = "https://allorigins.win" + encodeURIComponent(rawAudioUrl);
-                const audioBufferResponse = await fetch(streamProxy);
-                const arrayBuffer = await audioBufferResponse.arrayBuffer();
-
-                status.innerText = "Decoding audio samples in browser sandbox...";
-
-                // 3. Decode the raw audio bytes using the browser's built-in engine
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-                status.innerText = "Encoding channels into MP3 format...\n(This may take a few seconds)";
-
-                // 4. Encode to MP3 using lamejs instead of heavy FFmpeg WebAssembly
-                const mp3Blob = convertAudioBufferToMp3(audioBuffer);
-
-                // 5. Trigger download
-                const downloadUrl = URL.createObjectURL(mp3Blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = `slaps_conversion_${Date.now()}.mp3`;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-                URL.revokeObjectURL(downloadUrl);
-
-                status.style.color = "#2ed573";
-                status.innerText = "Success! Check your downloads folder.";
-
-            } catch (err) {
-                status.style.color = "#ff4757";
-                status.innerText = "Error: " + err.message;
-                console.error(err);
-            } finally {
-                convertBtn.disabled = false;
-            }
-        });
-
-        // Pure JS encoding matrix matching stereo or mono channels into MP3 data blocks
-        function convertAudioBufferToMp3(audioBuffer) {
-            const channels = audioBuffer.numberOfChannels;
-            const sampleRate = audioBuffer.sampleRate;
-            
-            // Defaulting to standard 128kbps stereo MP3 engine specs
-            const mp3encoder = new lamejs.Mp3Encoder(channels, sampleRate, 128);
-            const mp3Data = [];
-
-            const sampleBlockSize = 1152; 
-            const left = audioBuffer.getChannelData(0);
-            const right = channels > 1 ? audioBuffer.getChannelData(1) : left;
-
-            // Convert Float32 structural arrays to required Int16 bit arrays
-            const leftInt16 = new Int16Array(left.length);
-            const rightInt16 = new Int16Array(right.length);
-            for (let i = 0; i < left.length; i++) {
-                leftInt16[i] = left[i] < 0 ? left[i] * 32768 : left[i] * 32767;
-                rightInt16[i] = right[i] < 0 ? right[i] * 32768 : right[i] * 32767;
+            if (!targetUrl) {
+                alert('Please enter a URL');
+                return;
             }
 
-            // Loop through data samples chunk-by-chunk
-            for (let i = 0; i < leftInt16.length; i += sampleBlockSize) {
-                const leftChunk = leftInt16.subarray(i, i + sampleBlockSize);
-                const rightChunk = rightInt16.subarray(i, i + sampleBlockSize);
-                
-                let mp3buf;
-                if (channels === 1) {
-                    mp3buf = mp3encoder.encodeBuffer(leftChunk);
-                } else {
-                    mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
-                }
-                if (mp3buf.length > 0) mp3Data.push(mp3buf);
-            }
+            log.innerText = "Connecting to public proxy server...";
 
-            // Flush encoder structural buffer limits
-            const mp3buf = mp3encoder.flush();
-            if (mp3buf.length > 0) mp3Data.push(mp3buf);
+            // Use an open proxy to read the HTML source safely over the web
+            var proxy = "https://allorigins.win" + encodeURIComponent(targetUrl);
 
-            return new Blob(mp3Data, { type: 'audio/mp3' });
-        }
+            fetch(proxy)
+                .then(function(res) { 
+                    if (!res.ok) throw new Error("Proxy connection failed.");
+                    return res.json(); 
+                })
+                .then(function(data) {
+                    var html = data.contents;
+                    log.innerText = "Analyzing page text data...";
+
+                    // Check if Cloudflare is blocking the public proxy's server IP
+                    if (html.indexOf("cloudflare") !== -1 || html.indexOf("Just a moment") !== -1) {
+                        throw new Error("Cloudflare blocked the proxy. Automated browser scraping is restricted by their firewall right now.");
+                    }
+
+                    // FIXED REGEX: Scans text safely without causing browser crashes
+                    var match = html.match(/https?:\/\/[^"'\s>]+\.(?:mp3|wav|ogg|m4a)[^"'\s>]*/i);
+                    if (!match) {
+                        throw new Error("Could not find a direct audio link signature in the page text.");
+                    }
+
+                    var rawAudioUrl = match[0];
+                    log.innerText = "Audio stream found! Forwarding to browser...";
+
+                    // Open the raw streaming link directly in a safe browser window
+                    window.open(rawAudioUrl, '_blank');
+                    log.innerText = "Stream opened in a new tab! Right-click it to save.";
+                })
+                .catch(function(err) {
+                    log.style.color = "#ff4757";
+                    log.innerText = "Error: " + err.message;
+                    console.error(err);
+                });
+        };
     </script>
 </body>
 </html>
