@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chillify Roblox IDs</title>
+    <style>
+        /* CSS Theme Variables mapped to the Layout */
+        :root {
+            --bg-page: #fcfcfc;                /* Background color */
+            --bg-banner: #006699;              /* Classic Blue */
+            --text-banner: #ffffff;            /* White main banner text */
+            --text-accent: #ffff00;            /* Yellow highlights */
+            --border-banner: none;
+            --font-main: Arial, Helvetica, sans-serif;
+            --id-bg: #1a7bb0;                  /* Improved accessible contrasting blue */
+            --id-text: #ffffff;
+            --topbar-bg: #222222;              /* Dark top navigation bar */
+            --topbar-text: #ffffff;
+        }
+
+        /* --- 1. CORE DEFAULT THEMES --- */
+        [data-theme="light"] {
+            --bg-page: #ffffff; --bg-banner: #f0f0f0; --text-banner: #000000;
+            --text-accent: #0000ff; --border-banner: 1px solid #ccc; --id-bg: #d0d0d0; --id-text: #000000;
+        }
+        [data-theme="dark"] {
+            --bg-page: #121212; --bg-banner: #1e1e1e; --text-banner: #ffffff;
+            --text-accent: #00b0ff; --border-banner: 1px solid #333; --id-bg: #3a3a3a; --id-text: #00b0ff;
+        }
+
+        /* --- 2. 24 NORMAL COLOR VARIANTS --- */
+        [data-theme="crimson"] { --bg-page: #fff5f5; --bg-banner: #9b1c1c; --text-banner: #ffffff; --text-accent: #feb2b2; --id-bg: #c53030; --id-text: #ffffff; }
+        [data-theme="scarlet"] { --bg-page: #fff5f5; --bg-banner: #e53e3e; --text-banner: #ffffff; --text-accent: #fff5f5; --id-bg: #9b1c1c; --id-text: #ffffff; }
+        [data-theme="rose"] { --bg-page: #fff5f7; --bg-banner: #da1b60; --text-banner: #ffffff; --text-accent: #fbb6ce; --id-bg: #b8124a; --id-text: #ffffff; }
+        [data-theme="coral"] { --bg-page: #fffaf8; --bg-banner: #f35627; --text-banner: #ffffff; --text-accent: #ffdad0; --id-bg: #c03911; --id-text: #ffffff; }
+        [data-theme="amber"] { --bg-page: #fffbeb; --bg-banner: #d97706; --text-banner: #ffffff; --text-accent: #fef3c7; --id-bg: #b45309; --id-text: #ffffff; }
+        [data-theme="emerald"] { --bg-page: #f0fdf4; --bg-banner: #059669; --text-banner: #ffffff; --text-accent: #a7f3d0; --id-bg: #047857; --id-text: #ffffff; }
+        [data-theme="forest"] { --bg-page: #f0fdf4; --bg-banner: #14532d; --text-banner: #ffffff; --text-accent: #bbf7d0; --id-bg: #166534; --id-text: #ffffff; }
+        [data-theme="mint"] { --bg-page: #f0fdfa; --bg-banner: #0d9488; --text-banner: #ffffff; --text-accent: #ccfbf1; --id-bg: #0f766e; --id-text: #ffffff; }
+        [data-theme="seafoam"] { --bg-page: #f4fbf7; --bg-banner: #2eaf7d; --text-banner: #ffffff; --text-accent: #e6f7f0; --id-bg: #1f845d; --id-text: #ffffff; }
+        [data-theme="teal"] { --bg-page: #f0fdfa; --bg-banner: #0369a1; --text-banner: #ffffff; --text-accent: #e0f2fe; --id-bg: #0284c7; --id-text: #ffffff; }
+        [data-theme="sky"] { --bg-page: #f0f9ff; --bg-banner: #0284c7; --text-banner: #ffffff; --text-accent: #e0f2fe; --id-bg: #0369a1; --id-text: #ffffff; }
+        [data-theme="midnight"] { --bg-page: #0f172a; --bg-banner: #1e293b; --text-banner: #f8fafc; --text-accent: #38bdf8; --id-bg: #334155; --id-text: #38bdf8; }
+        [data-theme="indigo"] { --bg-page: #eef2ff; --bg-banner: #4338ca; --text-banner: #ffffff; --text-accent: #c7d2fe; --id-bg: #4f46e5; --id-text: #ffffff; }
+        [data-theme="royal-purple"] { --bg-page: #faf5ff; --bg-banner: #581c87; --text-banner: #ffffff; --text-accent: #e9d5ff; --id-bg: #6b21a8; --id-text: #ffffff; }
+        [data-theme="amethyst"] { --bg-page: #f3e8ff; --bg-banner: #7e22ce; --text-banner: #ffffff; --text-accent: #f3e8ff; --id-bg: #6b21a8; --id-text: #ffffff; }
+        [data-theme="plum"] { --bg-page: #fdf2f8; --bg-banner: #701a75; --text-banner: #ffffff; --text-accent: #fbcfe8; --id-bg: #86198f; --id-text: #ffffff; }
+        [data-theme="magenta"] { --bg-page: #fff5f7; --bg-banner: #9d174d; --text-banner: #ffffff; --text-accent: #fce7f3; --id-bg: #be185d; --id-text: #ffffff; }
+        [data-theme="fuchsia"] { --bg-page: #fdf4ff; --bg-banner: #c026d3; --text-banner: #ffffff; --text-accent: #fae8ff; --id-bg: #a21caf; --id-text: #ffffff; }
+        [data-theme="hot-pink"] { --bg-page: #fff5f7; --bg-banner: #ff1493; --text-banner: #ffffff; --text-accent: #fff0f5; --id-bg: #c71585; --id-text: #ffffff; }
+        [data-theme="salmon"] { --bg-page: #fff5f5; --bg-banner: #fa8072; --text-banner: #ffffff; --text-accent: #ffe4e1; --id-bg: #e9967a; --id-text: #ffffff; }
+        [data-theme="chocolate"] { --bg-page: #faf7f5; --bg-banner: #7c2d12; --text-banner: #ffffff; --text-accent: #ffedd5; --id-bg: #9a3412; --id-text: #ffffff; }
+        [data-theme="slate"] { --bg-page: #f8fafc; --bg-banner: #475569; --text-banner: #ffffff; --text-accent: #cbd5e1; --id-bg: #334155; --id-text: #ffffff; }
+        [data-theme="charcoal"] { --bg-page: #1c1c1c; --bg-banner: #2e2e2e; --text-banner: #ffffff; --text-accent: #e0e0e0; --id-bg: #444444; --id-text: #ffffff; }
+        [data-theme="olive"] { --bg-page: #fefce8; --bg-banner: #713f12; --text-banner: #ffffff; --text-accent: #fef08a; --id-bg: #854d0e; --id-text: #ffffff; }
+
+        /* --- 3. THE 24 OTHER POPULAR THEMES (PUBLIC MIX) --- */
+        [data-theme="vaporwave"] { --bg-page: #2a0845; --bg-banner: #ff71ce; --text-banner: #01cdfe; --text-accent: #05ffa1; --border-banner: 2px solid #01cdfe; --id-bg: #b967ff; --id-text: #ffffff; }
+        [data-theme="cyberpunk"] { --bg-page: #000000; --bg-banner: #ffee00; --text-banner: #000000; --text-accent: #00f0ff; --border-banner: 3px solid #00f0ff; --id-bg: #000000; --id-text: #00f0ff; }
+        [data-theme="pastel-dreams"] { --bg-page: #f7fed1; --bg-banner: #ffc6ff; --text-banner: #4a4a4a; --text-accent: #9bf6ff; --id-bg: #bdb2ff; --id-text: #ffffff; }
+        [data-theme="cottagecore"] { --bg-page: #f4f1ea; --bg-banner: #7d84b2; --text-banner: #ffffff; --text-accent: #e0ebb8; --id-bg: #8e9aaf; --id-text: #ffffff; }
+        [data-theme="y2k-futurism"] { --bg-page: #d4e0e7; --bg-banner: #8da9c4; --text-banner: #0b2545; --text-accent: #eef4f8; --id-bg: #134074; --id-text: #ffffff; }
+        [data-theme="glitch-art"] { --bg-page: #050505; --bg-banner: #ff0055; --text-banner: #ffffff; --text-accent: #00ffaa; --id-bg: #0055ff; --id-text: #ffffff; }
+        [data-theme="matrix"] { --bg-page: #000000; --bg-banner: #001100; --text-banner: #00ff00; --text-accent: #00ff00; --border-banner: 1px solid #00ff00; --id-bg: #003300; --id-text: #00ff00; }
+        [data-theme="outrun"] { --bg-page: #0d0015; --bg-banner: #f107a3; --text-banner: #ffffff; --text-accent: #7b00ff; --id-bg: #00f0ff; --id-text: #000000; }
+        [data-theme="coffee-shop"] { --bg-page: #f5ebe0; --bg-banner: #4e3629; --text-banner: #f5ebe0; --text-accent: #d5bdaf; --id-bg: #d5bdaf; --id-text: #4e3629; }
+        [data-theme="space-odyssey"] { --bg-page: #020205; --bg-banner: #111122; --text-banner: #e2e8f0; --text-accent: #a78bfa; --id-bg: #1e1b4b; --id-text: #ffffff; }
+        [data-theme="liminal-space"] { --bg-page: #ded8b6; --bg-banner: #7a7658; --text-banner: #ffffff; --text-accent: #ded8b6; --id-bg: #4a4835; --id-text: #ffffff; }
+        [data-theme="ocean-tide"] { --bg-page: #e0f2fe; --bg-banner: #0284c7; --text-banner: #ffffff; --text-accent: #38bdf8; --id-bg: #075985; --id-text: #ffffff; }
+        [data-theme="sunset-glow"] { --bg-page: #fff7ed; --bg-banner: #ff5e62; --text-banner: #ffffff; --text-accent: #ffb347; --id-bg: #ffb347; --id-text: #ffffff; }
+        [data-theme="toxic-waste"] { --bg-page: #0a0f0d; --bg-banner: #1f2421; --text-banner: #39ff14; --text-accent: #00ffff; --id-bg: #39ff14; --id-text: #000000; }
+        [data-theme="bubblegum"] { --bg-page: #fff1f2; --bg-banner: #f472b6; --text-banner: #ffffff; --text-accent: #fce7f3; --id-bg: #ec4899; --id-text: #ffffff; }
+        [data-theme="minimalist"] { --bg-page: #fafafa; --bg-banner: #18181b; --text-banner: #ffffff; --text-accent: #a1a1aa; --id-bg: #27272a; --id-text: #ffffff; }
+        [data-theme="iceberg"] { --bg-page: #f0fdfa; --bg-banner: #2ec4b6; --text-banner: #ffffff; --text-accent: #cbf3f0; --id-bg: #ff9f1c; --id-text: #ffffff; }
+        [data-theme="ghost"] { --bg-page: #f1f5f9; --bg-banner: #cbd5e1; --text-banner: #334155; --text-accent: #64748b; --id-bg: #e2e8f0; --id-text: #334155; }
+        [data-theme="sakura"] { --bg-page: #fff5f5; --bg-banner: #ffb7c5; --text-banner: #65233c; --text-accent: #fff0f5; --id-bg: #ff94a4; --id-text: #ffffff; }
+        [data-theme="autumn"] { --bg-page: #fdf6e2; --bg-banner: #b45309; --text-banner: #ffffff; --text-accent: #fed7aa; --id-bg: #78350f; --id-text: #ffffff; }
+        [data-theme="honeybee"] { --bg-page: #fefce8; --bg-banner: #eab308; --text-banner: #1e1b4b; --text-accent: #ca8a04; --id-bg: #1e1b4b; --id-text: #fefce8; }
+        [data-theme="steampunk"] { --bg-page: #2b1d0c; --bg-banner: #b87333; --text-banner: #ffffff; --text-accent: #ffd700; --id-bg: #4a3319; --id-text: #ffd700; }
+        [data-theme="arcane"] { --bg-page: #100b26; --bg-banner: #3b0764; --text-banner: #c084fc; --text-accent: #e9d5ff; --id-bg: #581c87; --id-text: #ffffff; }
+        [data-theme="glacier"] { --bg-page: #f0f9ff; --bg-banner: #bae6fd; --text-banner: #0c4a6e; --text-accent: #0284c7; --id-bg: #0284c7; --id-text: #ffffff; }
+
+        /* --- 4. SECRET UNLOCKABLE SUB-THEMES --- */
+        [data-theme="femboy"] {
+            --bg-page: #fff0f3; --bg-banner: #ffccd5; --text-banner: #590d22;
+            --text-accent: #ff4d6d; --border-banner: 2px solid #ffb3c1; --id-bg: #ffb3c1; --id-text: #590d22;
+        }
+        [data-theme="furry"] {
+            --bg-page: #ede0d4; --bg-banner: #b5835a; --text-banner: #ffffff;
+            --text-accent: #4f1d00; --border-banner: 2px solid #ddb892; --id-bg: #ddb892; --id-text: #4f1d00;
+        }
+        [data-theme="kandi"] {
+            --bg-page: #7b2cbf; --bg-banner: #00f5d4; --text-banner: #000000;
+            --text-accent: #ff006e; --border-banner: 3px solid #9d4edd; --id-bg: #ff006e; --id-text: #ffffff;
+        }
+        [data-theme="scenecore"] {
+            --bg-page: #000000; --bg-banner: #111111; --text-banner: #00ff00;
+            --text-accent: #ff007f; --border-banner: 2px solid #ff007f; --id-bg: #00ffff; --id-text: #000000;
+        }
+        [data-theme="emo"] {
+            --bg-page: #111111; --bg-banner: #222222; --text-banner: #ffffff;
+            --text-accent: #cc0000; --border-banner: 1px solid #333; --id-bg: #333333; --id-text: #cc0000;
+        }
+        [data-theme="goth"] {
+            --bg-page: #050505; --bg-banner: #121212; --text-banner: #9b86bd;
+            --text-accent: #4a0e4e; --border-banner: 1px solid #2c1a4d; --id-bg: #2c1a4d; --id-text: #ffffff;
+        }
+        [data-theme="original-scenecore"] {
+            --bg-page: #000000; --bg-banner: #0d0d0d; --text-banner: #00ff00;
+            --text-accent: #00ff00; --border-banner: 1px solid #00ff00; --id-bg: #003300; --id-text: #00ff00;
+        }
+
+        /* Structure & Page setup */
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-page);
+            margin: 0;
+            padding: 0;
+            color: #333333;
+        }
+
+        /* Top Utility Bar */
+        .duck-nav {
+            background-color: var(--topbar-bg);
+            color: var(--topbar-text);
+            padding: 8px 15px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #000;
+        }
+
+        .duck-nav-left {
+            font-weight: bold;
+        }
+
+        .duck-nav-left span {
+            color: var(--text-accent);
+        }
+
+        .theme-select-box {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            padding: 2px;
+            background: #fff;
+            color: #000;
+            border: 1px solid #777;
+        }
+
+        .unlock-link {
+            color: #a0e0ff;
+            text-decoration: underline;
+            font-size: 11px;
+            margin-left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        /* The Main Centered Blue Banner Box */
+        .banner-container {
+            background-color: var(--bg-banner);
+            color: var(--text-banner);
+            border: var(--border-banner);
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin: 0 0 10px 0;
+            font-weight: bold;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        /* Clean basic list structure inside banner */
+        .song-list {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+            padding: 0;
+            list-style: none;
+        }
+
+        .song-item {
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+        }
+
+        .song-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .song-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .song-id {
+            display: block;
+            font-family: monospace;
+            background-color: var(--id-bg);
+            color: var(--id-text);
+            padding: 4px 8px;
+            font-size: 14px;
+            width: fit-content;
+            margin-top: 2px;
+        }
+
+        /* Smaller action inline button */
+        .small-action-btn {
+            background-color: #f0f0f0;
+            color: #000000;
+            border: 1px solid #777777;
+            padding: 2px 6px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .small-action-btn:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Bottom legal text style */
+        .footer-links {
+            text-align: right;
+            max-width: 900px;
+            margin: 20px auto;
+            font-size: 12px;
+        }
+
+        .footer-links a {
+            color: #006699;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="duck-nav">
+    <div class="duck-nav-left">
+        <strong>Chillify DNS</strong> &nbsp;
+        <select id="theme-select" class="theme-select-box" onchange="changeTheme(this.value)">
+            <option value="classic-blue">Classic Blue</option>
+            <option value="light">Standard Light</option>
+            <option value="dark">Standard Dark</option>
+            <!-- Better themes list populated dynamically through JS -->
+        </select>
+        <button class="unlock-link" id="unlock-btn" onclick="unlockSecretThemes()">click to unlock the other themes</button>
+    </div>
+    <div>news: layout updated to clean web style</div>
+</div>
+
+<div class="banner-container">
+    <h1>Chillify Roblox Audio IDs</h1>
+    <div class="subtitle">free dynamic sound directories hosted on the web</div>
+    
+    <div class="song-list">
+        <div class="song-item">
+            <div class="song-header-row">
+                <span class="song-name">Chillify</span>
+            </div>
+            <span class="song-id">107334569672033</span>
+        </div>
+        
+        <div class="song-item">
+            <div class="song-header-row">
+                <span class="song-name">Chillify Nightcore</span>
+            </div>
+            <span class="song-id">111176761605828</span>
+        </div>
+        
+        <div class="song-item">
+            <div class="song-header-row">
+                <span class="song-name" id="hp-title">Chillify High Pitched</span>
+                <button class="small-action-btn" id="toggle-name-btn" onclick="toggleFullName()">Show Full Name</button>
+            </div>
+            <span class="song-id">99773633393306</span>
+        </div>
+        
+        <div class="song-item">
+            <div class="song-header-row">
+                <span class="song-name">Chillify Nightcore Reversed</span>
+            </div>
+            <span class="song-id">101943124547259</span>
+        </div>
+    </div>
+</div>
+
+<div class="footer-links">
+    <a href="terms.html">Terms of Use</a>
+    <a href="privacy.html">Privacy Statement</a>
+</div>
+
+<script>
+    const selectEl = document.getElementById('theme-select');
+    
+    // 1. Group of 24 Clean, normal, user-requested colors
+    const standardNormalThemes = [
+        { value: 'crimson', text: 'Crimson Red' },
+        { value: 'scarlet', text: 'Scarlet Fire' },
+        { value: 'rose', text: 'Rose Pink' },
+        { value: 'coral', text: 'Coral Sunset' },
+        { value: 'amber', text: 'Amber Gold' },
+        { value: 'emerald', text: 'Emerald Green' },
+        { value: 'forest', text: 'Forest Woods' },
+        { value: 'mint', text: 'Minty Fresh' },
+        { value: 'seafoam', text: 'Seafoam Teal' },
+        { value: 'teal', text: 'Deep Teal' },
+        { value: 'sky', text: 'Sky Blue' },
+        { value: 'midnight', text: 'Midnight Dark Blue' },
+        { value: 'indigo', text: 'Indigo Blue' },
+        { value: 'royal-purple', text: 'Royal Purple' },
+        { value: 'amethyst', text: 'Amethyst Violet' },
+        { value: 'plum', text: 'Plum Purple' },
+        { value: 'magenta', text: 'Rich Magenta' },
+        { value: 'fuchsia', text: 'Fuchsia Bright' },
+        { value: 'hot-pink', text: 'Hot Pink' },
+        { value: 'salmon', text: 'Salmon Clean' },
+        { value: 'chocolate', text: 'Chocolate Brown' },
+        { value: 'slate', text: 'Slate Gray' },
+        { value: 'charcoal', text: 'Charcoal Industrial' },
+        { value: 'olive', text: 'Olive Earth' }
+    ];
+
+    // 2. Group of 24 Public Aesthetic Trends / Community Favorites
+    const publicAestheticThemes = [
+        { value: 'vaporwave', text: 'Vaporwave 80s' },
+        { value: 'cyberpunk', text: 'Cyberpunk Neon' },
+        { value: 'pastel-dreams', text: 'Pastel Dreams' },
+        { value: 'cottagecore', text: 'Cottagecore Warmth' },
+        { value: 'y2k-futurism', text: 'Y2K Silver' },
+        { value: 'glitch-art', text: 'Glitch Art Matrix' },
+        { value: 'matrix', text: 'The Matrix Terminal' },
+        { value: 'outrun', text: 'Outrun Retro' },
+        { value: 'coffee-shop', text: 'Coffee Shop Cozy' },
+        { value: 'space-odyssey', text: 'Space Odyssey Deep' },
+        { value: 'liminal-space', text: 'Liminal Space Backrooms' },
+        { value: 'ocean-tide', text: 'Ocean Tide Splash' },
+        { value: 'sunset-glow', text: 'Sunset Glow Orange' },
+        { value: 'toxic-waste', text: 'Toxic Waste Bio' },
+        { value: 'bubblegum', text: 'Bubblegum Pop' },
+        { value: 'minimalist', text: 'Minimalist Clean' },
+        { value: 'iceberg', text: 'Iceberg Chill' },
+        { value: 'ghost', text: 'Ghostly Shadows' },
+        { value: 'sakura', text: 'Sakura Blossom' },
+        { value: 'autumn', text: 'Autumn Leaves' },
+        { value: 'honeybee', text: 'Honeybee Yellow' },
+        { value: 'steampunk', text: 'Steampunk Brass' },
+        { value: 'arcane', text: 'Arcane Sorcery' },
+        { value: 'glacier', text: 'Glacier Freeze' }
+    ];
+
+    // Combine them into the dropdown box right on load (Makes exactly 48 items + the 3 defaults = 51 setup!)
+    const allPublicThemes = [...standardNormalThemes, ...publicAestheticThemes];
+    allPublicThemes.forEach(theme => {
+        const opt = document.createElement('option');
+        opt.value = theme.value;
+        opt.textContent = theme.text;
+        selectEl.appendChild(opt);
+    });
+
+    // Handles picking and applying the theme
+    function changeTheme(themeName) {
+        if (themeName === 'classic-blue') {
+            document.documentElement.removeAttribute('data-theme');
+        } else {
+            document.documentElement.setAttribute('data-theme', themeName);
+        }
+        localStorage.setItem('chosenTheme', themeName);
+    }
+
+    // Unlocks and appends the special hidden subculture identity themes
+    function unlockSecretThemes() {
+        const secretThemes = [
+            { value: 'femboy', text: '🔒 Femboy Aesthetics' },
+            { value: 'furry', text: '🔒 Furry Fandom' },
+            { value: 'kandi', text: '🔒 Kandi Rave' },
+            { value: 'scenecore', text: '🔒 Scenecore Neon' },
+            { value: 'emo', text: '🔒 Emo Alternative' },
+            { value: 'goth', text: '🔒 Goth Underground' },
+            { value: 'original-scenecore', text: '🔒 Original Scenecore' }
+        ];
+
+        secretThemes.forEach(theme => {
+            // Prevent duplicate injections
+            if (!selectEl.querySelector(`option[value="${theme.value}"]`)) {
+                const opt = document.createElement('option');
+                opt.value = theme.value;
+                opt.textContent = theme.text;
+                selectEl.appendChild(opt);
+            }
+        });
+
+        document.getElementById('unlock-btn').style.display = 'none';
+        localStorage.setItem('themesUnlocked', 'true');
+    }
+
+    // Handles infinite toggle for full name display
+    function toggleFullName() {
+        const titleEl = document.getElementById('hp-title');
+        const btnEl = document.getElementById('toggle-name-btn');
+        const defaultName = "Chillify High Pitched";
+        const fullName = "Chillify - High Pitched (Reversed + Nightcore)";
+
+        if (titleEl.textContent === defaultName) {
+            titleEl.textContent = fullName;
+            btnEl.textContent = "Hide Full Name";
+        } else {
+            titleEl.textContent = defaultName;
+            btnEl.textContent = "Show Full Name";
+        }
+    }
+
+    // Check LocalStorage on page load to restore user's choices
+    window.addEventListener('DOMContentLoaded', () => {
+        // 1. Check if user already unlocked hidden themes
+        if (localStorage.getItem('themesUnlocked') === 'true') {
+            unlockSecretThemes();
+        }
+
+        // 2. Load stored theme preference
+        const savedTheme = localStorage.getItem('chosenTheme');
+        if (savedTheme) {
+            selectEl.value = savedTheme;
+            changeTheme(savedTheme);
+        }
+    });
+</script>
+</body>
+</html>
