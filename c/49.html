@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Maker (TXT, HTML, JS)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 250px;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #272822;
+            color: #f8f8f2;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>TXT / HTML / JS File Maker</h2>
+    
+    <div class="form-group">
+        <label for="fileName">File Name (without extension)</label>
+        <input type="text" id="fileName" placeholder="my-awesome-file" value="document">
+    </div>
+    
+    <div class="form-group">
+        <label for="fileType">Save As Format</label>
+        <select id="fileType">
+            <option value="text/plain">Plain Text (.txt)</option>
+            <option value="text/html">HTML Web Page (.html)</option>
+            <option value="application/javascript">JavaScript File (.js)</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fileContent">File Content</label>
+        <textarea id="fileContent" placeholder="Type or paste your content/code here..."></textarea>
+    </div>
+    
+    <button id="downloadBtn">Generate & Download File</button>
+</div>
+
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        // Retrieve inputs
+        const nameInput = document.getElementById('fileName').value.trim();
+        const mimeType = document.getElementById('fileType').value;
+        const content = document.getElementById('fileContent').value;
+        
+        // Default name fallback if blank
+        const baseName = nameInput ? nameInput : 'untitled';
+        
+        // Determine correct extension mapping
+        let extension = '.txt';
+        if (mimeType === 'text/html') {
+            extension = '.html';
+        } else if (mimeType === 'application/javascript') {
+            extension = '.js';
+        }
+        
+        const finalFileName = baseName + extension;
+        
+        // Create file payload
+        const blob = new Blob([content], { type: mimeType });
+        
+        // Trigger a native browser download link
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = finalFileName;
+        
+        // Append to DOM, click it, and clean up immediately
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    });
+</script>
+
+</body>
+</html>
