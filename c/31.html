@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pablo Yee Mispronounced Foods Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 0;
+        }
+        .description {
+            font-size: 0.9em;
+            color: #555;
+        }
+        .translator-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .box {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        textarea {
+            height: 200px;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        textarea[readonly] {
+            background-color: #eaedf1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Pablo Yee Mispronounced Foods Translator</h1>
+        <p class="subtitle">Translator of @pablopyee’s mispronounced foods.</p>
+        <p class="description">Translator app</p>
+    </header>
+
+    <div class="translator-container">
+        <div class="box">
+            <label for="english-input">English</label>
+            <textarea id="english-input" placeholder="Type English text here..."></textarea>
+        </div>
+        
+        <div class="box">
+            <label for="impediese-output">Impediese</label>
+            <textarea id="impediese-output" readonly placeholder="Translation will appear here..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // Mapping of exact words from the provided list
+        const dictionary = {
+            "apple": "Apelay",
+            "apples": "Apelays",
+            "avocado": "Ayvaycado",
+            "avocados": "Ayvaycados",
+            "bacon": "Bacan",
+            "bacones": "Bacans",
+            "bacons": "Bacans",
+            "ball": "Bail",
+            "balls": "Bails",
+            "banana": "Banaenae",
+            "bananas": "Banaenaes",
+            "beef": "Beff",
+            "boneless": "Bonuhlays",
+            "broccoli": "Brocooleye",
+            "broccolis": "Brocooleyes",
+            "burger": "Buregayer",
+            "burgers": "Buregayers",
+            "carrot": "Kayrott",
+            "carrots": "Kayrotts",
+            "cheese": "Chess",
+            "chicken": "Chyken",
+            "chip": "Chype",
+            "chips": "Chypes",
+            "coconut": "Cocknut",
+            "coke": "Cock",
+            "cucumber": "Coocumbeer",
+            "cucumbers": "Coocumbeers",
+            "egg": "Eeag",
+            "eggs": "Eeags",
+            "garlic": "Gayerlick",
+            "garlice": "Gayerlick",
+            "garlices": "Gayerlicks",
+            "garlics": "Gayerlicks",
+            "garlicz": "Gayerlicks",
+            "groceries": "Grockereyes",
+            "grocery": "Grockereye",
+            "guacamole": "Guacamalony",
+            "ham": "Hayme",
+            "kiwi": "Kawaii",
+            "kiwis": "Kawaiis",
+            "lettuce": "LeTouchei",
+            "meat": "Mate",
+            "meatball": "Matebail",
+            "meatballs": "Matebails",
+            "onion": "Onyo",
+            "onions": "Onyons",
+            "pineapple": "Pinopolay",
+            "pineapples": "Pinopolays",
+            "rice": "Riche",
+            "sausage": "Sauwsawgay",
+            "sausages": "Sauwsawgays",
+            "sweet potato": "Sweat puhtatoei",
+            "sweet potatoes": "Sweat puhtatoeis",
+            "sweet potatos": "Sweat puhtatoeis",
+            "tomato": "Toemater",
+            "vegetable": "Vegatabalays",
+            "vegetables": "Vegetabalays",
+            "watermelon": "Waitermelawn",
+            "white": "Wheatei",
+            "wing": "Wang",
+            "wings": "Wangs",
+            "fried": "Freed",
+            "parmesan cheese": "Farmer Sanchez",
+            "juice": "Jooichei"
+        };
+
+        // Longest phrases first to prevent partial matching (e.g., 'parmesan cheese' before 'cheese')
+        const sortedKeys = Object.keys(dictionary).sort((a, b) => b.length - a.length);
+
+        const inputArea = document.getElementById('english-input');
+        const outputArea = document.getElementById('impediese-output');
+
+        inputArea.addEventListener('input', () => {
+            let text = inputArea.value;
+            
+            // Loop through dictionary keys and replace matching words
+            sortedKeys.forEach(word => {
+                // Escape special regex characters just in case
+                const escapedWord = word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                // Word boundary check to avoid fixing parts of unrelated words
+                const regex = new RegExp(`\\b${escapedWord}\\b`, 'gi');
+                
+                text = text.replace(regex, (match) => {
+                    const translation = dictionary[word];
+                    
+                    // Match capitalization style of the input text
+                    if (match === match.toUpperCase()) {
+                        return translation.toUpperCase();
+                    }
+                    if (match[0] === match[0].toUpperCase()) {
+                        return translation.charAt(0).toUpperCase() + translation.slice(1);
+                    }
+                    return translation.toLowerCase();
+                });
+            });
+
+            outputArea.value = text;
+        });
+    </script>
+</body>
+</html>
