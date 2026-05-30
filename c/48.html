@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced File Maker</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+        h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 250px;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #272822;
+            color: #f8f8f2;
+        }
+        .hidden-group {
+            display: none;
+            background: #f9f9f9;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            border-radius: 0 4px 4px 0;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>TXT / HTML / JS / MHTML File Maker</h2>
+    
+    <div class="form-group">
+        <label for="fileName">File Name (without extension)</label>
+        <input type="text" id="fileName" placeholder="my-awesome-file" value="document">
+    </div>
+    
+    <div class="form-group">
+        <label for="fileType">Save As Format</label>
+        <select id="fileType">
+            <option value="text/plain|.txt">Plain Text (.txt)</option>
+            <option value="text/html|.html">HTML Web Page (.html)</option>
+            <option value="application/javascript|.js">JavaScript File (.js)</option>
+            <option value="message/rfc822|.mhtml">MHTML Web Archive (.mhtml)</option>
+            <option value="OTHER">Other Formats...</option>
+        </select>
+    </div>
+
+    <!-- Hidden Dropdown Section -->
+    <div class="form-group hidden-group" id="otherFormatsGroup">
+        <label for="otherFileType">Select Extended Format</label>
+        <select id="otherFileType">
+            <option value="application/json|.json">JSON File (.json)</option>
+            <option value="text/css|.css">CSS Stylesheet (.css)</option>
+            <option value="text/markdown|.md">Markdown (.md)</option>
+            <option value="application/xml|.xml">XML Document (.xml)</option>
+            <option value="text/csv|.csv">CSV Spreadsheet (.csv)</option>
+            <option value="application/x-sh|.sh">Shell Script (.sh)</option>
+            <option value="text/x-python|.py">Python Script (.py)</option>
+            <option value="text/x-csrc|.c">C Source (.c)</option>
+            <option value="text/x-c++src|.cpp">C++ Source (.cpp)</option>
+            <option value="text/x-java-source|.java">Java Source (.java)</option>
+            <option value="application/x-php|.php">PHP Script (.php)</option>
+            <option value="text/x-yaml|.yaml">YAML Configuration (.yaml)</option>
+            <option value="application/sql|.sql">SQL Query (.sql)</option>
+            <option value="text/vcard|.vcf">vCard Contact (.vcf)</option>
+            <option value="text/calendar|.ics">iCalendar Event (.ics)</option>
+            <option value="text/xml|.svg">SVG Vector Image (.svg)</option>
+            <option value="application/rtf|.rtf">Rich Text Format (.rtf)</option>
+            <option value="text/plain|.ini">INI Configuration (.ini)</option>
+            <option value="text/plain|.log">Log File (.log)</option>
+            <option value="text/x-batch|.bat">Windows Batch (.bat)</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="fileContent">File Content</label>
+        <textarea id="fileContent" placeholder="Type or paste your content/code here..."></textarea>
+    </div>
+    
+    <button id="downloadBtn">Generate & Download File</button>
+</div>
+
+<script>
+    const fileTypeSelect = document.getElementById('fileType');
+    const otherFileTypeSelect = document.getElementById('otherFileType');
+    const otherFormatsGroup = document.getElementById('otherFormatsGroup');
+
+    // Toggle hidden dropdown visibility based on primary choice
+    fileTypeSelect.addEventListener('change', function() {
+        if (this.value === 'OTHER') {
+            otherFormatsGroup.style.display = 'block';
+        } else {
+            otherFormatsGroup.style.display = 'none';
+        }
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        const nameInput = document.getElementById('fileName').value.trim();
+        const content = document.getElementById('fileContent').value;
+        const baseName = nameInput ? nameInput : 'untitled';
+        
+        // Determine which configuration string to parse
+        let formatSelection = fileTypeSelect.value;
+        if (formatSelection === 'OTHER') {
+            formatSelection = otherFileTypeSelect.value;
+        }
+
+        // Extract MIME type and File extension from value attribute
+        const [mimeType, extension] = formatSelection.split('|');
+        const finalFileName = baseName + extension;
+        
+        // Process download
+        const blob = new Blob([content], { type: mimeType });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = finalFileName;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+    });
+</script>
+
+</body>
+</html>
