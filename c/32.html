@@ -1,3 +1,63 @@
-</title>DJdoodledoo's SAMPLEFOCUS DOWNLOADER</title>
-<script src="https://gist.github.com/xob0t/65205098f33f37555c2de105eb29ad28.js"></script>
-<h4>Made with Xren Site Builder Studio</h4>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJdoodledoo's SampleFocus Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <!-- 1. LINKING THE EXTERNAL JAVASCRIPT FILE -->
+    <script src="downloader.js" defer></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Downloader Interface</h1>
+        <p>The external JavaScript file has been successfully loaded into this page.</p>
+        
+        <!-- 2. AN OPTIONAL BUTTON TO RUN THE SCRIPT FUNCTION -->
+        <button id="runScriptBtn">Execute Downloader Script</button>
+    </div>
+
+    <script>
+        // 3. EVENT LISTENER TO TRIGGER SCRIPT VIA BUTTON
+        document.getElementById('runScriptBtn').addEventListener('click', () => {
+            console.log('Button clicked! Attempting to run the script logic...');
+            
+            // If the code inside downloader.js is wrapped inside a function 
+            // (e.g., function startDownload() {}), call it here:
+            // startDownload();
+        });
+    </script>
+
+</body>
+</html>
