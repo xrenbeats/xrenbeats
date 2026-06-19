@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xren | Identity & Pride</title>
+    <style>
+        :root {
+            --bg-color: #0b0b0f;
+            --text-color: #f3f4f6;
+            --accent-color: #a855f7;
+            --secondary-accent: #3b82f6;
+            --card-bg: #161622;
+            --border-color: #2d2d3f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.4s, color 0.4s;
+        }
+
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, #1e1b4b 0%, var(--bg-color) 100%);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            background: linear-gradient(to right, var(--accent-color), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #9ca3af;
+            margin-top: 10px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            transition: border-color 0.4s;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .bio-box {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--accent-color);
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            transition: background-color 0.4s, border-color 0.4s;
+        }
+
+        /* Secret Theme Trigger Elements */
+        .secret-theme-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            opacity: 0.03;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: inline-block;
+            margin: 10px auto;
+        }
+        .secret-theme-btn:hover {
+            opacity: 0.7;
+        }
+
+        .microscopic-unlocker {
+            position: fixed;
+            bottom: 3px;
+            right: 3px;
+            width: 3px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            z-index: 99999;
+            border-radius: 50%;
+        }
+
+        /* Hidden Dashboard Panel */
+        #secret-dashboard {
+            display: none;
+            background-color: var(--card-bg);
+            border: 2px dashed var(--accent-color);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .theme-tile {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .theme-tile:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-color);
+        }
+
+        /* Custom Theme Form */
+        .custom-theme-builder {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .picker-group {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        .picker-group label {
+            margin-right: 8px;
+            font-size: 0.85rem;
+        }
+        input[type="color"] {
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Xren</h1>
+        <div class="subtitle">Identity, Expression & Pride</div>
+        <button class="secret-theme-btn" onclick="cycleStandardThemes()">themes</button>
+    </header>
+
+    <div class="microscopic-unlocker" title="???" onclick="unlockSecretDashboard()"></div>
+
+    <main>
+        <section id="secret-dashboard">
+            <h3 style="margin-top: 0; color: var(--accent-color); letter-spacing: 1px; text-transform: uppercase;">⚡ SYSTEM UNLOCKED: Pride & Custom Themes</h3>
+            <p style="font-size: 0.95rem; color: #9ca3af;">You discovered the core configurations. Choose an identity color-pattern or create an experimental custom profile map below:</p>
+            
+            <div class="theme-grid">
+                <div class="theme-tile" onclick="applyPrideTheme('lgbtq')">🌈 LGBTQ+ Pride</div>
+                <div class="theme-tile" onclick="applyPrideTheme('transgender')">⚧️ Transgender</div>
+                <div class="theme-tile" onclick="applyPrideTheme('gay')">🟩 Gay (Vincian)</div>
+                <div class="theme-tile" onclick="applyPrideTheme('lesbian')">🟧 Lesbian</div>
+                <div class="theme-tile" onclick="applyPrideTheme('pansexual')">🟨 Pansexual</div>
+                <div class="theme-tile" onclick="applyPrideTheme('bisexual')">🟦 Bisexual</div>
+                <div class="theme-tile" onclick="applyPrideTheme('queer')">🟪 Queer</div>
+                <div class="theme-tile" onclick="applyPrideTheme('androgynous')">⬜ Androgynous</div>
+                <div class="theme-tile" onclick="applyPrideTheme('asexual')">⬛ Asexual</div>
+                <div class="theme-tile" onclick="applyPrideTheme('intersex')">🟨 Intersex</div>
+                <div class="theme-tile" onclick="applyPrideTheme('genderfluid')">🟪 Genderfluid</div>
+                <div class="theme-tile" onclick="applyPrideTheme('gnc')">🟩 GNC</div>
+                <div class="theme-tile" onclick="applyPrideTheme('nonbinary')">🟨 Nonbinary</div>
+            </div>
+
+            <div class="custom-theme-builder">
+                <h4 style="margin: 0 0 15px 0;">Configure Custom Array:</h4>
+                <div class="picker-group">
+                    <label>Background</label>
+                    <input type="color" id="custom-bg" value="#0b0b0f" oninput="buildCustomTheme()">
+                </div>
+                <div class="picker-group">
+                    <label>Cards</label>
+                    <input type="color" id="custom-card" value="#161622" oninput="buildCustomTheme()">
+                </div>
+                <div class="picker-group">
+                    <label>Text</label>
+                    <input type="color" id="custom-text" value="#f3f4f6" oninput="buildCustomTheme()">
+                </div>
+                <div class="picker-group">
+                    <label>Primary Accent</label>
+                    <input type="color" id="custom-accent" value="#a855f7" oninput="buildCustomTheme()">
+                </div>
+                <div class="picker-group">
+                    <label>Secondary Accent</label>
+                    <input type="color" id="custom-secondary" value="#3b82f6" oninput="buildCustomTheme()">
+                </div>
+            </div>
+        </section>
+
+        <section id="identity">
+            <h2>The Persona behind the Beats</h2>
+            <p>Operating as an underground producer means stripping away artificial industry filters and putting raw truth straight into the master track. For <span class="highlight">Xren</span>, identity is not a footnote—it is an active processing engine for sound design.</p>
+            
+            <div class="bio-box">
+                <p style="margin: 0;"><strong>Living Openly Transgender:</strong> Navigating digital subcultures, hyperpop currents, and digicore soundscapes while embracing an open trans journey allows Xren to discard traditional boxes. Every track reflects personal evolution, capturing both the friction and absolute freedom of transition.</p>
+            </div>
+        </section>
+
+        <section id="philosophy">
+            <h2>Intersection: Faith & Fluidity</h2>
+            <p>Where many people assume lines must be drawn, Xren constructs bridges. Holding onto a profound personal foundation in <span class="highlight">Christianity</span> while completely owning an <span class="highlight">LGBTQ+ identity</span> presents an artistic space that subverts expectation.</p>
+            <p>Rather than conforming to modern labels or rigid external perspectives, Xren channels this unique spiritual and cultural intersection directly into electronic composition. It is high-energy, unapologetic music crafted by an artist secure in who they are created to be.</p>
+        </section>
+
+        <section id="community-space">
+            <h2>A Safe Node for Digital Outcasts</h2>
+            <p>The underground scene thrives because it gives shelter to individuals who don't fit normal frequencies. Xrenbeats projects are intentionally curated to establish a safe, sonic workspace for transgender youth, queer artists, and anyone searching for community in the digital wilderness.</p>
+        </section>
+    </main>
+
+    <footer>
+        <button class="secret-theme-btn" onclick="cycleStandardThemes()">themes</button>
+        <p>&copy; 2026 XrenBeats. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Standard hidden cycle array: Default, Light, Black
+        let currentStandardIndex = 0;
+        const standardThemes = [
+            { bg: "#0b0b0f", text: "#f3f4f6", accent: "#a855f7", secondary: "#3b82f6", card: "#161622", border: "#2d2d3f" }, // Default
+            { bg: "#f3f4f6", text: "#0b0b0f", accent: "#a855f7", secondary: "#3b82f6", card: "#ffffff", border: "#e5e7eb" }, // Light
+            { bg: "#000000", text: "#ffffff", accent: "#ff007f", secondary: "#00f0ff", card: "#111111", border: "#222222" }  // True Black
+        ];
+
+        function cycleStandardThemes() {
+            currentStandardIndex = (currentStandardIndex + 1) % standardThemes.length;
+            const t = standardThemes[currentStandardIndex];
+            applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
+        }
+
+        // Secret Suite Trigger
+        function unlockSecretDashboard() {
+            const panel = document.getElementById('secret-dashboard');
+            panel.style.display = "block";
+            panel.scrollIntoView({ behavior: 'smooth' });
+            console.log("⚡ Pride & Custom parameters initiated successfully.");
+        }
+
+        // Map definitions for pride configurations
+        const prideThemes = {
+            lgbtq: { bg: "#120a18", text: "#f3f4f6", accent: "#e40303", secondary: "#ff8c00", card: "#1c1124", border: "#ffed00" },
+            transgender: { bg: "#0f172a", text: "#f8fafc", accent: "#5bcefa", secondary: "#f5a9b8", card: "#1e293b", border: "#334155" },
+            gay: { bg: "#061f1a", text: "#f0fdfa", accent: "#078d70", secondary: "#26c6da", card: "#0c2e27", border: "#115e59" },
+            lesbian: { bg: "#1c0d12", text: "#fff5f5", accent: "#d62800", secondary: "#a30262", card: "#29161c", border: "#4c1d24" },
+            pansexual: { bg: "#1a1018", text: "#fdf2f8", accent: "#ff1b8d", secondary: "#00b8ff", card: "#261a24", border: "#ffd800" },
+            bisexual: { bg: "#120e24", text: "#f5f3ff", accent: "#d60270", secondary: "#0038a8", card: "#1c1636", border: "#4f2d7f" },
+            queer: { bg: "#160e1c", text: "#faf5ff", accent: "#b57edc", secondary: "#4f2d7f", card: "#23182c", border: "#3b0764" },
+            androgynous: { bg: "#171717", text: "#f5f5f5", accent: "#7b2cbf", secondary: "#3a0ca3", card: "#262626", border: "#404040" },
+            asexual: { bg: "#121212", text: "#f5f5f5", accent: "#a3a3a3", secondary: "#818cf8", card: "#1c1c1c", border: "#262626" },
+            intersex: { bg: "#1c1b0d", text: "#fefce8", accent: "#ffd800", secondary: "#7b1fa2", card: "#292716", border: "#422006" },
+            genderfluid: { bg: "#180f1c", text: "#faf5ff", accent: "#ff75a0", secondary: "#be1cff", card: "#24182b", border: "#334155" },
+            gnc: { bg: "#111827", text: "#f9fafb", accent: "#10b981", secondary: "#f59e0b", card: "#1f2937", border: "#374151" },
+            nonbinary: { bg: "#17141a", text: "#f9f8fa", accent: "#fff430", secondary: "#9c59d1", card: "#242029", border: "#2e2a33" }
+        };
+
+        function applyPrideTheme(key) {
+            const t = prideThemes[key];
+            if (t) {
+                applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
+            }
+        }
+
+        function buildCustomTheme() {
+            const bg = document.getElementById('custom-bg').value;
+            const card = document.getElementById('custom-card').value;
+            const text = document.getElementById('custom-text').value;
+            const accent = document.getElementById('custom-accent').value;
+            const secondary = document.getElementById('custom-secondary').value;
+            
+            // Generate dynamic borderline shade based on accent
+            applyStyleMap(bg, text, accent, secondary, card, accent + "44");
+        }
+
+        function applyStyleMap(bg, text, accent, secondary, card, border) {
+            const root = document.documentElement;
+            root.style.setProperty('--bg-color', bg);
+            root.style.setProperty('--text-color', text);
+            root.style.setProperty('--accent-color', accent);
+            root.style.setProperty('--secondary-accent', secondary);
+            root.style.setProperty('--card-bg', card);
+            root.style.setProperty('--border-color', border);
+        }
+    </script>
+</body>
+</html>
