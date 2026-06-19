@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xren | Identity & Expression</title>
+    <title>Xren</title>
     <style>
         :root {
             --bg-color: #0b0b0f;
@@ -20,68 +20,133 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.7;
             transition: background-color 0.4s, color 0.4s;
         }
 
+        /* Rainbow Screen Theme Overlay */
+        body.rainbow-active {
+            background: linear-gradient(132deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93);
+            background-size: 400% 400%;
+            animation: rainbowShift 12s ease infinite;
+            color: #ffffff;
+        }
+
+        body.rainbow-active :root {
+            --accent-color: #ffffff;
+            --secondary-accent: #ffffff;
+        }
+
+        body.rainbow-active header {
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        body.rainbow-active h1 {
+            background: #ffffff;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        body.rainbow-active .subtitle {
+            color: #ffffff;
+            opacity: 0.9;
+        }
+
+        body.rainbow-active .bio-box, 
+        body.rainbow-active #theme-dashboard {
+            background-color: rgba(0, 0, 0, 0.75);
+            border-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+
+        body.rainbow-active h2 {
+            border-bottom-color: #ffffff;
+            color: #ffffff;
+        }
+
+        body.rainbow-active p {
+            color: #f3f4f6;
+        }
+
+        body.rainbow-active .visible-theme-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+        }
+
+        body.rainbow-active .visible-theme-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
         header {
-            padding: 40px 20px;
+            padding: 60px 20px;
             text-align: center;
             background: linear-gradient(180deg, #1e1b4b 0%, var(--bg-color) 100%);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.4s;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin: 0;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             background: linear-gradient(to right, var(--accent-color), var(--secondary-accent));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            transition: background 0.4s;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: #9ca3af;
-            margin-top: 10px;
-            margin-bottom: 25px;
+            margin-top: 12px;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 1px;
         }
 
         main {
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
         }
 
         section {
-            margin-bottom: 60px;
+            margin-bottom: 70px;
         }
 
         h2 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             border-bottom: 2px solid var(--accent-color);
-            padding-bottom: 8px;
-            margin-bottom: 20px;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
             transition: border-color 0.4s;
         }
 
         p {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: #d1d5db;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .highlight {
             color: #ffffff;
             font-weight: 600;
+            text-decoration: underline;
+            text-decoration-color: var(--accent-color);
+            text-underline-offset: 4px;
         }
 
         .bio-box {
             background-color: var(--card-bg);
             border-left: 4px solid var(--accent-color);
-            padding: 25px;
+            padding: 30px;
             border-radius: 8px;
-            margin-top: 30px;
+            margin-top: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             transition: background-color 0.4s, border-color 0.4s;
         }
 
@@ -90,79 +155,102 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 1rem;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 30px;
             cursor: pointer;
             transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
         .visible-theme-btn:hover {
-            background-color: #222235;
+            background-color: #1e1e2f;
             border-color: var(--accent-color);
             transform: translateY(-2px);
         }
 
-        /* Visible Dashboard Panel */
+        /* Control Dashboard Panel */
         #theme-dashboard {
             display: none;
             background-color: var(--card-bg);
-            border: 2px solid var(--border-color);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 40px;
-            animation: fadeIn 0.3s ease-in-out;
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            animation: fadeIn 0.3s ease-out;
         }
 
         .theme-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .theme-tile {
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 10px;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
         }
 
         .theme-tile:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
             border-color: var(--accent-color);
+            background-color: rgba(255,255,255,0.05);
         }
 
-        /* Custom Theme Form */
+        .theme-tile.rainbow-toggle-btn {
+            background: linear-gradient(90deg, #ff595e, #ffca3a, #1982c4);
+            color: #ffffff;
+            border: none;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+        .theme-tile.rainbow-toggle-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Custom Color Configurator */
         .custom-theme-builder {
-            margin-top: 20px;
-            padding-top: 20px;
+            margin-top: 25px;
+            padding-top: 25px;
             border-top: 1px solid var(--border-color);
         }
+        
+        .picker-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         .picker-group {
             display: inline-flex;
             align-items: center;
-            margin-right: 15px;
-            margin-bottom: 10px;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
         }
         .picker-group label {
-            margin-right: 8px;
+            margin-right: 10px;
             font-size: 0.85rem;
+            font-weight: 500;
         }
         input[type="color"] {
             border: none;
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
             background: none;
@@ -170,15 +258,22 @@
 
         footer {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             color: #6b7280;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             border-top: 1px solid var(--border-color);
+            background-color: rgba(0,0,0,0.1);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
@@ -186,7 +281,7 @@
 
     <header>
         <h1>Xren</h1>
-        <div class="subtitle">Identity, Expression & Community</div>
+        <div class="subtitle">Identity, Sonic Expression & Digital Space</div>
         <button class="visible-theme-btn" onclick="toggleDashboard()">
             🎨 Customize Experience
         </button>
@@ -195,67 +290,73 @@
     <main>
         <!-- Theme Customizer Dashboard -->
         <section id="theme-dashboard">
-            <h3 style="margin-top: 0; color: var(--accent-color);">Community Theme Dashboard</h3>
-            <p style="font-size: 0.95rem; color: #9ca3af;">
-                <strong>Welcome to the community space.</strong> While I strictly identify as transgender, I built these custom pride palettes so visitors of all identities can customize their browsing experience. Pick a theme or build your own below!
+            <h3 style="margin-top: 0; color: var(--accent-color); font-size: 1.4rem;">Interface System Controls</h3>
+            <p style="font-size: 0.95rem; color: #9ca3af; margin-bottom: 15px;">
+                Personalize your viewpoint. Swap between optimized default structures, activate a full-bleed spectrum rainbow atmosphere built out for the community, or map an entire unique palette matrix manually.
             </p>
             
             <div class="theme-grid">
-                <div class="theme-tile" onclick="setBaseTheme('dark')">🌙 Dark (Default)</div>
-                <div class="theme-tile" onclick="setBaseTheme('light')">☀️ Light</div>
-                <div class="theme-tile" onclick="applyPrideTheme('transgender')">⚧️ Transgender</div>
-                <div class="theme-tile" onclick="applyPrideTheme('lgbtq')">🌈 LGBTQ+</div>
-                <div class="theme-tile" onclick="applyPrideTheme('gay')">🟩 Gay (Vincian)</div>
-                <div class="theme-tile" onclick="applyPrideTheme('lesbian')">🟧 Lesbian</div>
-                <div class="theme-tile" onclick="applyPrideTheme('pansexual')">🟨 Pansexual</div>
-                <div class="theme-tile" onclick="applyPrideTheme('bisexual')">🟦 Bisexual</div>
-                <div class="theme-tile" onclick="applyPrideTheme('queer')">🟪 Queer</div>
-                <div class="theme-tile" onclick="applyPrideTheme('androgynous')">⬜ Androgynous</div>
-                <div class="theme-tile" onclick="applyPrideTheme('asexual')">⬛ Asexual</div>
-                <div class="theme-tile" onclick="applyPrideTheme('intersex')">🟨 Intersex</div>
-                <div class="theme-tile" onclick="applyPrideTheme('genderfluid')">🟪 Genderfluid</div>
-                <div class="theme-tile" onclick="applyPrideTheme('gnc')">🟩 GNC</div>
-                <div class="theme-tile" onclick="applyPrideTheme('nonbinary')">🟨 Nonbinary</div>
+                <div class="theme-tile" onclick="setBaseTheme('dark')">🌙 Dark Protocol</div>
+                <div class="theme-tile" onclick="setBaseTheme('light')">☀️ Light Protocol</div>
+                <div class="theme-tile rainbow-toggle-btn" onclick="activateRainbowMode()">🌈 LGBTQ+ Rainbow</div>
             </div>
 
             <div class="custom-theme-builder">
-                <h4 style="margin: 0 0 15px 0;">Configure Custom Colors:</h4>
-                <div class="picker-group">
-                    <label>Background</label>
-                    <input type="color" id="custom-bg" value="#0b0b0f" oninput="buildCustomTheme()">
-                </div>
-                <div class="picker-group">
-                    <label>Cards</label>
-                    <input type="color" id="custom-card" value="#161622" oninput="buildCustomTheme()">
-                </div>
-                <div class="picker-group">
-                    <label>Text</label>
-                    <input type="color" id="custom-text" value="#f3f4f6" oninput="buildCustomTheme()">
-                </div>
-                <div class="picker-group">
-                    <label>Primary Accent</label>
-                    <input type="color" id="custom-accent" value="#a855f7" oninput="buildCustomTheme()">
-                </div>
-                <div class="picker-group">
-                    <label>Secondary Accent</label>
-                    <input type="color" id="custom-secondary" value="#3b82f6" oninput="buildCustomTheme()">
+                <h4 style="margin: 0 0 15px 0; font-size: 1rem;">Configure Custom Parameter Array:</h4>
+                <div class="picker-container">
+                    <div class="picker-group">
+                        <label>Background</label>
+                        <input type="color" id="custom-bg" value="#0b0b0f" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Cards</label>
+                        <input type="color" id="custom-card" value="#161622" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Text</label>
+                        <input type="color" id="custom-text" value="#f3f4f6" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Primary Accent</label>
+                        <input type="color" id="custom-accent" value="#a855f7" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Secondary Accent</label>
+                        <input type="color" id="custom-secondary" value="#3b82f6" oninput="buildCustomTheme()">
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Main Content Core -->
-        <section id="identity">
-            <h2>The Persona behind the Beats</h2>
-            <p>Operating as an underground producer means stripping away artificial industry filters and putting raw truth straight into the master track. For <span class="highlight">Xren</span>, identity is not a footnote—it is an active processing engine for sound design.</p>
+        <!-- Section 1: Creative Philosophy -->
+        <section id="sonic-blueprint">
+            <h2>The Sonic Blueprint</h2>
+            <p>Operating inside the fringes of underground production requires discarding manufactured, mainstream industry frameworks. For Xren, constructing soundscapes isn't about conforming to safe formulas—it’s about translating raw life mechanics straight into high-velocity synthesis, heavy sub-bass lines, and complex glitch architecture.</p>
+            <p>Every audio signal engineered under the Xren moniker acts as a direct look into a completely uncompromising creative process. The music moves between the aggressive textures of digicore and the bright, chaotic textures of hyperpop, establishing a lane where sound design is entirely dictated by personal authenticity.</p>
+        </section>
+
+        <!-- Section 2: Identity Focus -->
+        <section id="identity-core">
+            <h2>The Persona Behind the Master Track</h2>
+            <p>Identity isn't a minor detail or a marketing angle; it is the core engine through which all perspective is filtered. Standing openly as a <span class="highlight">transgender creator</span> in a highly saturated digital culture means pushing back against rigid social expectations on a daily basis.</p>
             
             <div class="bio-box">
-                <p style="margin: 0;"><strong>Living Openly Transgender:</strong> Navigating digital subcultures, hyperpop currents, and digicore soundscapes while embracing an open trans journey allows Xren to discard traditional boxes. Every track reflects personal evolution, capturing both the friction and absolute freedom of transition.</p>
+                <p style="margin: 0;"><strong>Owning the Journey:</strong> Navigating transition while actively designing music provides a distinct framework for tracking evolution. The internal process of dismantling expected labels and building a true reality directly mirrors the creative process of deconstructing audio signals to build completely original sounds from scratch.</p>
             </div>
         </section>
 
-        <section id="community-space">
+        <!-- Section 3: Safe Node Narrative -->
+        <section id="digital-outcasts">
             <h2>A Safe Node for Digital Outcasts</h2>
-            <p>The underground scene thrives because it gives shelter to individuals who don't fit normal frequencies. Xrenbeats projects are intentionally curated to establish a safe, sonic workspace for transgender youth and anyone searching for an inclusive community in the digital wilderness.</p>
+            <p>The global underground scene remains vital because it functions as a sanctuary for individuals who run on completely different frequencies than standard society. Production projects under Xrenbeats are deliberately arranged to cultivate a reliable, open network for trans youth, underground artists, and anyone searching for a community free from typical social gatekeeping.</p>
+            <p>This space rejects superficial tracking and performance metrics. It functions purely as a destination to exist freely, collaborate without restriction, and witness genuine independent art thriving outside traditional boundaries.</p>
+        </section>
+
+        <!-- Section 4: Future Frequencies -->
+        <section id="future-frequencies">
+            <h2>Future Frequencies</h2>
+            <p>As independent platforms continue to transform and change, keeping baseline creative control remains completely non-negotiable. The goal moving forward through 2026 is to push the tactical limits of electronic production further—developing deeper sonic narratives, sharpening distorted sound environments, and remaining a distinct, uncompromising voice for the community.</p>
+            <p>The infrastructure built here is designed to last. No matter how much the external music landscape changes, this platform will continue to function as a home base for unfiltered independent work and genuine personal freedom.</p>
         </section>
     </main>
 
@@ -266,11 +367,7 @@
     <script>
         function toggleDashboard() {
             const panel = document.getElementById('theme-dashboard');
-            if (panel.style.display === "block") {
-                panel.style.display = "none";
-            } else {
-                panel.style.display = "block";
-            }
+            panel.style.display = (panel.style.display === "block") ? "none" : "block";
         }
 
         const baseThemes = {
@@ -278,37 +375,19 @@
             light: { bg: "#f3f4f6", text: "#0b0b0f", accent: "#a855f7", secondary: "#3b82f6", card: "#ffffff", border: "#e5e7eb" }
         };
 
-        const prideThemes = {
-            lgbtq: { bg: "#120a18", text: "#f3f4f6", accent: "#e40303", secondary: "#ff8c00", card: "#1c1124", border: "#ffed00" },
-            transgender: { bg: "#0f172a", text: "#f8fafc", accent: "#5bcefa", secondary: "#f5a9b8", card: "#1e293b", border: "#334155" },
-            gay: { bg: "#061f1a", text: "#f0fdfa", accent: "#078d70", secondary: "#26c6da", card: "#0c2e27", border: "#115e59" },
-            lesbian: { bg: "#1c0d12", text: "#fff5f5", accent: "#d62800", secondary: "#a30262", card: "#29161c", border: "#4c1d24" },
-            pansexual: { bg: "#1a1018", text: "#fdf2f8", accent: "#ff1b8d", secondary: "#00b8ff", card: "#261a24", border: "#ffd800" },
-            bisexual: { bg: "#120e24", text: "#f5f3ff", accent: "#d60270", secondary: "#0038a8", card: "#1c1636", border: "#4f2d7f" },
-            queer: { bg: "#160e1c", text: "#faf5ff", accent: "#b57edc", secondary: "#4f2d7f", card: "#23182c", border: "#3b0764" },
-            androgynous: { bg: "#171717", text: "#f5f5f5", accent: "#7b2cbf", secondary: "#3a0ca3", card: "#262626", border: "#404040" },
-            asexual: { bg: "#121212", text: "#f5f5f5", accent: "#a3a3a3", secondary: "#818cf8", card: "#1c1c1c", border: "#262626" },
-            intersex: { bg: "#1c1b0d", text: "#fefce8", accent: "#ffd800", secondary: "#7b1fa2", card: "#292716", border: "#422006" },
-            genderfluid: { bg: "#180f1c", text: "#faf5ff", accent: "#ff75a0", secondary: "#be1cff", card: "#24182b", border: "#334155" },
-            gnc: { bg: "#111827", text: "#f9fafb", accent: "#10b981", secondary: "#f59e0b", card: "#1f2937", border: "#374151" },
-            nonbinary: { bg: "#17141a", text: "#f9f8fa", accent: "#fff430", secondary: "#9c59d1", card: "#242029", border: "#2e2a33" }
-        };
-
         function setBaseTheme(key) {
+            document.body.classList.remove('rainbow-active');
             const t = baseThemes[key];
             applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
             syncColorPickers(t);
         }
 
-        function applyPrideTheme(key) {
-            const t = prideThemes[key];
-            if (t) {
-                applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
-                syncColorPickers(t);
-            }
+        function activateRainbowMode() {
+            document.body.classList.add('rainbow-active');
         }
 
         function buildCustomTheme() {
+            document.body.classList.remove('rainbow-active');
             const bg = document.getElementById('custom-bg').value;
             const card = document.getElementById('custom-card').value;
             const text = document.getElementById('custom-text').value;
