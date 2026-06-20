@@ -144,3 +144,250 @@
             padding: 30px;
             border-radius: 8px;
             margin-top: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.4s, border-color 0.4s;
+        }
+
+        .theme-toggle-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .theme-toggle-btn:hover {
+            background-color: #1e1e2f;
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        #theme-dashboard {
+            display: none;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .theme-tile {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .theme-tile:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-color);
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .theme-tile.rainbow-toggle-btn {
+            background: linear-gradient(90deg, #ff595e, #ffca3a, #1982c4);
+            color: #ffffff;
+            border: none;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+        }
+
+        .theme-tile.rainbow-toggle-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .custom-theme-builder {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .picker-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .picker-group {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .picker-group label {
+            margin-right: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            background: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+            font-size: 0.95rem;
+            border-top: 1px solid var(--border-color);
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes rainbowShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+
+   <header>
+        <h1>Xren</h1>
+        <div class="subtitle">Identity & Transgender Life 🏳️‍⚧️</div>
+        <button class="theme-toggle-btn" onclick="toggleDashboard()">
+            🎨 Customize Theme
+        </button>
+    </header>
+
+    <main>
+        <section id="theme-dashboard">
+            <h3 style="margin-top: 0; color: var(--accent-color); font-size: 1.4rem;">Theme Customizer</h3>
+            <p style="font-size: 0.95rem; color: #9ca3af; margin-bottom: 15px;">
+                Pick a quick layout preset or fine-tune the individual accent colors below to fit your vibe.
+            </p>
+            
+            <div class="theme-grid">
+                <div class="theme-tile" onclick="setBaseTheme('dark')">🌙 Dark Mode</div>
+                <div class="theme-tile" onclick="setBaseTheme('light')">☀️ Light Mode</div>
+                <div class="theme-tile rainbow-toggle-btn" onclick="activateRainbowMode()">🌈 Rainbow</div>
+            </div>
+
+            <div class="custom-theme-builder">
+                <h4 style="margin: 0 0 15px 0; font-size: 1rem;">Fine-tune Colors:</h4>
+                <div class="picker-container">
+                    <div class="picker-group">
+                        <label>Background</label>
+                        <input type="color" id="custom-bg" value="#0b0b0f" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Cards</label>
+                        <input type="color" id="custom-card" value="#161622" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Text</label>
+                        <input type="color" id="custom-text" value="#f3f4f6" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Primary Accent</label>
+                        <input type="color" id="custom-accent" value="#a855f7" oninput="buildCustomTheme()">
+                    </div>
+                    <div class="picker-group">
+                        <label>Secondary Accent</label>
+                        <input type="color" id="custom-secondary" value="#3b82f6" oninput="buildCustomTheme()">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="openlyTrans">
+            <h2>Openly Trans</h2>
+            <p>Xren is a transgender creator and an active part of the LGBTQ+ community ❤️🏳️‍🌈.</p>
+            <p>Everything under the songs are driven by personal creativity :3.</p>
+        </section>
+
+        <section id="identity">
+            <h2>Identity</h2>
+            <p>The identity of Xren's trans is not a marketing angle. But it is the main picture of where everything is refined. All of the songs by Xren is all because of personal life. Navigating the music industry openly as a <span class="highlight">transgender creator</span> means going through tough social expectations on a daily basis. It's hard to come out and do this, but I always do it for you :3.</
+    <footer>
+        <p>&copy; 2026 XrenBeats. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleDashboard() {
+            const panel = document.getElementById('theme-dashboard');
+            panel.style.display = (panel.style.display === "block") ? "none" : "block";
+        }
+
+        const baseThemes = {
+            dark: { bg: "#0b0b0f", text: "#f3f4f6", accent: "#a855f7", secondary: "#3b82f6", card: "#161622", border: "#2d2d3f" },
+            light: { bg: "#f3f4f6", text: "#0b0b0f", accent: "#a855f7", secondary: "#3b82f6", card: "#ffffff", border: "#e5e7eb" }
+        };
+
+        function setBaseTheme(key) {
+            document.body.classList.remove('rainbow-active');
+            const t = baseThemes[key];
+            applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
+            syncColorPickers(t);
+        }
+
+        function activateRainbowMode() {
+            document.body.classList.add('rainbow-active');
+        }
+
+        function buildCustomTheme() {
+            document.body.classList.remove('rainbow-active');
+            const bg = document.getElementById('custom-bg').value;
+            const card = document.getElementById('custom-card').value;
+            const text = document.getElementById('custom-text').value;
+            const accent = document.getElementById('custom-accent').value;
+            const secondary = document.getElementById('custom-secondary').value;
+            
+            applyStyleMap(bg, text, accent, secondary, card, '#2d2d3f');
+        }
+
+        function applyStyleMap(bg, text, accent, secondary, card, border) {
+            const root = document.documentElement;
+            root.style.setProperty('--bg-color', bg);
+            root.style.setProperty('--text-color', text);
+            root.style.setProperty('--accent-color', accent);
+            root.style.setProperty('--secondary-accent', secondary);
+            root.style.setProperty('--card-bg', card);
+            root.style.setProperty('--border-color', border);
+        }
+
+        function syncColorPickers(t) {
+            document.getElementById('custom-bg').value = t.bg;
+            document.getElementById('custom-card').value = t.card;
+            document.getElementById('custom-text').value = t.text;
+            document.getElementById('custom-accent').value = t.accent;
+            document.getElementById('custom-secondary').value = t.secondary;
+        }
+    </script>
+</body>
+</html>
