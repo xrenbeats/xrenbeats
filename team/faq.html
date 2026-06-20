@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Team Q&A</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent: #8a2be2; /* Sleek purple accent */
+            --accent-hover: #9b4dca;
+            --text-main: #f5f5f5;
+            --text-muted: #b3b3b3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 50px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .member-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border-left: 5px solid var(--accent);
+        }
+
+        /* Clickable header that redirects */
+        .member-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .member-header:hover {
+            color: var(--accent-hover);
+        }
+
+        .member-header h2 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .redirect-icon {
+            font-size: 0.9rem;
+            color: var(--accent);
+            background: rgba(138, 43, 226, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .member-header:hover .redirect-icon {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Q&A Accordion styling */
+        details {
+            background-color: #252525;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 15px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary::after {
+            content: '+';
+            font-size: 1.5rem;
+            color: var(--accent);
+            transition: transform 0.3s ease;
+        }
+
+        details[open] summary::after {
+            content: '−';
+        }
+
+        details p {
+            padding: 0 20px 20px 20px;
+            margin: 0;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Meet The Team</h1>
+        <p class="subtitle">10 Members. 100 Questions. Everything you need to know about our music.</p>
+        
+        <div id="qna-container"></div>
+    </div>
+
+    <script>
+        // ==========================================
+        // FILL OUT YOUR 100 QUESTIONS HERE :3
+        // ==========================================
+        const teamData = [
+            {
+                name: "Xren",
+                link: "https://example.com/member1", // Put their personal site or "#team-section" link here
+                qna: [
+                    { q: "Who is Xren?", a: "He owns XrenBeats :3" }
+                    { q: "About him page?", a: "xrenbeats.com/am" }
+                ]
+            },
+            {
+                name: "Member 2 Name",
+                link: "https://example.com/member2",
+                qna: [
+                    { q: "M2 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M2 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M2 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M2 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M2 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M2 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M2 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M2 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M2 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M2 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 3 Name",
+                link: "https://example.com/member3",
+                qna: [
+                    { q: "M3 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M3 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M3 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M3 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M3 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M3 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M3 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M3 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M3 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M3 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 4 Name",
+                link: "https://example.com/member4",
+                qna: [
+                    { q: "M4 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M4 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M4 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M4 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M4 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M4 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M4 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M4 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M4 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M4 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 5 Name",
+                link: "https://example.com/member5",
+                qna: [
+                    { q: "M5 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M5 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M5 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M5 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M5 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M5 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M5 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M5 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M5 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M5 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 6 Name",
+                link: "https://example.com/member6",
+                qna: [
+                    { q: "M6 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M6 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M6 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M6 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M6 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M6 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M6 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M6 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M6 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M6 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 7 Name",
+                link: "https://example.com/member7",
+                qna: [
+                    { q: "M7 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M7 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M7 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M7 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M7 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M7 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M7 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M7 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M7 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M7 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 8 Name",
+                link: "https://example.com/member8",
+                qna: [
+                    { q: "M8 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M8 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M8 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M8 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M8 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M8 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M8 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M8 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M8 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M8 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 9 Name",
+                link: "https://example.com/member9",
+                qna: [
+                    { q: "M9 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M9 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M9 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M9 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M9 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M9 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M9 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M9 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M9 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M9 Question 10?", a: "Answer 10 goes here." }
+                ]
+            },
+            {
+                name: "Member 10 Name",
+                link: "https://example.com/member10",
+                qna: [
+                    { q: "M10 Question 1?", a: "Answer 1 goes here." },
+                    { q: "M10 Question 2?", a: "Answer 2 goes here." },
+                    { q: "M10 Question 3?", a: "Answer 3 goes here." },
+                    { q: "M10 Question 4?", a: "Answer 4 goes here." },
+                    { q: "M10 Question 5?", a: "Answer 5 goes here." },
+                    { q: "M10 Question 6?", a: "Answer 6 goes here." },
+                    { q: "M10 Question 7?", a: "Answer 7 goes here." },
+                    { q: "M10 Question 8?", a: "Answer 8 goes here." },
+                    { q: "M10 Question 9?", a: "Answer 9 goes here." },
+                    { q: "M10 Question 10?", a: "Answer 10 goes here." }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // DO NOT EDIT BELOW (Unless changing styles)
+        // ==========================================
+        const container = document.getElementById('qna-container');
+
+        teamData.forEach(member => {
+            // Create the card
+            const card = document.createElement('div');
+            card.className = 'member-card';
+
+            // Create the clickable header
+            const headerLink = document.createElement('a');
+            headerLink.href = member.link;
+            headerLink.className = 'member-header';
+            
+            // Optional: If linking to external websites, keep this. 
+            // If linking to sections on the same page, you can delete the next line.
+            headerLink.target = '_blank'; 
+            
+            headerLink.innerHTML = `
+                <h2>${member.name}</h2>
+                <span class="redirect-icon">Visit Site →</span>
+            `;
+            card.appendChild(headerLink);
+
+            // Generate the 10 Q&As
+            member.qna.forEach(item => {
+                const details = document.createElement('details');
+                
+                const summary = document.createElement('summary');
+                summary.textContent = item.q;
+                
+                const answerBox = document.createElement('p');
+                answerBox.textContent = item.a;
+
+                details.appendChild(summary);
+                details.appendChild(answerBox);
+                card.appendChild(details);
+            });
+
+            // Add the fully built card to the page
+            container.appendChild(card);
+        });
+    </script>
+</body>
+</html>
