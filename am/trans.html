@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xren</title>
+    <title>xren — pride</title>
     <style>
         :root {
             --bg-color: #0b0b0f;
@@ -17,14 +17,13 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.7;
-            transition: background-color 0.4s, color 0.4s;
+            transition: background 0.4s, color 0.4s;
         }
 
-        /* Rainbow Screen Theme Overlay */
         body.rainbow-active {
             background: linear-gradient(132deg, #ff595e, #ffca3a, #8ac926, #1982c4, #6a4c93);
             background-size: 400% 400%;
@@ -69,13 +68,13 @@
             color: #f3f4f6;
         }
 
-        body.rainbow-active .visible-theme-btn {
+        body.rainbow-active .theme-toggle-btn {
             background-color: rgba(0, 0, 0, 0.6);
             border-color: rgba(255, 255, 255, 0.4);
             color: #ffffff;
         }
 
-        body.rainbow-active .visible-theme-btn:hover {
+        body.rainbow-active .theme-toggle-btn:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
@@ -101,8 +100,7 @@
         .subtitle {
             font-size: 1.25rem;
             color: #9ca3af;
-            margin-top: 12px;
-            margin-bottom: 30px;
+            margin: 12px 0 30px 0;
             font-weight: 300;
             letter-spacing: 1px;
         }
@@ -146,274 +144,3 @@
             padding: 30px;
             border-radius: 8px;
             margin-top: 35px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.4s, border-color 0.4s;
-        }
-
-        /* Highly Visible Theme Button */
-        .visible-theme-btn {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .visible-theme-btn:hover {
-            background-color: #1e1e2f;
-            border-color: var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        /* Control Dashboard Panel */
-        #theme-dashboard {
-            display: none;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 30px;
-            border-radius: 16px;
-            margin-bottom: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .theme-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .theme-tile {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.95rem;
-            text-align: center;
-            transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
-        }
-
-        .theme-tile:hover {
-            transform: scale(1.02);
-            border-color: var(--accent-color);
-            background-color: rgba(255,255,255,0.05);
-        }
-
-        .theme-tile.rainbow-toggle-btn {
-            background: linear-gradient(90deg, #ff595e, #ffca3a, #1982c4);
-            color: #ffffff;
-            border: none;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-        }
-        .theme-tile.rainbow-toggle-btn:hover {
-            filter: brightness(1.1);
-        }
-
-        /* Custom Color Configurator */
-        .custom-theme-builder {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        .picker-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .picker-group {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(0,0,0,0.2);
-            padding: 6px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-        .picker-group label {
-            margin-right: 10px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-        input[type="color"] {
-            border: none;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            cursor: pointer;
-            background: none;
-        }
-
-        footer {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-            font-size: 0.95rem;
-            border-top: 1px solid var(--border-color);
-            background-color: rgba(0,0,0,0.1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes rainbowShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>Xren</h1>
-        <div class="subtitle">Identity, Sonic Expression & Digital Space</div>
-        <button class="visible-theme-btn" onclick="toggleDashboard()">
-            🎨 Customize Experience
-        </button>
-    </header>
-
-    <main>
-        <!-- Theme Customizer Dashboard -->
-        <section id="theme-dashboard">
-            <h3 style="margin-top: 0; color: var(--accent-color); font-size: 1.4rem;">Interface System Controls</h3>
-            <p style="font-size: 0.95rem; color: #9ca3af; margin-bottom: 15px;">
-                Personalize your viewpoint. Swap between optimized default structures, activate a full-bleed spectrum rainbow atmosphere built out for the community, or map an entire unique palette matrix manually.
-            </p>
-            
-            <div class="theme-grid">
-                <div class="theme-tile" onclick="setBaseTheme('dark')">🌙 Dark Protocol</div>
-                <div class="theme-tile" onclick="setBaseTheme('light')">☀️ Light Protocol</div>
-                <div class="theme-tile rainbow-toggle-btn" onclick="activateRainbowMode()">🌈 LGBTQ+ Rainbow</div>
-            </div>
-
-            <div class="custom-theme-builder">
-                <h4 style="margin: 0 0 15px 0; font-size: 1rem;">Configure Custom Parameter Array:</h4>
-                <div class="picker-container">
-                    <div class="picker-group">
-                        <label>Background</label>
-                        <input type="color" id="custom-bg" value="#0b0b0f" oninput="buildCustomTheme()">
-                    </div>
-                    <div class="picker-group">
-                        <label>Cards</label>
-                        <input type="color" id="custom-card" value="#161622" oninput="buildCustomTheme()">
-                    </div>
-                    <div class="picker-group">
-                        <label>Text</label>
-                        <input type="color" id="custom-text" value="#f3f4f6" oninput="buildCustomTheme()">
-                    </div>
-                    <div class="picker-group">
-                        <label>Primary Accent</label>
-                        <input type="color" id="custom-accent" value="#a855f7" oninput="buildCustomTheme()">
-                    </div>
-                    <div class="picker-group">
-                        <label>Secondary Accent</label>
-                        <input type="color" id="custom-secondary" value="#3b82f6" oninput="buildCustomTheme()">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Section 1: Creative Philosophy -->
-        <section id="sonic-blueprint">
-            <h2>The Sonic Blueprint</h2>
-            <p>Operating inside the fringes of underground production requires discarding manufactured, mainstream industry frameworks. For Xren, constructing soundscapes isn't about conforming to safe formulas—it’s about translating raw life mechanics straight into high-velocity synthesis, heavy sub-bass lines, and complex glitch architecture.</p>
-            <p>Every audio signal engineered under the Xren moniker acts as a direct look into a completely uncompromising creative process. The music moves between the aggressive textures of digicore and the bright, chaotic textures of hyperpop, establishing a lane where sound design is entirely dictated by personal authenticity.</p>
-        </section>
-
-        <!-- Section 2: Identity Focus -->
-        <section id="identity-core">
-            <h2>The Persona Behind the Master Track</h2>
-            <p>Identity isn't a minor detail or a marketing angle; it is the core engine through which all perspective is filtered. Standing openly as a <span class="highlight">transgender creator</span> in a highly saturated digital culture means pushing back against rigid social expectations on a daily basis.</p>
-            
-            <div class="bio-box">
-                <p style="margin: 0;"><strong>Owning the Journey:</strong> Navigating transition while actively designing music provides a distinct framework for tracking evolution. The internal process of dismantling expected labels and building a true reality directly mirrors the creative process of deconstructing audio signals to build completely original sounds from scratch.</p>
-            </div>
-        </section>
-
-        <!-- Section 3: Safe Node Narrative -->
-        <section id="digital-outcasts">
-            <h2>A Safe Node for Digital Outcasts</h2>
-            <p>The global underground scene remains vital because it functions as a sanctuary for individuals who run on completely different frequencies than standard society. Production projects under Xrenbeats are deliberately arranged to cultivate a reliable, open network for trans youth, underground artists, and anyone searching for a community free from typical social gatekeeping.</p>
-            <p>This space rejects superficial tracking and performance metrics. It functions purely as a destination to exist freely, collaborate without restriction, and witness genuine independent art thriving outside traditional boundaries.</p>
-        </section>
-
-        <!-- Section 4: Future Frequencies -->
-        <section id="future-frequencies">
-            <h2>Future Frequencies</h2>
-            <p>As independent platforms continue to transform and change, keeping baseline creative control remains completely non-negotiable. The goal moving forward through 2026 is to push the tactical limits of electronic production further—developing deeper sonic narratives, sharpening distorted sound environments, and remaining a distinct, uncompromising voice for the community.</p>
-            <p>The infrastructure built here is designed to last. No matter how much the external music landscape changes, this platform will continue to function as a home base for unfiltered independent work and genuine personal freedom.</p>
-        </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 XrenBeats. All rights reserved.</p>
-    </footer>
-
-    <script>
-        function toggleDashboard() {
-            const panel = document.getElementById('theme-dashboard');
-            panel.style.display = (panel.style.display === "block") ? "none" : "block";
-        }
-
-        const baseThemes = {
-            dark: { bg: "#0b0b0f", text: "#f3f4f6", accent: "#a855f7", secondary: "#3b82f6", card: "#161622", border: "#2d2d3f" },
-            light: { bg: "#f3f4f6", text: "#0b0b0f", accent: "#a855f7", secondary: "#3b82f6", card: "#ffffff", border: "#e5e7eb" }
-        };
-
-        function setBaseTheme(key) {
-            document.body.classList.remove('rainbow-active');
-            const t = baseThemes[key];
-            applyStyleMap(t.bg, t.text, t.accent, t.secondary, t.card, t.border);
-            syncColorPickers(t);
-        }
-
-        function activateRainbowMode() {
-            document.body.classList.add('rainbow-active');
-        }
-
-        function buildCustomTheme() {
-            document.body.classList.remove('rainbow-active');
-            const bg = document.getElementById('custom-bg').value;
-            const card = document.getElementById('custom-card').value;
-            const text = document.getElementById('custom-text').value;
-            const accent = document.getElementById('custom-accent').value;
-            const secondary = document.getElementById('custom-secondary').value;
-            
-            applyStyleMap(bg, text, accent, secondary, card, accent + "44");
-        }
-
-        function applyStyleMap(bg, text, accent, secondary, card, border) {
-            const root = document.documentElement;
-            root.style.setProperty('--bg-color', bg);
-            root.style.setProperty('--text-color', text);
-            root.style.setProperty('--accent-color', accent);
-            root.style.setProperty('--secondary-accent', secondary);
-            root.style.setProperty('--card-bg', card);
-            root.style.setProperty('--border-color', border);
-        }
-
-        function syncColorPickers(t) {
-            document.getElementById('custom-bg').value = t.bg;
-            document.getElementById('custom-card').value = t.card;
-            document.getElementById('custom-text').value = t.text;
-            document.getElementById('custom-accent').value = t.accent;
-            document.getElementById('custom-secondary').value = t.secondary;
-        }
-    </script>
-</body>
-</html>
