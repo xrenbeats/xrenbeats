@@ -2,23 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
-    <!-- 1. The structural backup: standard meta refresh (0 seconds delay) -->
-    <meta http-equiv="refresh" content="0; url=https://xrenbeats.com/">
+    <title>Redirecting</title>
     
-    <!-- 2. SEO Best Practice: Tells search engines where the actual content is -->
+    <!-- 1. Meta refresh is set to the correct final URL -->
+    <meta http-equiv="refresh" content="0; url=https://xrenbeats.com/team">
+    
+    <!-- 2. SEO Best Practice: Tells search engines where the content moved -->
     <link rel="canonical" href="https://xrenbeats.com/team">
-
-    <!-- 3. The high-speed option: Immediate JavaScript relocation -->
+    
+    <!-- 3. Immediate JavaScript relocation -->
     <script>
         window.location.replace("https://xrenbeats.com/team");
     </script>
 </head>
 <body>
-    <!-- 4. Accessibility: Users can manually click if they have scripts/meta disabled -->
+    <!-- 4. Fallback for users with scripts/meta disabled -->
     <h1>Moving to a new home...</h1>
-    <p>You are being automatically redirected. If nothing happens, 
-       <a href="https://xrenbeats.com/team/">click here to visit the new site</a>.
-    </p>
+    <p>You are being automatically redirected. If nothing happens, <a href="https://xrenbeats.com/team/">click here to visit the new site</a>.</p>
 </body>
 </html>
