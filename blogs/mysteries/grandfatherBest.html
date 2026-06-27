@@ -184,10 +184,9 @@
             z-index: 9999;
         }
 
-        /* Special style for the evasive runaway ads to make them visually distinct if needed */
         .runaway-ad {
             border: 3px solid #ff0055;
-            transition: top 0.1s ease, left 0.1s ease; /* Adds a tiny slick slide when dodging */
+            transition: top 0.1s ease, left 0.1s ease;
         }
 
         .fake-popup-header {
@@ -287,20 +286,20 @@
 
         <div class="auxiliary-overrides">
             <div style="font-size:10px; font-weight:bold; color:#6600cc; margin-bottom:5px;">🛠️ AUXILIARY INPUT OVERRIDES (STATUS: HUNG)</div>
-            <button onclick="spawnMoreDiagnosticChaos()">Cancel</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Submit</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Next ></button>
-            <button onclick="spawnMoreDiagnosticChaos()">&lt; Back</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Accept Cookies</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Decline Cookies</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Cancel</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Submit</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Next ></button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">&lt; Back</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Accept Cookies</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Decline Cookies</button>
             <button onclick="triggerInPageAlertWindow('🚨 RE-INDEX ATTEMPTED', 'Registry is trying to ingest previous memory points.', false)">Retry Matrix Ingestion</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Print Log File</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Help</button>
-            <button onclick="spawnMoreDiagnosticChaos()" style="font-weight:bold; color:red;">Upgrade to Pro</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Settings</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Delete Account</button>
-            <button onclick="spawnMoreDiagnosticChaos()">Apply Promo Code</button>
-            <button onclick="spawnMoreDiagnosticChaos()" style="text-decoration: underline;">View Terms of Service and violate us and sell ur personal info</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Print Log File</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Help</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)" style="font-weight:bold; color:red;">Upgrade to Pro</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Settings</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Delete Account</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)">Apply Promo Code</button>
+            <button onclick="spawnMoreDiagnosticChaos(2)" style="text-decoration: underline;">View Terms of Service and violate us and sell ur personal info</button>
         </div>
 
         <div class="random-button-cloud">
@@ -319,43 +318,65 @@
     </div>
 
     <script>
-        // Preset array for generating dynamic alerts
         const frameworkAlerts = [
             { title: "🚨 CRITICAL DRIVER OVERRIDE", body: "(1) Notification. Click Here. High-priority sprocket update is waiting.", isBye: false },
             { title: "💾 SYSTEM LOG DEFICIT", body: "Active windows require corduroy timeline configuration blocks. Click to fetch allocations.", isBye: false },
             { title: "👀 CORE TIMELINE UPDATE", body: "grandfather is watching your computer click to remove virus", isBye: false },
             { title: "🛠️ AIRFLOW RECONFIGURATION", body: "Bicycle valve stem bypass detected inside execution paths. Apply structural patch.", isBye: false },
-            { title: "📥 SERVER TERMINATION EXECUTE", body: "bye :3", isBye: true } // Marks this specific popup as evasive
+            { title: "📥 SERVER TERMINATION EXECUTE", body: "bye :3", isBye: true }
         ];
 
-        // Load saved alert positions out of local storage on runtime initialization
+        // Track hidden time to calculate accumulated background debt
+        let leftTabTime = 0;
+
         window.addEventListener('DOMContentLoaded', () => {
             const savedWindows = JSON.parse(localStorage.getItem('active_registry_windows')) || [];
             
             if (savedWindows.length === 0) {
-                // Initialize default alerts if memory is completely blank
                 triggerInPageAlertWindow("💾 TIMELINE STATUS DETECTED", "Your current active system cache contains unresolved timeline fragmentation. Click the bouncing green button to fix.", false, 400, 40);
                 triggerInPageAlertWindow("👵 LOCAL INFRASTRUCTURE VORTICES", "WARNING: Severe knitting matrix localized inside your browser space.", false, 180, 20);
             } else {
-                // Restore previous session state exactly as it was left
                 savedWindows.forEach(win => {
                     renderWindowElement(win.id, win.title, win.body, win.top, win.left, win.isBye);
                 });
             }
 
-            // Passive processing loop to populate extra assets over runtime session
+            // Standard runtime intervals
             setInterval(() => {
-                const currentCount = document.querySelectorAll('.fake-popup-window').length;
-                if (currentCount < 6) {
-                    const packet = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
-                    const targetTop = Math.floor(Math.random() * (window.innerHeight - 250)) + 50;
-                    const targetLeft = Math.floor(Math.random() * (window.innerWidth - 350));
-                    triggerInPageAlertWindow(packet.title, packet.body, packet.isBye, targetTop, targetLeft);
+                // Only spawn passively if they are actively viewing the page
+                if (document.visibilityState === 'visible') {
+                    const currentCount = document.querySelectorAll('.fake-popup-window').length;
+                    if (currentCount < 6) {
+                        const packet = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
+                        const targetTop = Math.floor(Math.random() * (window.innerHeight - 250)) + 50;
+                        const targetLeft = Math.floor(Math.random() * (window.innerWidth - 350));
+                        triggerInPageAlertWindow(packet.title, packet.body, packet.isBye, targetTop, targetLeft);
+                    }
                 }
             }, 8000);
         });
 
-        // Core window engine handler
+        // VISIBILITY MONITORING SYSTEM (Calculates background absence)
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // User left the tab to go somewhere else -> Record timestamp
+                leftTabTime = Date.now();
+            } else {
+                // User returned from a different webpage -> Calculate how long they were away
+                if (leftTabTime > 0) {
+                    const timeAwaySeconds = Math.floor((Date.now() - leftTabTime) / 1000);
+                    
+                    // Generate 2 ads for every second they spent on another webpage
+                    const debtToSpawn = Math.min(30, timeAwaySeconds * 2); 
+                    if (debtToSpawn > 0) {
+                        spawnMoreDiagnosticChaos(debtToSpawn);
+                        triggerInPageAlertWindow("⚠️ BACKGROUND DEFICIT LOADED", `Detected structural absence of ${timeAwaySeconds} seconds. Background timeline allocation sync complete.`, false);
+                    }
+                    leftTabTime = 0; // Reset timer
+                }
+            }
+        });
+
         function triggerInPageAlertWindow(title, body, isBye, topPos, leftPos) {
             const uniqueId = 'sys-alert-pack-' + Date.now() + Math.floor(Math.random() * 1000);
             const top = topPos !== undefined ? topPos : Math.floor(Math.random() * (window.innerHeight - 250)) + 50;
@@ -365,25 +386,23 @@
             saveCurrentWindowState();
         }
 
-        // Commits layout elements directly into the application DOM surface frame
         function renderWindowElement(id, title, body, top, left, isBye) {
             let runawayClass = isBye ? 'runaway-ad' : '';
             
             const alertMarkup = `
-                <div class="fake-popup-window ${runawayClass}" id="${id}" style="top: ${top}px; left: ${left}px;" data-isbye="${isBye}">
+                <div class="fake-popup-window ${runawayClass}" id="${id}" style="top: ${top}px; left: ${left}px;" data-isbye="${isBye}" onclick="handleWindowMiss(event, '${id}')">
                     <div class="fake-popup-header">
                         <span>${title}</span>
-                        <div class="fake-popup-close-btn" onclick="removeWindowElement('${id}')">X</div>
+                        <div class="fake-popup-close-btn" onclick="handleXClick(event, '${id}')">X</div>
                     </div>
                     <div class="fake-popup-body">
                         <p style="margin-bottom: 8px;">${body}</p>
-                        <center><button class="fake-popup-btn" onclick="spawnMoreDiagnosticChaos()">RUN CONFIG</button></center>
+                        <center><button class="fake-popup-btn" onclick="event.stopPropagation(); spawnMoreDiagnosticChaos(2);">RUN CONFIG</button></center>
                     </div>
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', alertMarkup);
 
-            // If it is a "bye :3" ad, bind the evasive runaway mouse handler immediately
             if (isBye) {
                 const targetEl = document.getElementById(id);
                 targetEl.addEventListener('mouseenter', function() {
@@ -396,43 +415,62 @@
                     targetEl.style.top = randomY + 'px';
                     targetEl.style.left = randomX + 'px';
                     
-                    saveCurrentWindowState(); // Persist the new runaway location
+                    saveCurrentWindowState();
                 });
             }
         }
 
-        // Removes window elements and syncs local data modifications
+        function handleWindowMiss(event, id) {
+            if (event.target.classList.contains('fake-popup-close-btn')) {
+                return; 
+            }
+            spawnMoreDiagnosticChaos(20);
+        }
+
+        function handleXClick(event, id) {
+            event.stopPropagation(); 
+
+            if (Math.random() < 0.5) {
+                spawnMoreDiagnosticChaos(4);
+                triggerInPageAlertWindow("🚨 ACTION BLOCKED", "Registry close verification routine encountered unexpected loop frames.", false);
+            } else {
+                removeWindowElement(id);
+            }
+        }
+
         function removeWindowElement(id) {
             const element = document.getElementById(id);
             if (element) element.remove();
             saveCurrentWindowState();
         }
 
-        // Serializes current interface positions into the persistent data structures
         function saveCurrentWindowState() {
             const currentWindows = [];
             document.querySelectorAll('.fake-popup-window').forEach(win => {
-                currentWindows.push({
-                    id: win.id,
-                    title: win.querySelector('.fake-popup-header span').innerText,
-                    body: win.querySelector('.fake-popup-body p').innerText,
-                    top: parseInt(win.style.top, 10) || 50,
-                    left: parseInt(win.style.left, 10) || 50,
-                    isBye: win.getAttribute('data-isbye') === 'true'
-                });
+                const headerSpan = win.querySelector('.fake-popup-header span');
+                const bodyP = win.querySelector('.fake-popup-body p');
+                if (headerSpan && bodyP) {
+                    currentWindows.push({
+                        id: win.id,
+                        title: headerSpan.innerText,
+                        body: bodyP.innerText,
+                        top: parseInt(win.style.top, 10) || 50,
+                        left: parseInt(win.style.left, 10) || 50,
+                        isBye: win.getAttribute('data-isbye') === 'true'
+                    });
+                }
             });
             localStorage.setItem('active_registry_windows', JSON.stringify(currentWindows));
         }
 
-        // Cascade processing for link components
-        function spawnMoreDiagnosticChaos() {
-            const packet1 = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
-            const packet2 = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
-            
-            triggerInPageAlertWindow(packet1.title, packet1.body, packet1.isBye);
-            setTimeout(() => {
-                triggerInPageAlertWindow(packet2.title, packet2.body, packet2.isBye);
-            }, 200);
+        function spawnMoreDiagnosticChaos(count) {
+            let variations = count || 2;
+            for (let i = 0; i < variations; i++) {
+                setTimeout(() => {
+                    const packet = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
+                    triggerInPageAlertWindow(packet.title, packet.body, packet.isBye);
+                }, i * 60); 
+            }
         }
 
         function logUserAction() {
