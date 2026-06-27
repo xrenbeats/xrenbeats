@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -185,6 +184,12 @@
             z-index: 9999;
         }
 
+        /* Special style for the evasive runaway ads to make them visually distinct if needed */
+        .runaway-ad {
+            border: 3px solid #ff0055;
+            transition: top 0.1s ease, left 0.1s ease; /* Adds a tiny slick slide when dodging */
+        }
+
         .fake-popup-header {
             background: linear-gradient(90deg, #000080, #1084d0);
             color: white;
@@ -288,7 +293,7 @@
             <button onclick="spawnMoreDiagnosticChaos()">&lt; Back</button>
             <button onclick="spawnMoreDiagnosticChaos()">Accept Cookies</button>
             <button onclick="spawnMoreDiagnosticChaos()">Decline Cookies</button>
-            <button onclick="triggerInPageAlertWindow('🚨 RE-INDEX ATTEMPTED', 'Registry is trying to ingest previous memory points.')">Retry Matrix Ingestion</button>
+            <button onclick="triggerInPageAlertWindow('🚨 RE-INDEX ATTEMPTED', 'Registry is trying to ingest previous memory points.', false)">Retry Matrix Ingestion</button>
             <button onclick="spawnMoreDiagnosticChaos()">Print Log File</button>
             <button onclick="spawnMoreDiagnosticChaos()">Help</button>
             <button onclick="spawnMoreDiagnosticChaos()" style="font-weight:bold; color:red;">Upgrade to Pro</button>
@@ -316,11 +321,11 @@
     <script>
         // Preset array for generating dynamic alerts
         const frameworkAlerts = [
-            { title: "🚨 CRITICAL DRIVER OVERRIDE", body: "(1) Notification. Click Here. High-priority sprocket update is waiting." },
-            { title: "💾 SYSTEM LOG DEFICIT", body: "Active windows require corduroy timeline configuration blocks. Click to fetch allocations." },
-            { title: "👀 CORE TIMELINE UPDATE", body: "grandfather is watching your computer click to remove virus" },
-            { title: "🛠️ AIRFLOW RECONFIGURATION", body: "Bicycle valve stem bypass detected inside execution paths. Apply structural patch." },
-            { title: "📥 SERVER TERMINATION EXECUTE", body: "bye :3" }
+            { title: "🚨 CRITICAL DRIVER OVERRIDE", body: "(1) Notification. Click Here. High-priority sprocket update is waiting.", isBye: false },
+            { title: "💾 SYSTEM LOG DEFICIT", body: "Active windows require corduroy timeline configuration blocks. Click to fetch allocations.", isBye: false },
+            { title: "👀 CORE TIMELINE UPDATE", body: "grandfather is watching your computer click to remove virus", isBye: false },
+            { title: "🛠️ AIRFLOW RECONFIGURATION", body: "Bicycle valve stem bypass detected inside execution paths. Apply structural patch.", isBye: false },
+            { title: "📥 SERVER TERMINATION EXECUTE", body: "bye :3", isBye: true } // Marks this specific popup as evasive
         ];
 
         // Load saved alert positions out of local storage on runtime initialization
@@ -329,12 +334,12 @@
             
             if (savedWindows.length === 0) {
                 // Initialize default alerts if memory is completely blank
-                triggerInPageAlertWindow("💾 TIMELINE STATUS DETECTED", "Your current active system cache contains unresolved timeline fragmentation. Click the bouncing green button to fix.", 400, 40);
-                triggerInPageAlertWindow("👵 LOCAL INFRASTRUCTURE VORTICES", "WARNING: Severe knitting matrix localized inside your browser space.", 180, 20);
+                triggerInPageAlertWindow("💾 TIMELINE STATUS DETECTED", "Your current active system cache contains unresolved timeline fragmentation. Click the bouncing green button to fix.", false, 400, 40);
+                triggerInPageAlertWindow("👵 LOCAL INFRASTRUCTURE VORTICES", "WARNING: Severe knitting matrix localized inside your browser space.", false, 180, 20);
             } else {
                 // Restore previous session state exactly as it was left
                 savedWindows.forEach(win => {
-                    renderWindowElement(win.id, win.title, win.body, win.top, win.left);
+                    renderWindowElement(win.id, win.title, win.body, win.top, win.left, win.isBye);
                 });
             }
 
@@ -345,25 +350,27 @@
                     const packet = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
                     const targetTop = Math.floor(Math.random() * (window.innerHeight - 250)) + 50;
                     const targetLeft = Math.floor(Math.random() * (window.innerWidth - 350));
-                    triggerInPageAlertWindow(packet.title, packet.body, targetTop, targetLeft);
+                    triggerInPageAlertWindow(packet.title, packet.body, packet.isBye, targetTop, targetLeft);
                 }
             }, 8000);
         });
 
         // Core window engine handler
-        function triggerInPageAlertWindow(title, body, topPos, leftPos) {
+        function triggerInPageAlertWindow(title, body, isBye, topPos, leftPos) {
             const uniqueId = 'sys-alert-pack-' + Date.now() + Math.floor(Math.random() * 1000);
             const top = topPos !== undefined ? topPos : Math.floor(Math.random() * (window.innerHeight - 250)) + 50;
             const left = leftPos !== undefined ? leftPos : Math.floor(Math.random() * (window.innerWidth - 350));
 
-            renderWindowElement(uniqueId, title, body, top, left);
+            renderWindowElement(uniqueId, title, body, top, left, isBye);
             saveCurrentWindowState();
         }
 
         // Commits layout elements directly into the application DOM surface frame
-        function renderWindowElement(id, title, body, top, left) {
+        function renderWindowElement(id, title, body, top, left, isBye) {
+            let runawayClass = isBye ? 'runaway-ad' : '';
+            
             const alertMarkup = `
-                <div class="fake-popup-window" id="${id}" style="top: ${top}px; left: ${left}px;">
+                <div class="fake-popup-window ${runawayClass}" id="${id}" style="top: ${top}px; left: ${left}px;" data-isbye="${isBye}">
                     <div class="fake-popup-header">
                         <span>${title}</span>
                         <div class="fake-popup-close-btn" onclick="removeWindowElement('${id}')">X</div>
@@ -375,6 +382,23 @@
                 </div>
             `;
             document.body.insertAdjacentHTML('beforeend', alertMarkup);
+
+            // If it is a "bye :3" ad, bind the evasive runaway mouse handler immediately
+            if (isBye) {
+                const targetEl = document.getElementById(id);
+                targetEl.addEventListener('mouseenter', function() {
+                    const maxX = window.innerWidth - targetEl.offsetWidth;
+                    const maxY = window.innerHeight - targetEl.offsetHeight;
+                    
+                    const randomX = Math.floor(Math.random() * Math.max(0, maxX));
+                    const randomY = Math.floor(Math.random() * Math.max(0, maxY));
+                    
+                    targetEl.style.top = randomY + 'px';
+                    targetEl.style.left = randomX + 'px';
+                    
+                    saveCurrentWindowState(); // Persist the new runaway location
+                });
+            }
         }
 
         // Removes window elements and syncs local data modifications
@@ -392,8 +416,9 @@
                     id: win.id,
                     title: win.querySelector('.fake-popup-header span').innerText,
                     body: win.querySelector('.fake-popup-body p').innerText,
-                    top: parseInt(win.style.top, 10),
-                    left: parseInt(win.style.left, 10)
+                    top: parseInt(win.style.top, 10) || 50,
+                    left: parseInt(win.style.left, 10) || 50,
+                    isBye: win.getAttribute('data-isbye') === 'true'
                 });
             });
             localStorage.setItem('active_registry_windows', JSON.stringify(currentWindows));
@@ -404,9 +429,9 @@
             const packet1 = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
             const packet2 = frameworkAlerts[Math.floor(Math.random() * frameworkAlerts.length)];
             
-            triggerInPageAlertWindow(packet1.title, packet1.body);
+            triggerInPageAlertWindow(packet1.title, packet1.body, packet1.isBye);
             setTimeout(() => {
-                triggerInPageAlertWindow(packet2.title, packet2.body);
+                triggerInPageAlertWindow(packet2.title, packet2.body, packet2.isBye);
             }, 200);
         }
 
@@ -416,5 +441,3 @@
     </script>
 </body>
 </html>
-
-```
