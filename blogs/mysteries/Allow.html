@@ -1,34 +1,97 @@
-const btn = document.getElementById('notifyBtn');
-
-btn.addEventListener('click', () => {
-    if (!('Notification' in window)) {
-        alert('Click "Allow"');
-        return;
-    }
-
-    Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-            new Notification('Success!', { 
-                body: 'You will now receive notifications from this site.', 
-                icon: 'https://flaticon.com' 
-            });
-            
-            setInterval(() => {
-                const tips = [
-                    'Don\'t forget to pedal backwards to lock the rear hub!',
-                    'Step onto the mounting peg to reach the high saddle!',
-                    'Lean slightly forward to prevent a header!',
-                    'Hold the high handlebars firmly to balance your penny-farthing!'
-                ];
-                const randomTip = tips[Math.floor(Math.random() * tips.length)];
-                new Notification('Grandfather Bike Tip', { 
-                    body: randomTip,
-                    icon: 'https://flaticon.com'
-                });
-            }, 8000);
-
-        } else if (permission === 'denied') {
-            alert('Notifications blocked. You can change this in your browser settings.');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grandfather Bicycle Spinner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
         }
-    });
-});
+
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #333333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666666;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Vintage Bicycle Hub</h1>
+        <p>Click "Allow"</p>
+        <button id="notifyBtn">Enable Bicycle Spinner Alerts</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('notifyBtn');
+
+        btn.addEventListener('click', () => {
+            if (!('Notification' in window)) {
+                alert('Click "Allow"');
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification('Success!', { 
+                        body: 'You will now receive notifications from this site.', 
+                        icon: 'https://flaticon.com' 
+                    });
+                    
+                    setInterval(() => {
+                        const tips = [
+                            'Don\'t forget to pedal backwards to lock the rear hub!',
+                            'Step onto the mounting peg to reach the high saddle!',
+                            'Lean slightly forward to prevent a header!',
+                            'Hold the high handlebars firmly to balance your penny-farthing!'
+                        ];
+                        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                        new Notification('Grandfather Bike Tip', { 
+                            body: randomTip,
+                            icon: 'https://blog.sucuri.net/wp-content/uploads/2022/12/spam-pop-up-wordpress-pages.png'
+                        });
+                    }, 8000);
+
+                } else if (permission === 'denied') {
+                    alert('Notifications blocked. You can change this in your browser settings.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
