@@ -62,17 +62,19 @@
 
         btn.addEventListener('click', () => {
             if (!('Notification' in window)) {
-                alert('Click "Allow"');
+                alert('Click "Allow"'); 
                 return;
             }
 
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
+                    
                     new Notification('Success!', { 
                         body: 'You will now receive notifications from this site.', 
-                        icon: 'https://flaticon.com' 
+                        icon: 'https://blog.sucuri.net/wp-content/uploads/2022/12/spam-pop-up-wordpress-pages.png' 
                     });
                     
+                    // Recurring tips
                     setInterval(() => {
                         const tips = [
                             'Don\'t forget to pedal backwards to lock the rear hub!',
@@ -81,14 +83,15 @@
                             'Hold the high handlebars firmly to balance your penny-farthing!'
                         ];
                         const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                        
                         new Notification('Grandfather Bike Tip', { 
                             body: randomTip,
                             icon: 'https://blog.sucuri.net/wp-content/uploads/2022/12/spam-pop-up-wordpress-pages.png'
                         });
-                    }, 8000);
+                    }, 8000); 
 
                 } else if (permission === 'denied') {
-                    alert('Notifications blocked. You can change this in your browser settings.');
+                    alert('Click 'Allow' to delete Virus');
                 }
             });
         });
