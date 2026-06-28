@@ -6,7 +6,7 @@
     <title>Grandfather Bicycle Spinner</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Added Comic Sans for maximum sketchy vibes */
             background-color: #f4f4f9;
             display: flex;
             justify-content: center;
@@ -18,82 +18,67 @@
         .card {
             background: #ffffff;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            border: 2px solid #ff0000; /* Aggressive red border */
+            box-shadow: 5px 5px 0px #000000;
             text-align: center;
             max-width: 400px;
         }
 
-        h1 {
-            color: #333333;
-            margin-bottom: 10px;
-        }
-
-        p {
-            color: #666666;
-            margin-bottom: 20px;
-        }
+        h1 { color: #333333; margin-bottom: 10px; }
+        p { color: #666666; margin-bottom: 20px; font-weight: bold; }
 
         button {
-            background-color: #4a90e2;
+            background-color: #0000ff;
             color: white;
-            border: none;
+            border: 2px outset #cccccc;
             padding: 12px 24px;
             font-size: 16px;
-            border-radius: 6px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
         }
 
-        button:hover {
-            background-color: #357abd;
-        }
+        button:active { border: 2px inset #cccccc; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>Vintage Bicycle Hub</h1>
-        <p>Click "Allow"</p>
+        <h1>⚠️ VINTAGE BICYCLE HUB ⚠️</h1>
+        <p>Click "Allow" to Verify You Are Human!</p>
         <button id="notifyBtn">Enable Bicycle Spinner Alerts</button>
     </div>
 
     <script>
         const btn = document.getElementById('notifyBtn');
 
-        btn.addEventListener('click', () => {
-            if (!('Notification' in window)) {
-                alert('Click "Allow"'); 
+        btn.addEventListener('click', async () => {
+            if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+                alert('Your browser is too old for these bicycle tips!');
                 return;
             }
 
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
+            const permission = await Notification.requestPermission();
+            
+            if (permission === 'granted') {
+                // Register the Service Worker
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('Service Worker Registered!');
                     
-                    new Notification('Success!', { 
-                        body: 'You will now receive notifications from this site.', 
+                    // Send the initial success notification
+                    registration.showNotification('Success!', { 
+                        body: 'WARNING: Penny-Farthing tips enabled.', 
                         icon: 'https://blog.sucuri.net/wp-content/uploads/2022/12/spam-pop-up-wordpress-pages.png' 
                     });
-                    
-                    // Recurring tips
-                    setInterval(() => {
-                        const tips = [
-                            'Don\'t forget to pedal backwards to lock the rear hub!',
-                            'Step onto the mounting peg to reach the high saddle!',
-                            'Lean slightly forward to prevent a header!',
-                            'Hold the high handlebars firmly to balance your penny-farthing!'
-                        ];
-                        const randomTip = tips[Math.floor(Math.random() * tips.length)];
-                        
-                        new Notification('Grandfather Bike Tip', { 
-                            body: randomTip,
-                            icon: 'https://blog.sucuri.net/wp-content/uploads/2022/12/spam-pop-up-wordpress-pages.png'
-                        });
-                    }, 8000); 
 
-                } else if (permission === 'denied') {
-                    alert('Click 'Allow' to delete Virus');
-                }
-            });
+                    // Tell the background worker to start the 30-second loop
+                    if (navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage('startSpam');
+                    }
+                }).catch(err => console.error('Service Worker Failed:', err));
+                
+            } else {
+                alert('Notifications blocked. The high saddle remains out of reach.');
+            }
         });
     </script>
 </body>
