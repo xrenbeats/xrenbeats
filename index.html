@@ -722,21 +722,32 @@ footer {
     <h2 class="section-title">New Drop.</h2>
 
 ```
-<div class="release-card">
-  <div class="release-art">🎧</div>
+<div class="release-card" style="background: #1e1e24; color: #fff; padding: 1.5rem; border-radius: 12px; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: sans-serif;">
+  <div class="release-art" style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🎧</div>
   <div class="release-info">
-    <div class="release-type">Single</div>
-    <h3 id="release-title">FAR AWAY!</h3>
-    <p class="release-artist">Xren &mdash; XrenBeats</p>
-    <p class="release-desc" id="release-desc">
+    <div class="release-type" style="text-transform: uppercase; font-size: 0.75rem; tracking: 1px; color: #aaa; margin-bottom: 0.25rem;">Single</div>
+    <h3 id="release-title" style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">FAR AWAY!</h3>
+    <p class="release-artist" style="margin: 0 0 1rem 0; color: #ddd; font-size: 0.9rem;">Xren &mdash; XrenBeats</p>
+    
+    <!-- Inline Audio Player -->
+    <div class="audio-preview" style="margin-bottom: 1.25rem;">
+      <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #888;">Preview Track:</p>
+      <audio controls style="width: 100%; height: 40px;">
+        <source src="https://files.catbox.moe/9bjvhf.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+
+    <p class="release-desc" id="release-desc" style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: #bbb;">
       FAR AWAY - out now!
     </p>
+    
     <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-      <a href="#" class="btn btn-primary">Stream Now</a>
-      <a href="/misc/download/far-away.flac" class="btn btn-ghost">Download</a>
+      <a href="https://www.mediafire.com/file/hnnxh9bn9y4wkij/far-away.wav/file" target="_blank" class="btn btn-primary" style="display: inline-block; background: #0070f3; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: bold;">Download WAV</a>
     </div>
   </div>
 </div>
+
 ```
 
   </section>
@@ -794,9 +805,31 @@ footer {
     <div class="team-link">View Profile →</div>
   </a>
 
+     <!-- XrenBruh :3 -->
+  <a class="team-card" href="https://xrenbeats.com/team/xrenbruh.html" target="_blank" rel="noopener">
+    <div class="team-avatar">XB</div>
+    <div class="team-name">XrenBruh</div>
+    <div class="team-role">Producer &middot; Artist</div>
+    <div class="team-link">View Profile →</div>
+  </a>
 </div>
 ```
 
+   <!-- Fallen ashes -->
+  <a class="team-card" href="https://xrenbeats.com/team/fallen-ashes.html" target="_blank" rel="noopener">
+    <div class="team-avatar">FA</div>
+    <div class="team-name">Fallen Ashes</div>
+    <div class="team-role">Producer &middot; Artist</div>
+    <div class="team-link">View Profile →</div>
+  </a>
+
+   <!-- LILI! -->
+  <a class="team-card" href="https://xrenbeats.com/team/lili.html" target="_blank" rel="noopener">
+    <div class="team-avatar">L</div>
+    <div class="team-name">LILI!</div>
+    <div class="team-role">Singer &middot; Artist</div>
+    <div class="team-link">View Profile →</div>
+  </a>
   </section>
 
   <!-- FOOTER -->
