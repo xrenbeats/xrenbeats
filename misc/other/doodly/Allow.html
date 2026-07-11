@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click "OK" to continue!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Notification Container */
+        .push-prompt {
+            background: white;
+            width: 380px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Icon/Bell Styling */
+        .push-icon {
+            background: #e3f2fd;
+            color: #2196f3;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Text Content */
+        .push-content {
+            flex-grow: 1;
+        }
+
+        .push-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .push-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Button Group */
+        .push-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-close {
+            background: transparent;
+            color: #666;
+        }
+
+        .btn-close:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-allow {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-allow:hover {
+            background: #0d8aee;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="push-prompt">
+        <div class="push-icon">🔔</div>
+        <div class="push-content">
+            <div class="push-title">Want the latest updates?</div>
+            <div class="push-desc">Enable notifications to stay informed about our newest content and offers!</div>
+            
+            <div class="push-actions">
+                <button class="btn btn-close" onclick="handleClose()">Not Now</button>
+                <button class="btn btn-allow" onclick="requestNotificationPermission()">Allow</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleClose() {
+            document.querySelector('.push-prompt').style.display = 'none';
+            console.log("User dismissed the prompt.");
+        }
+
+        async function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                alert("This browser does not support system notifications.");
+                return;
+            }
+
+            const permission = await Notification.requestPermission();
+            
+            if (permission === "granted") {
+                alert("Notifications allowed! 🎉");
+            } else if (permission === "denied") {
+                alert("Notifications blocked. ❌ You can enable them later in your browser settings.");
+            }
+            
+            handleClose();
+        }
+    </script>
+
+</body>
+</html>
