@@ -48,10 +48,10 @@
             </div>
 
             <h2 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white mt-3">Random Palette Generator</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Click to copy hex • Double-click or use action buttons on slots</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Click to copy hex • Double-click or use "Replace Color" to edit custom HEX/RGB</p>
             
             <!-- Palette Container -->
-            <div id="paletteBox" class="flex justify-center h-40 my-6 gap-1.5 rounded-lg overflow-hidden shadow-inner w-full bg-gray-100 dark:bg-gray-800 p-1">
+            <div id="paletteBox" class="flex justify-center h-44 my-6 gap-1.5 rounded-lg overflow-hidden shadow-inner w-full bg-gray-100 dark:bg-gray-800 p-1">
                 <!-- Colors injected here -->
             </div>
 
@@ -78,7 +78,7 @@
     </main>
 
     <!-- Draggable / Dockable Buckets Panel -->
-    <div id="bucketsPanel" class="fixed z-30 bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl shadow-2xl p-4 w-80 max-h-[80vh] flex flex-col transition-all" style="left: 20px; top: 100px;">
+    <div id="bucketsPanel" class="fixed z-30 bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl shadow-2xl p-4 w-80 max-w-[calc(100vw-20px)] max-h-[80vh] flex flex-col transition-all" style="left: 20px; top: 100px;">
         <div id="panelDragHandle" class="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-[#2a2a2e] cursor-move">
             <div class="flex items-center gap-2">
                 <i data-lucide="grip-vertical" class="w-4 h-4 text-gray-400"></i>
@@ -165,6 +165,7 @@
         let historyIndex = -1;
         let editingColorIndex = null;
         let copiedColorMemory = null;
+        let clickTimer = null;
         
         let totalColorsGenerated = parseInt(localStorage.getItem('sx_total_generated') || '0');
         let savedBuckets = JSON.parse(localStorage.getItem('sx_saved_buckets') || '{}');
@@ -183,10 +184,21 @@
             return `rgb(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255})`;
         }
 
+        function normalizeHex(hex) {
+            let sanitized = hex.replace('#', '').trim();
+            if (sanitized.length === 3) {
+                sanitized = sanitized.split('').map(c => c + c).join('');
+            }
+            if (/^[0-9A-Fa-f]{6}$/.test(sanitized)) {
+                return '#' + sanitized.toLowerCase();
+            }
+            return '#ff3366';
+        }
+
         function parseColorInput(input) {
             input = input.trim();
             if (input.startsWith('#')) {
-                if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) return input;
+                if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) return normalizeHex(input);
             } else if (input.toLowerCase().startsWith('rgb')) {
                 const match = input.match(/\d+/g);
                 if (match && match.length >= 3) {
@@ -197,7 +209,7 @@
                 }
             } else {
                 const withHash = '#' + input;
-                if (/^#([0-9A-F]{3}){1,2}$/i.test(withHash)) return withHash;
+                if (/^#([0-9A-F]{3}){1,2}$/i.test(withHash)) return normalizeHex(withHash);
             }
             return null;
         }
@@ -218,8 +230,8 @@
             applyDockMode(dockMode, false);
             if (panelPos && dockMode === 'custom') {
                 const panel = document.getElementById('bucketsPanel');
-                panel.style.left = panelPos.x + 'px';
-                panel.style.top = panelPos.y + 'px';
+                panel.style.left = Math.max(10, Math.min(panelPos.x, window.innerWidth - 330)) + 'px';
+                panel.style.top = Math.max(10, Math.min(panelPos.y, window.innerHeight - 200)) + 'px';
             }
 
             generatePalette(true);
@@ -233,6 +245,10 @@
             textInput.addEventListener('input', (e) => {
                 const parsed = parseColorInput(e.target.value);
                 if (parsed) nativePicker.value = parsed;
+            });
+
+            window.addEventListener('resize', () => {
+                if (dockMode === 'left') applyDockMode('left', false);
             });
         });
 
@@ -280,15 +296,15 @@
                 colorDiv.innerHTML = `
                     <!-- Top Action Bar for Slot -->
                     <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded backdrop-blur-sm z-20">
-                        <button onclick="event.stopPropagation(); copySingleColor('${color}')" title="Copy Color" class="hover:text-[#ff3366] p-0.5"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="event.stopPropagation(); pasteSingleColor(${index})" title="${copiedColorMemory ? 'Paste Color (' + copiedColorMemory + ')' : 'No Color Copied'}" class="hover:text-green-400 p-0.5 ${copiedColorMemory ? '' : 'opacity-40'}"><i data-lucide="clipboard" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="event.stopPropagation(); duplicateColor(${index})" title="Duplicate Color" class="hover:text-blue-400 p-0.5"><i data-lucide="copy-plus" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="event.stopPropagation(); copySingleColor('${color}')" title="Copy Color" class="hover:text-[#ff3366] p-0.5 cursor-pointer"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="event.stopPropagation(); pasteSingleColor(${index})" title="${copiedColorMemory ? 'Paste (' + copiedColorMemory + ')' : 'No Color Copied'}" class="hover:text-green-400 p-0.5 cursor-pointer ${copiedColorMemory ? '' : 'opacity-40'}"><i data-lucide="clipboard" class="w-3.5 h-3.5"></i></button>
+                        <button onclick="event.stopPropagation(); duplicateColor(${index})" title="Duplicate Color" class="hover:text-blue-400 p-0.5 cursor-pointer"><i data-lucide="copy-plus" class="w-3.5 h-3.5"></i></button>
                     </div>
 
-                    <!-- Center Replace Color Button & Copy prompt -->
+                    <!-- Center Replace Color Button -->
                     <div class="flex flex-col items-center justify-center gap-1 my-auto">
-                        <span class="bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-semibold pointer-events-none text-[11px]">Copy Hex</span>
-                        <button onclick="event.stopPropagation(); openColorPickerModal(${index}, '${color}')" class="bg-white/90 hover:bg-white text-black font-bold px-2 py-1 rounded shadow text-[10px] opacity-0 group-hover:opacity-100 transition-all scale-95 hover:scale-100">
+                        <span class="bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-semibold pointer-events-none text-[10px]">Copy Hex</span>
+                        <button onclick="event.stopPropagation(); openColorPickerModal(${index}, '${color}')" class="bg-white/90 hover:bg-white text-black font-bold px-2 py-1 rounded shadow text-[10px] opacity-0 group-hover:opacity-100 transition-all scale-95 hover:scale-100 cursor-pointer">
                             Replace Color
                         </button>
                     </div>
@@ -300,14 +316,23 @@
                     </div>
                 `;
 
-                // Single click = Copy Hex code
-                colorDiv.addEventListener('click', () => {
-                    copySingleColor(color);
+                // Single click = Copy Hex code (Debounced to avoid conflict with double-click)
+                colorDiv.addEventListener('click', (e) => {
+                    if (e.target.closest('button')) return;
+                    if (clickTimer) clearTimeout(clickTimer);
+                    clickTimer = setTimeout(() => {
+                        copySingleColor(color);
+                        clickTimer = null;
+                    }, 250);
                 });
 
-                // Double click = Open Custom Color Picker Modal
+                // Double click = Open Custom Color Picker Modal (Cancels single click copy)
                 colorDiv.addEventListener('dblclick', (e) => {
-                    e.stopPropagation();
+                    if (e.target.closest('button')) return;
+                    if (clickTimer) {
+                        clearTimeout(clickTimer);
+                        clickTimer = null;
+                    }
                     openColorPickerModal(index, color);
                 });
 
@@ -319,7 +344,7 @@
         function copySingleColor(color) {
             navigator.clipboard.writeText(color);
             copiedColorMemory = color;
-            renderPaletteBox(); // Refresh to highlight paste availability
+            renderPaletteBox();
         }
 
         function pasteSingleColor(index) {
@@ -331,10 +356,11 @@
         }
 
         function duplicateColor(index) {
-            if (index > 0) {
-                currentPalette[index] = currentPalette[index - 1];
-            } else if (currentPalette.length > 1) {
-                currentPalette[0] = currentPalette[1];
+            const colorToDuplicate = currentPalette[index];
+            if (index < currentPalette.length - 1) {
+                currentPalette[index + 1] = colorToDuplicate;
+            } else if (index > 0) {
+                currentPalette[index - 1] = colorToDuplicate;
             }
             renderPaletteBox();
             pushHistoryState();
@@ -349,7 +375,8 @@
 
         function openColorPickerModal(index, currentColor) {
             editingColorIndex = index;
-            document.getElementById('nativeColorPicker').value = currentColor;
+            const normHex = normalizeHex(currentColor);
+            document.getElementById('nativeColorPicker').value = normHex;
             document.getElementById('customColorInput').value = currentColor;
             document.getElementById('colorPickerModal').classList.remove('hidden');
         }
@@ -397,7 +424,7 @@
             document.getElementById('btnForward').disabled = historyIndex >= history.length - 1;
         }
 
-        // --- Dock & Drag Management ---
+        // --- Dock & Drag Management with Screen Boundary Bounds ---
         function setDockMode(mode) {
             dockMode = mode;
             localStorage.setItem('sx_dock_mode', mode);
@@ -409,19 +436,30 @@
             panel.style.transition = animate ? 'all 0.3s ease' : 'none';
             
             if (mode === 'left') {
-                panel.style.left = '20px';
-                panel.style.top = '100px';
-                panel.style.bottom = 'auto';
-                panel.style.right = 'auto';
-                panel.style.width = '320px';
-                panel.style.maxHeight = '80vh';
+                if (window.innerWidth < 768) {
+                    panel.style.left = '10px';
+                    panel.style.top = 'auto';
+                    panel.style.bottom = '10px';
+                    panel.style.right = 'auto';
+                    panel.style.transform = 'none';
+                    panel.style.width = 'calc(100vw - 20px)';
+                    panel.style.maxHeight = '250px';
+                } else {
+                    panel.style.left = '20px';
+                    panel.style.top = '100px';
+                    panel.style.bottom = 'auto';
+                    panel.style.right = 'auto';
+                    panel.style.transform = 'none';
+                    panel.style.width = '320px';
+                    panel.style.maxHeight = '80vh';
+                }
             } else if (mode === 'bottom') {
                 panel.style.left = '50%';
                 panel.style.transform = 'translateX(-50%)';
                 panel.style.bottom = '20px';
                 panel.style.top = 'auto';
                 panel.style.right = 'auto';
-                panel.style.width = '90%';
+                panel.style.width = 'calc(100vw - 32px)';
                 panel.style.maxWidth = '600px';
                 panel.style.maxHeight = '250px';
             }
@@ -448,6 +486,14 @@
                 if (!isDragging) return;
                 let newX = e.clientX - startX;
                 let newY = e.clientY - startY;
+
+                // Clamping left & top so panel NEVER goes off-screen
+                const maxRight = window.innerWidth - panel.offsetWidth - 10;
+                const maxBottom = window.innerHeight - panel.offsetHeight - 10;
+
+                newX = Math.max(10, Math.min(newX, maxRight));
+                newY = Math.max(10, Math.min(newY, maxBottom));
+
                 panel.style.left = `${newX}px`;
                 panel.style.top = `${newY}px`;
                 localStorage.setItem('sx_panel_pos', JSON.stringify({ x: newX, y: newY }));
@@ -482,10 +528,10 @@
                         </div>
                         <div class="flex justify-between items-center text-[10px] text-gray-400 font-mono pt-0.5">
                             <div class="flex gap-2">
-                                <button onclick="copyBucketHexes(${i})" class="hover:text-gray-200">Copy Hex</button>
-                                <button onclick="copyBucketRgb(${i})" class="hover:text-gray-200">Copy RGB</button>
+                                <button onclick="copyBucketHexes(${i})" class="hover:text-gray-200 cursor-pointer">Copy Hex</button>
+                                <button onclick="copyBucketRgb(${i})" class="hover:text-gray-200 cursor-pointer">Copy RGB</button>
                             </div>
-                            ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500" title="Delete Slot">Delete Slot</button>` : ''}
+                            ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500 cursor-pointer" title="Delete Slot">Delete Slot</button>` : ''}
                         </div>
                     `;
                 } else {
@@ -494,7 +540,7 @@
                             <span>Bucket #${i}</span>
                             <div class="flex items-center gap-1">
                                 <span>Empty</span>
-                                ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500 ml-1" title="Delete Slot"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` : ''}
+                                ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500 ml-1 cursor-pointer" title="Delete Slot"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` : ''}
                             </div>
                         </div>
                         <button onclick="saveToBucket(${i})" class="w-full bg-gray-200 dark:bg-gray-800 hover:bg-[#ff3366] hover:text-white text-gray-700 dark:text-gray-300 text-xs font-semibold py-1.5 rounded transition-colors cursor-pointer flex items-center justify-center gap-1">
@@ -611,13 +657,36 @@
                 else if (format === 'webp') mimeType = 'image/webp';
 
                 canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob);
+                    const url = URL.createObjectURL(blob || new Blob([]));
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = filename;
                     a.click();
                     URL.revokeObjectURL(url);
                 }, mimeType, 1.0);
+
+            } else if (format === 'svg') {
+                const barWidth = 200;
+                let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${currentPalette.length * barWidth}" height="400">`;
+                currentPalette.forEach((c, i) => {
+                    svg += `<rect x="${i * barWidth}" y="0" width="${barWidth}" height="320" fill="${c}"/>`;
+                    svg += `<text x="${i * barWidth + barWidth/2}" y="360" font-family="monospace" font-size="18" fill="#888" text-anchor="middle">${c}</text>`;
+                });
+                svg += `</svg>`;
+                triggerTextDownload(svg, filename, 'image/svg+xml');
+
+            } else if (['css', 'scss', 'less'].includes(format)) {
+                let css = `:root {\n`;
+                currentPalette.forEach((c, i) => { css += `  --color-${i + 1}: ${c};\n`; });
+                css += `}\n`;
+                triggerTextDownload(css, filename, 'text/css');
+
+            } else if (format === 'html') {
+                let html = `<!DOCTYPE html><html><head><title>Palette Export</title></head><body style="display:flex;height:100vh;margin:0;">`;
+                currentPalette.forEach(c => { html += `<div style="flex:1;background:${c};display:flex;align-items:center;justify-content:center;color:#fff;font-family:monospace;font-weight:bold;">${c}</div>`; });
+                html += `</body></html>`;
+                triggerTextDownload(html, filename, 'text/html');
+
             } else if (format === 'json') {
                 const data = JSON.stringify({
                     generator: "SensationalX Random Palette Generator",
@@ -625,10 +694,12 @@
                     colors: currentPalette.map(hex => ({ hex, rgb: hexToRgb(hex) }))
                 }, null, 2);
                 triggerTextDownload(data, filename, 'application/json');
+
             } else if (format === 'md') {
                 let md = `# SensationalX Color Palette\n\n`;
                 currentPalette.forEach((c, i) => { md += `- **Color ${i+1}**: \`${c}\` / \`${hexToRgb(c)}\`\n`; });
                 triggerTextDownload(md, filename, 'text/markdown');
+
             } else {
                 let text = `SensationalX Palette Export\n` + currentPalette.map(c => `${c} | ${hexToRgb(c)}`).join('\n');
                 triggerTextDownload(text, filename, 'text/plain');
