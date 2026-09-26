@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SensationalX Random Palette Generator</title>
+    <title>Random Palette Generator</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style id="theme-styles">
+        :root {
+            --brand: #ff3366;
+            --bg-body-dark: #0b0b0c;
+            --bg-card-dark: #1c1c1f;
+            --bg-alt-dark: #141417;
+            --border-dark: #2a2a2e;
+        }
+        .chat-scroll::-webkit-scrollbar { width: 6px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: var(--border-dark); border-radius: 4px; }
+    </style>
 
     <script>
         tailwind.config = { darkMode: 'class' }
@@ -18,17 +30,27 @@
     </script>
 </head>
 
-<body class="bg-gray-50 dark:bg-[#0b0b0c] text-gray-900 dark:text-white font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col relative pb-20 select-none">
+<body class="bg-gray-50 dark:bg-[var(--bg-body-dark)] text-gray-900 dark:text-white font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col relative pb-20 select-none">
 
     <!-- Header -->
-    <header class="flex items-center justify-between border-b border-gray-200 dark:border-[#2a2a2e] bg-white dark:bg-[#1c1c1f] px-[8%] py-4 sticky top-0 z-40 transition-colors">
-        <div class="text-xl font-extrabold tracking-widest uppercase flex items-center gap-2">
-            <span class="text-[#ff3366]">SX</span> PALETTE
-            <i data-lucide="sparkles" class="w-5 h-5 text-[#ff3366]"></i>
+    <header class="flex items-center justify-between border-b border-gray-200 dark:border-[var(--border-dark)] bg-white dark:bg-[var(--bg-card-dark)] px-[8%] py-4 sticky top-0 z-40 transition-colors">
+        <div class="text-xl font-extrabold tracking-widest uppercase flex items-center gap-2 text-[var(--brand)]">
+            <span class="text-gray-900 dark:text-white">SX</span> PALETTE
+            <i data-lucide="sparkles" class="w-5 h-5"></i>
         </div>
-        <nav class="flex items-center gap-6">
-            <a href="../index.html" class="text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-[#ff3366] transition-colors">Home</a>
-            <a href="../tools" class="text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-[#ff3366] transition-colors">Tools</a>
+        <nav class="flex items-center gap-4 sm:gap-5">
+            <button onclick="openPaintStoreModal()" title="Paint Store & Shopping" class="text-emerald-500 hover:text-emerald-400 cursor-pointer flex items-center gap-1 bg-emerald-500/10 px-2.5 py-1 rounded-full transition-all hover:scale-105">
+                <i data-lucide="shopping-bag" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase tracking-wider hidden md:inline">Paint Store</span>
+            </button>
+            <button onclick="toggleGeminiChat()" title="Talk to Gemini AI" class="text-blue-500 hover:text-blue-400 cursor-pointer flex items-center gap-1 bg-blue-500/10 px-2.5 py-1 rounded-full transition-all hover:scale-105">
+                <i data-lucide="sparkles" class="w-4 h-4"></i> <span class="text-xs font-bold uppercase tracking-wider hidden md:inline">AI Agent</span>
+            </button>
+            <button onclick="openSettings()" title="Settings & Themes" class="text-gray-500 hover:text-[var(--brand)] transition-colors cursor-pointer">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+            </button>
+            <button onclick="openTipsModal()" title="Helpful Tips & Guide" class="text-gray-500 hover:text-[var(--brand)] transition-colors cursor-pointer">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+            </button>
             <button onclick="toggleTheme()" class="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer">
                 <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
             </button>
@@ -39,144 +61,362 @@
     <main class="flex-1 flex flex-col items-center justify-center p-5 max-w-2xl mx-auto w-full gap-6">
         
         <!-- Main Generator Card -->
-        <div class="w-full bg-white dark:bg-[#1c1c1f] p-8 rounded-2xl border border-gray-200 dark:border-[#2a2a2e] shadow-xl text-center relative">
+        <div class="w-full bg-white dark:bg-[var(--bg-card-dark)] p-8 rounded-2xl border border-gray-200 dark:border-[var(--border-dark)] shadow-xl text-center relative transition-colors">
             
-            <!-- Achievement Stats / Counter Badge -->
-            <div class="absolute top-4 right-4 bg-pink-100 dark:bg-pink-950/60 text-[#ff3366] text-xs font-bold px-3 py-1 rounded-full border border-pink-200 dark:border-pink-900 flex items-center gap-1 shadow-sm">
+            <div class="absolute top-4 right-4 bg-gray-100 dark:bg-[var(--bg-alt-dark)] text-[var(--brand)] text-xs font-bold px-3 py-1 rounded-full border border-gray-200 dark:border-[var(--border-dark)] flex items-center gap-1 shadow-sm transition-colors">
                 <i data-lucide="trophy" class="w-3.5 h-3.5"></i>
-                <span id="achievementStat">Slots: 5/5</span>
+                <span id="achievementStat">Slots: 0/5</span>
             </div>
 
-            <h2 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white mt-3">Random Palette Generator</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Click to copy hex • Double-click or use "Replace Color" to edit custom HEX/RGB</p>
+            <h2 class="font-bold text-2xl mb-1 text-gray-900 dark:text-white mt-3">Random Palette Generator</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Click color to copy hex • Use pickers to edit • Use Select Mode to duplicate</p>
             
-            <!-- Palette Container -->
-            <div id="paletteBox" class="flex justify-center h-44 my-6 gap-1.5 rounded-lg overflow-hidden shadow-inner w-full bg-gray-100 dark:bg-gray-800 p-1">
-                <!-- Colors injected here -->
+            <!-- Select Mode Toggle Bar -->
+            <div class="flex items-center justify-between bg-gray-100 dark:bg-[var(--bg-alt-dark)] px-4 py-2 rounded-xl mb-4 border border-gray-200 dark:border-[var(--border-dark)]">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="selectModeToggle" onchange="toggleSelectMode(this.checked)" class="w-4 h-4 accent-[var(--brand)] cursor-pointer">
+                    <label for="selectModeToggle" class="text-xs font-bold uppercase tracking-wider cursor-pointer">Enable Select & Duplicate Mode</label>
+                </div>
+                <button onclick="executeDuplicate()" id="btnDuplicate" disabled class="text-xs bg-[var(--brand)] hover:opacity-80 text-white font-bold px-3 py-1 rounded-lg transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                    Duplicate Selected
+                </button>
             </div>
 
-            <!-- Controls -->
-            <div class="flex items-center justify-center gap-2 mt-4">
-                <button onclick="openHistoryModal()" title="View History Log" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
-                </button>
-                <button onclick="openDownloadModal()" title="Download Palette" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer text-[#ff3366]">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                </button>
-                <button onclick="historyBack()" id="btnBack" title="Previous Palette" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+            <!-- Palette Container -->
+            <div id="paletteBox" class="flex justify-center h-44 my-4 gap-1.5 rounded-lg overflow-hidden shadow-inner w-full bg-gray-100 dark:bg-gray-800 p-1"></div>
+
+            <!-- Controls with Undo / Redo & Center Generate Button -->
+            <div class="flex items-center justify-center gap-2 mt-4 w-full flex-wrap sm:flex-nowrap">
+                <div class="flex items-center gap-1">
+                    <button onclick="undoAction()" id="btnUndo" title="Undo (Ctrl+Z)" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="redoAction()" id="btnRedo" title="Redo (Ctrl+Y)" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                        <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <button onclick="historyBack()" id="btnBack" title="History Back" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 </button>
-                <button onclick="generatePalette()" class="flex-1 bg-[#ff3366] hover:bg-[#e62e5c] transition-colors duration-200 text-white font-semibold px-6 py-3 rounded-lg shadow-md cursor-pointer">
+                <button onclick="openHistoryModal()" title="View History Log" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                </button>
+                
+                <!-- Perfectly Centered Generate Button -->
+                <button onclick="generatePalette()" class="flex-1 bg-[var(--brand)] hover:opacity-80 transition-all duration-200 text-white font-bold uppercase tracking-wider px-6 py-3 rounded-lg shadow-md cursor-pointer hover:scale-[1.02]">
                     Generate Colors
                 </button>
-                <button onclick="historyForward()" id="btnForward" title="Next Palette" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                
+                <button onclick="openDownloadModal()" title="Download Palette" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer text-[var(--brand)]">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                </button>
+                <button onclick="historyForward()" id="btnForward" title="History Forward" class="p-3 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
             </div>
-            
         </div>
     </main>
 
-    <!-- Draggable / Dockable Buckets Panel -->
-    <div id="bucketsPanel" class="fixed z-30 bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl shadow-2xl p-4 w-80 max-w-[calc(100vw-20px)] max-h-[80vh] flex flex-col transition-all" style="left: 20px; top: 100px;">
-        <div id="panelDragHandle" class="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-[#2a2a2e] cursor-move">
+    <!-- Draggable & Resizable Buckets Panel -->
+    <div id="bucketsPanel" class="fixed z-30 bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl shadow-2xl p-4 w-80 min-w-[300px] min-h-[250px] flex flex-col transition-all relative pb-5" style="left: 20px; top: 100px;">
+        <div id="panelDragHandle" class="flex items-center justify-between pb-3 mb-3 border-b border-gray-200 dark:border-[var(--border-dark)] cursor-move">
             <div class="flex items-center gap-2">
                 <i data-lucide="grip-vertical" class="w-4 h-4 text-gray-400"></i>
-                <h3 class="font-bold text-sm text-gray-900 dark:text-white">Save Buckets</h3>
+                <h3 class="font-bold text-sm text-gray-900 dark:text-white">Save Buckets (Editable)</h3>
             </div>
             <div class="flex items-center gap-1">
-                <button onclick="setDockMode('left')" title="Dock Left" class="p-1 text-gray-400 hover:text-[#ff3366] cursor-pointer"><i data-lucide="panel-left" class="w-3.5 h-3.5"></i></button>
-                <button onclick="setDockMode('bottom')" title="Dock Bottom" class="p-1 text-gray-400 hover:text-[#ff3366] cursor-pointer"><i data-lucide="panel-bottom" class="w-3.5 h-3.5"></i></button>
+                <button onclick="setDockMode('left')" title="Dock Left" class="p-1 text-gray-400 hover:text-[var(--brand)] cursor-pointer"><i data-lucide="panel-left" class="w-3.5 h-3.5"></i></button>
+                <button onclick="setDockMode('bottom')" title="Dock Bottom" class="p-1 text-gray-400 hover:text-[var(--brand)] cursor-pointer"><i data-lucide="panel-bottom" class="w-3.5 h-3.5"></i></button>
             </div>
         </div>
 
-        <div id="bucketsContainer" class="flex flex-col gap-2.5 overflow-y-auto pr-1"></div>
+        <div id="bucketsContainer" class="flex-1 min-h-0 flex flex-col gap-2.5 overflow-y-auto pr-1 chat-scroll"></div>
+        
+        <div id="panelResizeHandle" class="absolute bottom-0 right-0 w-6 h-6 flex items-center justify-center cursor-se-resize text-gray-300 dark:text-gray-600 hover:text-[var(--brand)] transition-colors rounded-br-2xl z-50">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4 translate-x-[-2px] translate-y-[-2px]"><path d="M21 15v6h-6"/><path d="M21 21l-7-7"/></svg>
+        </div>
     </div>
 
-    <!-- Bottom Right Clear All Buckets Button -->
-    <button onclick="triggerClearAll()" title="Clear All Buckets" class="fixed bottom-6 right-6 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/30 p-3.5 rounded-full shadow-2xl transition-all duration-200 cursor-pointer z-50 flex items-center justify-center group">
-        <i data-lucide="trash-2" class="w-5 h-5"></i>
-        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 ease-in-out text-xs font-bold uppercase tracking-wider">Clear Buckets</span>
-    </button>
+    <!-- Geometry Dash-Style Mini Move Tools Panel -->
+    <div id="gdMoveToolPanel" class="fixed z-30 bg-white/90 dark:bg-[var(--bg-card-dark)]/90 backdrop-blur border border-gray-200 dark:border-[var(--border-dark)] rounded-xl shadow-xl p-3 flex items-center gap-3 transition-all">
+        <div class="flex items-center gap-1 text-[var(--brand)]" title="GD Move Tools">
+            <i data-lucide="move" class="w-4 h-4"></i>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider hidden sm:inline">Move</span>
+        </div>
+        <div class="h-4 w-[1px] bg-gray-300 dark:bg-gray-700"></div>
+        <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="shiftPalette(-1)" title="Shift Left (-1 slot)" class="p-1.5 bg-gray-100 dark:bg-[var(--bg-alt-dark)] hover:bg-[var(--brand)] hover:text-white rounded-lg transition-colors cursor-pointer flex items-center justify-center">
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="shiftPalette(1)" title="Shift Right (+1 slot)" class="p-1.5 bg-gray-100 dark:bg-[var(--bg-alt-dark)] hover:bg-[var(--brand)] hover:text-white rounded-lg transition-colors cursor-pointer flex items-center justify-center">
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="invertPalette()" title="Invert Palette Order" class="p-1.5 bg-gray-100 dark:bg-[var(--bg-alt-dark)] hover:bg-[var(--brand)] hover:text-white rounded-lg transition-colors cursor-pointer flex items-center justify-center">
+                <i data-lucide="arrow-left-right" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="shufflePaletteOrder()" title="Shuffle Order" class="p-1.5 bg-gray-100 dark:bg-[var(--bg-alt-dark)] hover:bg-[var(--brand)] hover:text-white rounded-lg transition-colors cursor-pointer flex items-center justify-center">
+                <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>
+            </button>
+        </div>
+    </div>
 
-    <!-- Custom Color Picker Modal -->
-    <div id="colorPickerModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl p-6 max-w-xs w-full shadow-2xl flex flex-col gap-4 text-center">
-            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[#2a2a2e]">
-                <h3 class="font-bold text-sm">Edit Custom Color</h3>
-                <button onclick="closeColorPickerModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-4 h-4"></i></button>
+    <!-- Gemini AI Chat Side Panel with Attachments -->
+    <div id="geminiPanel" class="fixed inset-y-0 right-0 w-full max-w-md bg-white dark:bg-[var(--bg-card-dark)] border-l border-gray-200 dark:border-[var(--border-dark)] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-[var(--border-dark)] bg-blue-500/5">
+            <div class="flex items-center gap-2">
+                <i data-lucide="bot" class="text-blue-500 w-5 h-5"></i>
+                <div>
+                    <h3 class="font-bold text-sm leading-tight">Gemini AI Agent</h3>
+                    <span class="text-[10px] text-emerald-500 font-bold flex items-center gap-1">● Has Full App Control</span>
+                </div>
             </div>
-            <div class="flex flex-col items-center gap-3">
-                <input type="color" id="nativeColorPicker" class="w-20 h-20 rounded-xl cursor-pointer bg-transparent border-0">
-                <input type="text" id="customColorInput" placeholder="#ff3366 or rgb(...)" class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs px-3 py-2 rounded-lg font-mono text-center">
+            <button onclick="toggleGeminiChat()" class="text-gray-400 hover:text-[var(--brand)] cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 flex flex-col gap-3 chat-scroll text-sm">
+            <div class="bg-gray-100 dark:bg-[var(--bg-alt-dark)] p-3 rounded-2xl rounded-tl-none self-start max-w-[85%] border border-gray-200 dark:border-[var(--border-dark)] shadow-sm">
+                Hello! I am your Gemini color agent. I can analyze attachments, generate files for you, and directly update your palette or save buckets if you ask me! ✨
             </div>
-            <div class="flex gap-2 mt-2">
-                <button onclick="closeColorPickerModal()" class="flex-1 bg-gray-200 dark:bg-gray-800 py-2 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>
-                <button onclick="applyCustomColor()" class="flex-1 bg-[#ff3366] text-white py-2 rounded-lg text-xs font-semibold cursor-pointer">Apply</button>
+        </div>
+
+        <!-- Attachment preview bar -->
+        <div id="attachmentPreviewContainer" class="px-4 py-2 hidden border-t border-gray-200 dark:border-[var(--border-dark)] bg-gray-50 dark:bg-[var(--bg-body-dark)] flex items-center gap-2">
+            <span class="text-xs font-bold text-blue-500">Attachment:</span>
+            <span id="attachmentName" class="text-xs truncate max-w-[200px]"></span>
+            <button onclick="clearAttachment()" class="text-gray-400 hover:text-red-500 ml-auto"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+        </div>
+
+        <div class="p-4 border-t border-gray-200 dark:border-[var(--border-dark)] bg-gray-50 dark:bg-[var(--bg-body-dark)] flex flex-col gap-2">
+            <div class="flex gap-2 items-center">
+                <input type="file" id="aiFileInput" class="hidden" onchange="handleFileAttachment(this)">
+                <button onclick="document.getElementById('aiFileInput').click()" title="Upload Image or File attachment" class="p-2.5 bg-gray-200 dark:bg-[var(--bg-alt-dark)] hover:bg-gray-300 dark:hover:bg-gray-700 rounded-xl text-gray-500 dark:text-gray-300 transition-colors cursor-pointer">
+                    <i data-lucide="paperclip" class="w-4 h-4"></i>
+                </button>
+                <input type="text" id="geminiInput" placeholder="Ask AI to change colors, buckets, etc..." class="flex-1 bg-white dark:bg-[var(--bg-alt-dark)] border border-gray-200 dark:border-[var(--border-dark)] px-3 py-2.5 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-colors" onkeypress="if(event.key==='Enter') sendGeminiMessage()">
+                <button onclick="sendGeminiMessage()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2.5 rounded-xl transition-colors shadow-md cursor-pointer">
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Download Format Modal -->
-    <div id="downloadModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 max-h-[85vh]">
-            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[#2a2a2e]">
-                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="download" class="w-4 h-4 text-[#ff3366]"></i> High-Quality Export</h3>
-                <button onclick="closeDownloadModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Choose a format to download your palette file in ultra-high resolution:</p>
-            <div class="grid grid-cols-3 gap-2 overflow-y-auto pr-1 max-h-[50vh]" id="formatGrid"></div>
-        </div>
-    </div>
+    <!-- Modals -->
 
-    <!-- Custom Warning Modal for Clear All -->
-    <div id="clearModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center flex flex-col gap-4">
-            <div class="w-12 h-12 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto">
-                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+    <!-- Tips & Tricks Modal -->
+    <div id="tipsModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[var(--border-dark)]">
+                <h3 class="font-bold text-base flex items-center gap-2 text-[var(--brand)]"><i data-lucide="eye" class="w-5 h-5"></i> Useful Tips & Guide</h3>
+                <button onclick="closeTipsModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <h3 class="font-bold text-lg">Clear All Buckets?</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">This will remove all saved palettes inside your buckets. This action cannot be undone.</p>
-            <label class="flex items-center justify-center gap-2 text-xs text-gray-400 cursor-pointer mt-1">
-                <input type="checkbox" id="dontShowAgain" class="rounded accent-[#ff3366]"> Don't show this warning again
-            </label>
-            <div class="flex gap-2 mt-2">
-                <button onclick="closeClearModal()" class="flex-1 bg-gray-200 dark:bg-gray-800 py-2 rounded-lg font-semibold text-xs cursor-pointer">Cancel</button>
-                <button onclick="confirmClearAll()" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-semibold text-xs cursor-pointer">Clear All</button>
+            <div class="flex flex-col gap-3 text-sm text-gray-600 dark:text-gray-300 max-h-[60vh] overflow-y-auto pr-1 chat-scroll">
+                <div class="bg-gray-50 dark:bg-[var(--bg-alt-dark)] p-3 rounded-xl border border-gray-200 dark:border-[var(--border-dark)]">
+                    <b>🎯 Select & Duplicate Mode:</b> Enable the select checkbox to pick specific swatches in your palette, then hit "Duplicate Selected" to copy them instantly!
+                </div>
+                <div class="bg-gray-50 dark:bg-[var(--bg-alt-dark)] p-3 rounded-xl border border-gray-200 dark:border-[var(--border-dark)]">
+                    <b>Object Mover Toolbar:</b> Use the mini move tools at the bottom/left of your screen to instantly shift, invert, or shuffle your colors.
+                </div>
+                <div class="bg-gray-50 dark:bg-[var(--bg-alt-dark)] p-3 rounded-xl border border-gray-200 dark:border-[var(--border-dark)]">
+                    <b>🎨 Direct Swatch Editing:</b> Click any color swatch inside the main palette, save buckets, or history logs to open a native color picker and instantly modify its HEX value!
+                </div>
+                <div class="bg-gray-50 dark:bg-[var(--bg-alt-dark)] p-3 rounded-xl border border-gray-200 dark:border-[var(--border-dark)]">
+                    <b>🔄 Undo & Redo:</b> Use the Undo (`Ctrl+Z`) and Redo (`Ctrl+Y`) buttons on the toolbar.
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- History Modal Viewer -->
-    <div id="historyModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white dark:bg-[#1c1c1f] border border-gray-200 dark:border-[#2a2a2e] rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 max-h-[80vh]">
-            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[#2a2a2e]">
-                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-[#ff3366]"></i> Palette History Log</h3>
+    <!-- Paint Store Shopping Modal -->
+    <div id="paintStoreModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl p-6 max-w-lg w-full shadow-2xl flex flex-col gap-4 max-h-[85vh]">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[var(--border-dark)]">
+                <h3 class="font-bold text-base flex items-center gap-2 text-emerald-500"><i data-lucide="shopping-bag" class="w-5 h-5"></i> Paint Store Color Formulas</h3>
+                <button onclick="closePaintStoreModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Take these hardware/craft store mixing formulas and color matches to your local paint store for real art projects and wall painting!</p>
+            <div id="paintStoreList" class="flex flex-col gap-3 overflow-y-auto pr-1 max-h-[50vh] chat-scroll"></div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col gap-5 text-center">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[var(--border-dark)]">
+                <h3 class="font-bold flex items-center gap-2"><i data-lucide="palette" class="w-5 h-5 text-[var(--brand)]"></i> App Themes</h3>
+                <button onclick="closeSettings()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="applyTheme('default')" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#ff3366] bg-gray-50 dark:bg-[#0b0b0c] cursor-pointer transition-all">
+                    <div class="w-6 h-6 rounded-full bg-[#ff3366]"></div><span class="text-xs font-bold uppercase tracking-wider">Sensational Pink</span>
+                </button>
+                <button onclick="applyTheme('midnight')" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#3b82f6] bg-gray-50 dark:bg-[#020617] cursor-pointer transition-all">
+                    <div class="w-6 h-6 rounded-full bg-[#3b82f6]"></div><span class="text-xs font-bold uppercase tracking-wider">Midnight Blue</span>
+                </button>
+                <button onclick="applyTheme('matcha')" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#10b981] bg-gray-50 dark:bg-[#022c22] cursor-pointer transition-all">
+                    <div class="w-6 h-6 rounded-full bg-[#10b981]"></div><span class="text-xs font-bold uppercase tracking-wider">Matcha Green</span>
+                </button>
+                <button onclick="applyTheme('violet')" class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#a855f7] bg-gray-50 dark:bg-[#2e1065] cursor-pointer transition-all">
+                    <div class="w-6 h-6 rounded-full bg-[#a855f7]"></div><span class="text-xs font-bold uppercase tracking-wider">Deep Violet</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 max-h-[80vh]">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[var(--border-dark)]">
+                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4 text-[var(--brand)]"></i> Palette History (Editable)</h3>
                 <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            <div id="historyListContainer" class="flex flex-col gap-3 overflow-y-auto pr-1 max-h-[50vh]"></div>
+            <div id="historyListContainer" class="flex flex-col gap-3 overflow-y-auto pr-1 max-h-[50vh] chat-scroll"></div>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Download Modal -->
+    <div id="downloadModal" class="fixed inset-0 bg-black/60 z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-[var(--bg-card-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4 max-h-[85vh]">
+            <div class="flex items-center justify-between pb-2 border-b border-gray-200 dark:border-[var(--border-dark)]">
+                <h3 class="font-bold text-base flex items-center gap-2"><i data-lucide="download" class="w-4 h-4 text-[var(--brand)]"></i> Export</h3>
+                <button onclick="closeDownloadModal()" class="text-gray-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="grid grid-cols-3 gap-2 overflow-y-auto pr-1 max-h-[50vh] chat-scroll" id="formatGrid"></div>
+        </div>
+    </div>
+
     <script>
         let currentPalette = [];
         let history = [];
         let historyIndex = -1;
-        let editingColorIndex = null;
-        let copiedColorMemory = null;
-        let clickTimer = null;
-        
-        let totalColorsGenerated = parseInt(localStorage.getItem('sx_total_generated') || '0');
+        let undoStack = [];
+        let redoStack = [];
         let savedBuckets = JSON.parse(localStorage.getItem('sx_saved_buckets') || '{}');
         let dockMode = localStorage.getItem('sx_dock_mode') || 'left';
         let panelPos = JSON.parse(localStorage.getItem('sx_panel_pos') || 'null');
-        let skipClearWarning = localStorage.getItem('sx_skip_clear_warning') === 'true';
+        let panelSize = JSON.parse(localStorage.getItem('sx_panel_size') || 'null');
+        let savedTheme = localStorage.getItem('sx_color_theme') || 'default';
+        let currentAttachment = null;
+        let isSelectMode = false;
+        let selectedIndices = new Set();
 
-        function getMaxSlots() {
-            return 5 + Math.floor(totalColorsGenerated / 50);
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            applyTheme(savedTheme);
+            updateThemeIcon(document.documentElement.classList.contains('dark'));
+            applyDockMode(dockMode, false);
+            
+            if (dockMode === 'custom') {
+                const panel = document.getElementById('bucketsPanel');
+                let w = panelSize ? Math.max(300, panelSize.w) : 320;
+                let h = panelSize ? Math.max(250, panelSize.h) : 300;
+                if (panelPos) {
+                    panel.style.left = Math.max(10, Math.min(panelPos.x, window.innerWidth - w - 10)) + 'px';
+                    panel.style.top = Math.max(10, Math.min(panelPos.y, window.innerHeight - h - 10)) + 'px';
+                }
+                panel.style.width = w + 'px';
+                panel.style.height = h + 'px';
+            }
+
+            generatePalette(true);
+            renderBuckets();
+
+            window.addEventListener('resize', () => {
+                if (dockMode === 'left' || dockMode === 'bottom') applyDockMode(dockMode, false);
+            });
+
+            // Global Keyboard Shortcuts for Undo/Redo
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+                    e.preventDefault();
+                    undoAction();
+                } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+                    e.preventDefault();
+                    redoAction();
+                }
+            });
+        });
+
+        // --- Theme & Appearance Engine ---
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
         }
 
+        function updateThemeIcon(isDark) {
+            const icon = document.getElementById('themeIcon');
+            icon.setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons();
+        }
+
+        function openSettings() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettings() { document.getElementById('settingsModal').classList.add('hidden'); }
+
+        function openTipsModal() { document.getElementById('tipsModal').classList.remove('hidden'); }
+        function closeTipsModal() { document.getElementById('tipsModal').classList.add('hidden'); }
+
+        function openPaintStoreModal() {
+            const list = document.getElementById('paintStoreList');
+            list.innerHTML = '';
+            currentPalette.forEach((hex, idx) => {
+                const rgb = hexToRgbVals(hex);
+                const item = document.createElement('div');
+                item.className = "bg-gray-50 dark:bg-[var(--bg-alt-dark)] border border-gray-200 dark:border-[var(--border-dark)] p-3 rounded-xl flex items-center gap-3";
+                item.innerHTML = `
+                    <div class="w-10 h-10 rounded-lg shadow-inner shrink-0 border border-black/10" style="background-color: ${hex}"></div>
+                    <div class="flex-1 text-xs">
+                        <div class="font-bold text-gray-900 dark:text-white">${hex} • RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</div>
+                        <div class="text-emerald-500 font-semibold mt-0.5">Approx Paint Match: "${getSimulatedPaintName(hex)}" (Formula: Base ${Math.round(rgb.r*0.4)}ml, Tint ${Math.round(rgb.g*0.3)}ml)</div>
+                    </div>
+                    <button onclick="navigator.clipboard.writeText('Paint Recipe for ${hex}: RGB(${rgb.r},${rgb.g},${rgb.b})')" class="text-xs bg-emerald-500 text-white px-2.5 py-1.5 rounded-lg font-bold cursor-pointer hover:bg-emerald-600 transition-colors">Copy Recipe</button>
+                `;
+                list.appendChild(item);
+            });
+            document.getElementById('paintStoreModal').classList.remove('hidden');
+        }
+        function closePaintStoreModal() { document.getElementById('paintStoreModal').classList.add('hidden'); }
+
+        function getSimulatedPaintName(hex) {
+            const names = ["Velvet Dusk", "Solar Flare", "Emerald Glade", "Mystic Indigo", "Cashmere Peach", "Titanium Frost", "Desert Ochre", "Obsidian Shadow"];
+            let hash = 0;
+            for (let i = 0; i < hex.length; i++) hash = hex.charCodeAt(i) + ((hash << 5) - hash);
+            return names[Math.abs(hash) % names.length];
+        }
+
+        function applyTheme(themeName) {
+            const root = document.documentElement;
+            if (themeName === 'midnight') {
+                root.style.setProperty('--brand', '#3b82f6');
+                root.style.setProperty('--bg-body-dark', '#020617');
+                root.style.setProperty('--bg-card-dark', '#0f172a');
+                root.style.setProperty('--border-dark', '#1e293b');
+                root.style.setProperty('--bg-alt-dark', '#1e293b');
+            } else if (themeName === 'matcha') {
+                root.style.setProperty('--brand', '#10b981');
+                root.style.setProperty('--bg-body-dark', '#022c22');
+                root.style.setProperty('--bg-card-dark', '#064e3b');
+                root.style.setProperty('--border-dark', '#065f46');
+                root.style.setProperty('--bg-alt-dark', '#065f46');
+            } else if (themeName === 'violet') {
+                root.style.setProperty('--brand', '#a855f7');
+                root.style.setProperty('--bg-body-dark', '#2e1065');
+                root.style.setProperty('--bg-card-dark', '#3b0764');
+                root.style.setProperty('--border-dark', '#581c87');
+                root.style.setProperty('--bg-alt-dark', '#581c87');
+            } else {
+                root.style.setProperty('--brand', '#ff3366');
+                root.style.setProperty('--bg-body-dark', &apos;#0b0b0c&apos;);
+                root.style.setProperty('--bg-card-dark', '#1c1c1f');
+                root.style.setProperty('--border-dark', '#2a2a2e');
+                root.style.setProperty('--bg-alt-dark', '#141417');
+            }
+            localStorage.setItem('sx_color_theme', themeName);
+            closeSettings();
+        }
+
+        // --- Core Generator & Undo/Redo ---
         function hexToRgb(hex) {
             let sanitized = hex.replace('#', '');
             if (sanitized.length === 3) sanitized = sanitized.split('').map(c => c + c).join('');
@@ -184,221 +424,162 @@
             return `rgb(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255})`;
         }
 
-        function normalizeHex(hex) {
-            let sanitized = hex.replace('#', '').trim();
-            if (sanitized.length === 3) {
-                sanitized = sanitized.split('').map(c => c + c).join('');
-            }
-            if (/^[0-9A-Fa-f]{6}$/.test(sanitized)) {
-                return '#' + sanitized.toLowerCase();
-            }
-            return '#ff3366';
+        function hexToRgbVals(hex) {
+            let sanitized = hex.replace('#', '');
+            if (sanitized.length === 3) sanitized = sanitized.split('').map(c => c + c).join('');
+            const num = parseInt(sanitized, 16);
+            return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
         }
 
-        function parseColorInput(input) {
-            input = input.trim();
-            if (input.startsWith('#')) {
-                if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) return normalizeHex(input);
-            } else if (input.toLowerCase().startsWith('rgb')) {
-                const match = input.match(/\d+/g);
-                if (match && match.length >= 3) {
-                    const r = parseInt(match[0]).toString(16).padStart(2, '0');
-                    const g = parseInt(match[1]).toString(16).padStart(2, '0');
-                    const b = parseInt(match[2]).toString(16).padStart(2, '0');
-                    return `#${r}${g}${b}`;
-                }
-            } else {
-                const withHash = '#' + input;
-                if (/^#([0-9A-F]{3}){1,2}$/i.test(withHash)) return normalizeHex(withHash);
-            }
-            return null;
+        function pushState() {
+            undoStack.push([...currentPalette]);
+            if (undoStack.length > 25) undoStack.shift();
+            redoStack = [];
+            updateUndoRedoButtons();
         }
 
-        function toggleTheme() {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-            lucide.createIcons();
+        function undoAction() {
+            if (undoStack.length === 0) return;
+            redoStack.push([...currentPalette]);
+            currentPalette = undoStack.pop();
+            renderPaletteBox();
+            updateUndoRedoButtons();
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
-            lucide.createIcons();
-            
-            applyDockMode(dockMode, false);
-            if (panelPos && dockMode === 'custom') {
-                const panel = document.getElementById('bucketsPanel');
-                panel.style.left = Math.max(10, Math.min(panelPos.x, window.innerWidth - 330)) + 'px';
-                panel.style.top = Math.max(10, Math.min(panelPos.y, window.innerHeight - 200)) + 'px';
-            }
+        function redoAction() {
+            if (redoStack.length === 0) return;
+            undoStack.push([...currentPalette]);
+            currentPalette = redoStack.pop();
+            renderPaletteBox();
+            updateUndoRedoButtons();
+        }
 
-            generatePalette(true);
-            renderBuckets();
-            updateAchievementUI();
-            setupDraggablePanel();
-
-            const nativePicker = document.getElementById('nativeColorPicker');
-            const textInput = document.getElementById('customColorInput');
-            nativePicker.addEventListener('input', (e) => { textInput.value = e.target.value; });
-            textInput.addEventListener('input', (e) => {
-                const parsed = parseColorInput(e.target.value);
-                if (parsed) nativePicker.value = parsed;
-            });
-
-            window.addEventListener('resize', () => {
-                if (dockMode === 'left') applyDockMode('left', false);
-            });
-        });
-
-        function updateAchievementUI() {
-            const maxSlots = getMaxSlots();
-            document.getElementById('achievementStat').innerText = `Slots: ${Object.keys(savedBuckets).length}/${maxSlots}`;
+        function updateUndoRedoButtons() {
+            document.getElementById('btnUndo').disabled = undoStack.length === 0;
+            document.getElementById('btnRedo').disabled = redoStack.length === 0;
         }
 
         function generatePalette(isInitial = false) {
+            if (!isInitial) pushState();
             currentPalette = [];
             for (let i = 0; i < 5; i++) {
                 const array = new Uint8Array(3);
                 window.crypto.getRandomValues(array);
-                const color = '#' + Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-                currentPalette.push(color);
+                currentPalette.push('#' + Array.from(array, byte => byte.toString(16).padStart(2, '0')).join(''));
             }
-
             renderPaletteBox();
 
             if (!isInitial) {
-                totalColorsGenerated += 5;
-                localStorage.setItem('sx_total_generated', totalColorsGenerated);
                 history = history.slice(0, historyIndex + 1);
                 history.push([...currentPalette]);
                 historyIndex = history.length - 1;
                 updateHistoryButtons();
-                updateAchievementUI();
-            } else {
+            } else if (history.length === 0) {
                 history.push([...currentPalette]);
                 historyIndex = 0;
-                updateHistoryButtons();
             }
+        }
+
+        // --- Select & Duplicate Mode ---
+        function toggleSelectMode(enabled) {
+            isSelectMode = enabled;
+            selectedIndices.clear();
+            document.getElementById('btnDuplicate').disabled = true;
+            renderPaletteBox();
+        }
+
+        function toggleSelectIndex(index) {
+            if (!isSelectMode) return;
+            if (selectedIndices.has(index)) {
+                selectedIndices.delete(index);
+            } else {
+                selectedIndices.add(index);
+            }
+            document.getElementById('btnDuplicate').disabled = selectedIndices.size === 0;
+            renderPaletteBox();
+        }
+
+        function executeDuplicate() {
+            if (selectedIndices.size === 0) return;
+            pushState();
+            let newPalette = [...currentPalette];
+            selectedIndices.forEach(idx => {
+                newPalette.push(currentPalette[idx]);
+            });
+            currentPalette = newPalette.slice(-5); // keep max 5 slots
+            selectedIndices.clear();
+            isSelectMode = false;
+            document.getElementById('selectModeToggle').checked = false;
+            document.getElementById('btnDuplicate').disabled = true;
+            renderPaletteBox();
+        }
+
+        // --- GD-Style Move Tools ---
+        function shiftPalette(dir) {
+            if (currentPalette.length === 0) return;
+            pushState();
+            if (dir > 0) {
+                let last = currentPalette.pop();
+                currentPalette.unshift(last);
+            } else {
+                let first = currentPalette.shift();
+                currentPalette.push(first);
+            }
+            renderPaletteBox();
+        }
+
+        function invertPalette() {
+            pushState();
+            currentPalette.reverse();
+            renderPaletteBox();
+        }
+
+        function shufflePaletteOrder() {
+            pushState();
+            for (let i = currentPalette.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentPalette[i], currentPalette[j]] = [currentPalette[j], currentPalette[i]];
+            }
+            renderPaletteBox();
         }
 
         function renderPaletteBox() {
             const box = document.getElementById('paletteBox');
             box.innerHTML = '';
-
             currentPalette.forEach((color, index) => {
-                const rgbVal = hexToRgb(color);
+                const isSelected = selectedIndices.has(index);
                 const colorDiv = document.createElement('div');
-                colorDiv.className = 'flex-1 h-full flex flex-col justify-between text-xs text-white font-mono cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-lg rounded-md group relative p-2';
+                colorDiv.className = `flex-1 h-full flex flex-col justify-between text-xs text-white font-mono cursor-pointer transition-all duration-200 hover:scale-[1.02] hover:z-10 hover:shadow-lg rounded-md group relative p-2 ${isSelected ? 'ring-4 ring-[var(--brand)] scale-95' : ''}`;
                 colorDiv.style.backgroundColor = color;
                 
                 colorDiv.innerHTML = `
-                    <!-- Top Action Bar for Slot -->
-                    <div class="flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-1 rounded backdrop-blur-sm z-20">
-                        <button onclick="event.stopPropagation(); copySingleColor('${color}')" title="Copy Color" class="hover:text-[#ff3366] p-0.5 cursor-pointer"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="event.stopPropagation(); pasteSingleColor(${index})" title="${copiedColorMemory ? 'Paste (' + copiedColorMemory + ')' : 'No Color Copied'}" class="hover:text-green-400 p-0.5 cursor-pointer ${copiedColorMemory ? '' : 'opacity-40'}"><i data-lucide="clipboard" class="w-3.5 h-3.5"></i></button>
-                        <button onclick="event.stopPropagation(); duplicateColor(${index})" title="Duplicate Color" class="hover:text-blue-400 p-0.5 cursor-pointer"><i data-lucide="copy-plus" class="w-3.5 h-3.5"></i></button>
+                    <div class="flex justify-between items-center w-full">
+                        ${isSelectMode ? `<div class="w-5 h-5 rounded-full border-2 border-white flex items-center justify-center bg-black/40 text-[10px] font-bold">${isSelected ? '✓' : ''}</div>` : '<div></div>'}
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex justify-center">
+                            <input type="color" value="${color}" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" onclick="event.stopPropagation()" onchange="updatePaletteColor(${index}, this.value)">
+                        </div>
                     </div>
-
-                    <!-- Center Replace Color Button -->
-                    <div class="flex flex-col items-center justify-center gap-1 my-auto">
-                        <span class="bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-semibold pointer-events-none text-[10px]">Copy Hex</span>
-                        <button onclick="event.stopPropagation(); openColorPickerModal(${index}, '${color}')" class="bg-white/90 hover:bg-white text-black font-bold px-2 py-1 rounded shadow text-[10px] opacity-0 group-hover:opacity-100 transition-all scale-95 hover:scale-100 cursor-pointer">
-                            Replace Color
-                        </button>
-                    </div>
-
-                    <!-- Bottom Hex & RGB Labels -->
                     <div class="bg-black/60 px-2 py-1 rounded drop-shadow-sm flex flex-col items-center pointer-events-none">
                         <span class="font-bold text-xs">${color}</span>
-                        <span class="text-[9px] text-gray-300 opacity-80">${rgbVal}</span>
+                        <span class="text-[9px] text-gray-300 opacity-80">${hexToRgb(color)}</span>
                     </div>
                 `;
-
-                // Single click = Copy Hex code (Debounced to avoid conflict with double-click)
-                colorDiv.addEventListener('click', (e) => {
-                    if (e.target.closest('button')) return;
-                    if (clickTimer) clearTimeout(clickTimer);
-                    clickTimer = setTimeout(() => {
-                        copySingleColor(color);
-                        clickTimer = null;
-                    }, 250);
-                });
-
-                // Double click = Open Custom Color Picker Modal (Cancels single click copy)
-                colorDiv.addEventListener('dblclick', (e) => {
-                    if (e.target.closest('button')) return;
-                    if (clickTimer) {
-                        clearTimeout(clickTimer);
-                        clickTimer = null;
+                colorDiv.addEventListener('click', () => {
+                    if (isSelectMode) {
+                        toggleSelectIndex(index);
+                    } else {
+                        navigator.clipboard.writeText(color);
                     }
-                    openColorPickerModal(index, color);
                 });
-
                 box.appendChild(colorDiv);
             });
-            lucide.createIcons();
+            document.getElementById('achievementStat').innerText = `Slots: ${Object.keys(savedBuckets).length}/5`;
         }
 
-        function copySingleColor(color) {
-            navigator.clipboard.writeText(color);
-            copiedColorMemory = color;
+        function updatePaletteColor(index, newHex) {
+            pushState();
+            currentPalette[index] = newHex;
             renderPaletteBox();
-        }
-
-        function pasteSingleColor(index) {
-            if (copiedColorMemory) {
-                currentPalette[index] = copiedColorMemory;
-                renderPaletteBox();
-                pushHistoryState();
-            }
-        }
-
-        function duplicateColor(index) {
-            const colorToDuplicate = currentPalette[index];
-            if (index < currentPalette.length - 1) {
-                currentPalette[index + 1] = colorToDuplicate;
-            } else if (index > 0) {
-                currentPalette[index - 1] = colorToDuplicate;
-            }
-            renderPaletteBox();
-            pushHistoryState();
-        }
-
-        function pushHistoryState() {
-            history = history.slice(0, historyIndex + 1);
-            history.push([...currentPalette]);
-            historyIndex = history.length - 1;
-            updateHistoryButtons();
-        }
-
-        function openColorPickerModal(index, currentColor) {
-            editingColorIndex = index;
-            const normHex = normalizeHex(currentColor);
-            document.getElementById('nativeColorPicker').value = normHex;
-            document.getElementById('customColorInput').value = currentColor;
-            document.getElementById('colorPickerModal').classList.remove('hidden');
-        }
-
-        function closeColorPickerModal() {
-            document.getElementById('colorPickerModal').classList.add('hidden');
-            editingColorIndex = null;
-        }
-
-        function applyCustomColor() {
-            if (editingColorIndex !== null) {
-                const val = document.getElementById('customColorInput').value;
-                const parsedHex = parseColorInput(val);
-                if (parsedHex) {
-                    currentPalette[editingColorIndex] = parsedHex;
-                    renderPaletteBox();
-                    pushHistoryState();
-                    closeColorPickerModal();
-                } else {
-                    alert("Invalid color value format!");
-                }
-            }
         }
 
         function historyBack() {
@@ -424,7 +605,7 @@
             document.getElementById('btnForward').disabled = historyIndex >= history.length - 1;
         }
 
-        // --- Dock & Drag Management with Screen Boundary Bounds ---
+        // --- Dock, Drag & Resize ---
         function setDockMode(mode) {
             dockMode = mode;
             localStorage.setItem('sx_dock_mode', mode);
@@ -433,117 +614,124 @@
 
         function applyDockMode(mode, animate = true) {
             const panel = document.getElementById('bucketsPanel');
+            const gdToolbar = document.getElementById('gdMoveToolPanel');
             panel.style.transition = animate ? 'all 0.3s ease' : 'none';
             
             if (mode === 'left') {
                 if (window.innerWidth < 768) {
-                    panel.style.left = '10px';
-                    panel.style.top = 'auto';
-                    panel.style.bottom = '10px';
-                    panel.style.right = 'auto';
-                    panel.style.transform = 'none';
-                    panel.style.width = 'calc(100vw - 20px)';
-                    panel.style.maxHeight = '250px';
+                    panel.style.left = '10px'; panel.style.top = 'auto'; panel.style.bottom = '10px';
+                    panel.style.width = 'calc(100vw - 20px)'; panel.style.height = '300px';
                 } else {
-                    panel.style.left = '20px';
-                    panel.style.top = '100px';
-                    panel.style.bottom = 'auto';
-                    panel.style.right = 'auto';
-                    panel.style.transform = 'none';
-                    panel.style.width = '320px';
-                    panel.style.maxHeight = '80vh';
+                    panel.style.left = '20px'; panel.style.top = '100px'; panel.style.bottom = 'auto';
+                    panel.style.width = '320px'; panel.style.height = '75vh';
                 }
+                // When buckets are on left, put GD mini move tools on bottom right
+                gdToolbar.style.bottom = '20px';
+                gdToolbar.style.left = 'auto';
+                gdToolbar.style.right = '20px';
+                gdToolbar.style.transform = 'none';
             } else if (mode === 'bottom') {
-                panel.style.left = '50%';
-                panel.style.transform = 'translateX(-50%)';
-                panel.style.bottom = '20px';
-                panel.style.top = 'auto';
-                panel.style.right = 'auto';
-                panel.style.width = 'calc(100vw - 32px)';
-                panel.style.maxWidth = '600px';
-                panel.style.maxHeight = '250px';
+                panel.style.left = '50%'; panel.style.transform = 'translateX(-50%)'; panel.style.bottom = '20px'; panel.style.top = 'auto';
+                panel.style.width = 'calc(100vw - 32px)'; panel.style.height = '300px';
+                // When buckets are on bottom, move GD move tools safely to the left!
+                gdToolbar.style.bottom = '20px';
+                gdToolbar.style.left = '20px';
+                gdToolbar.style.right = 'auto';
+                gdToolbar.style.transform = 'none';
+            } else if (mode === 'custom' && panelSize) {
+                panel.style.transform = 'none';
+                panel.style.width = Math.max(300, panelSize.w) + 'px';
+                panel.style.height = Math.max(250, panelSize.h) + 'px';
+                gdToolbar.style.bottom = '20px';
+                gdToolbar.style.right = '20px';
+                gdToolbar.style.left = 'auto';
             }
             setTimeout(() => panel.style.transition = 'none', 300);
         }
 
-        function setupDraggablePanel() {
-            const panel = document.getElementById('bucketsPanel');
-            const handle = document.getElementById('panelDragHandle');
-            let isDragging = false;
-            let startX, startY;
+        const panel = document.getElementById('bucketsPanel');
+        const dragHandle = document.getElementById('panelDragHandle');
+        const resizeHandle = document.getElementById('panelResizeHandle');
+        let isDragging = false, isResizing = false;
+        let startX, startY, startW, startH, startRX, startRY;
 
-            handle.addEventListener('mousedown', (e) => {
-                isDragging = true;
-                startX = e.clientX - panel.offsetLeft;
-                startY = e.clientY - panel.offsetTop;
-                panel.style.transform = 'none';
-                dockMode = 'custom';
-                localStorage.setItem('sx_dock_mode', 'custom');
-                e.preventDefault();
-            });
+        const getClientX = (e) => e.touches ? e.touches[0].clientX : e.clientX;
+        const getClientY = (e) => e.touches ? e.touches[0].clientY : e.clientY;
 
-            document.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                let newX = e.clientX - startX;
-                let newY = e.clientY - startY;
+        const dragStart = (e) => {
+            isDragging = true;
+            startX = getClientX(e) - panel.offsetLeft;
+            startY = getClientY(e) - panel.offsetTop;
+            panel.style.transform = 'none';
+            dockMode = 'custom'; localStorage.setItem('sx_dock_mode', 'custom');
+            if(e.type === 'touchstart') e.preventDefault();
+        };
 
-                // Clamping left & top so panel NEVER goes off-screen
-                const maxRight = window.innerWidth - panel.offsetWidth - 10;
-                const maxBottom = window.innerHeight - panel.offsetHeight - 10;
+        const resizeStart = (e) => {
+            isResizing = true;
+            startW = panel.offsetWidth; startH = panel.offsetHeight;
+            startRX = getClientX(e); startRY = getClientY(e);
+            panel.style.transition = 'none';
+            dockMode = 'custom'; localStorage.setItem('sx_dock_mode', 'custom');
+            if(e.cancelable) e.preventDefault(); e.stopPropagation();
+        };
 
-                newX = Math.max(10, Math.min(newX, maxRight));
-                newY = Math.max(10, Math.min(newY, maxBottom));
+        dragHandle.addEventListener('mousedown', dragStart); dragHandle.addEventListener('touchstart', dragStart, {passive:false});
+        resizeHandle.addEventListener('mousedown', resizeStart); resizeHandle.addEventListener('touchstart', resizeStart, {passive:false});
 
-                panel.style.left = `${newX}px`;
-                panel.style.top = `${newY}px`;
+        const move = (e) => {
+            if (!isDragging && !isResizing) return;
+            if (isDragging) {
+                let newX = Math.max(10, Math.min(getClientX(e) - startX, window.innerWidth - panel.offsetWidth - 10));
+                let newY = Math.max(10, Math.min(getClientY(e) - startY, window.innerHeight - panel.offsetHeight - 10));
+                panel.style.left = `${newX}px`; panel.style.top = `${newY}px`;
                 localStorage.setItem('sx_panel_pos', JSON.stringify({ x: newX, y: newY }));
-            });
+            }
+            if (isResizing) {
+                let newW = startW + (getClientX(e) - startRX);
+                let newH = startH + (getClientY(e) - startRY);
+                newW = Math.max(300, Math.min(newW, window.innerWidth - panel.offsetLeft - 10));
+                newH = Math.max(250, Math.min(newH, window.innerHeight - panel.offsetTop - 10));
+                panel.style.width = `${newW}px`; panel.style.height = `${newH}px`;
+                localStorage.setItem('sx_panel_size', JSON.stringify({ w: newW, h: newH }));
+            }
+        };
 
-            document.addEventListener('mouseup', () => { isDragging = false; });
-        }
+        const end = () => { isDragging = false; isResizing = false; };
+        document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, {passive:false});
+        document.addEventListener('mouseup', end); document.addEventListener('touchend', end);
 
-        // --- Bucket Logic ---
+        // --- Save Buckets Rendering (Editable Colors) ---
         function renderBuckets() {
             const container = document.getElementById('bucketsContainer');
             container.innerHTML = '';
-            const maxSlots = getMaxSlots();
-
-            for (let i = 1; i <= maxSlots; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const bucketData = savedBuckets[i];
                 const slotDiv = document.createElement('div');
-                slotDiv.className = "bg-gray-50 dark:bg-[#141417] border border-gray-200 dark:border-[#2a2a2e] rounded-xl p-2.5 flex flex-col gap-2 relative";
+                slotDiv.className = "bg-gray-50 dark:bg-[var(--bg-alt-dark)] border border-gray-200 dark:border-[var(--border-dark)] rounded-xl p-2.5 flex flex-col gap-2 shrink-0";
 
                 if (bucketData) {
                     slotDiv.innerHTML = `
                         <div class="flex items-center justify-between text-xs font-bold text-gray-500 dark:text-gray-400">
                             <span>Bucket #${i}</span>
                             <div class="flex items-center gap-1">
-                                <button onclick="loadBucket(${i})" title="Load Palette" class="hover:text-[#ff3366] transition-colors cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i></button>
-                                <button onclick="replaceBucket(${i})" title="Replace with Current" class="hover:text-blue-500 transition-colors cursor-pointer"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i></button>
-                                <button onclick="clearBucket(${i})" title="Delete Bucket Content" class="hover:text-red-500 transition-colors cursor-pointer"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="loadBucket(${i})" title="Load Palette" class="hover:text-[var(--brand)] transition-colors cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="clearBucket(${i})" title="Delete Content" class="hover:text-red-500 transition-colors cursor-pointer"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
                             </div>
                         </div>
-                        <div class="flex h-10 rounded overflow-hidden shadow-inner gap-0.5 bg-gray-200 dark:bg-gray-800 p-0.5">
-                            ${bucketData.map(c => `<div style="background-color: ${c}" class="flex-1 cursor-pointer" onclick="copySingleColor('${c}')" title="Copy ${c}"></div>`).join('')}
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] text-gray-400 font-mono pt-0.5">
-                            <div class="flex gap-2">
-                                <button onclick="copyBucketHexes(${i})" class="hover:text-gray-200 cursor-pointer">Copy Hex</button>
-                                <button onclick="copyBucketRgb(${i})" class="hover:text-gray-200 cursor-pointer">Copy RGB</button>
-                            </div>
-                            ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500 cursor-pointer" title="Delete Slot">Delete Slot</button>` : ''}
+                        <div class="flex h-12 rounded-lg overflow-hidden shadow-inner gap-[1px] bg-gray-200 dark:bg-gray-800">
+                            ${bucketData.map((c, cIdx) => `
+                                <div style="background-color: ${c}" class="flex-1 cursor-pointer group flex flex-col items-center justify-between relative p-1 overflow-hidden">
+                                    <input type="color" value="${c}" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0 bg-transparent" onclick="event.stopPropagation()" onchange="updateBucketColor(${i},${cIdx}, this.value)">
+                                    <span class="text-[8px] font-bold tracking-tight text-white drop-shadow bg-black/40 px-1 rounded">${c}</span>
+                                </div>
+                            `).join('')}
                         </div>
                     `;
                 } else {
                     slotDiv.innerHTML = `
-                        <div class="flex items-center justify-between text-xs font-bold text-gray-400">
-                            <span>Bucket #${i}</span>
-                            <div class="flex items-center gap-1">
-                                <span>Empty</span>
-                                ${i > 5 ? `<button onclick="deleteAchievementBucket(${i})" class="text-red-400 hover:text-red-500 ml-1 cursor-pointer" title="Delete Slot"><i data-lucide="trash-2" class="w-3 h-3"></i></button>` : ''}
-                            </div>
-                        </div>
-                        <button onclick="saveToBucket(${i})" class="w-full bg-gray-200 dark:bg-gray-800 hover:bg-[#ff3366] hover:text-white text-gray-700 dark:text-gray-300 text-xs font-semibold py-1.5 rounded transition-colors cursor-pointer flex items-center justify-center gap-1">
+                        <div class="flex items-center justify-between text-xs font-bold text-gray-400"><span>Bucket #${i}</span> <span>Empty</span></div>
+                        <button onclick="saveToBucket(${i})" class="w-full bg-gray-200 dark:bg-gray-800 hover:bg-[var(--brand)] hover:text-white text-gray-700 dark:text-gray-300 text-xs font-bold py-2 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-1">
                             <i data-lucide="plus" class="w-3.5 h-3.5"></i> Save Current
                         </button>
                     `;
@@ -551,236 +739,232 @@
                 container.appendChild(slotDiv);
             }
             lucide.createIcons();
-            updateAchievementUI();
+            document.getElementById('achievementStat').innerText = `Slots: ${Object.keys(savedBuckets).length}/5`;
         }
 
-        function saveToBucket(slotNum) {
-            savedBuckets[slotNum] = [...currentPalette];
+        function saveToBucket(slot) { savedBuckets[slot] = [...currentPalette]; localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets)); renderBuckets(); }
+        function loadBucket(slot) { pushState(); currentPalette = [...savedBuckets[slot]]; renderPaletteBox(); }
+        function clearBucket(slot) { delete savedBuckets[slot]; localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets)); renderBuckets(); }
+        function updateBucketColor(slot, colorIdx, newHex) {
+            savedBuckets[slot][colorIdx] = newHex;
             localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
             renderBuckets();
         }
 
-        function replaceBucket(slotNum) {
-            savedBuckets[slotNum] = [...currentPalette];
-            localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
-            renderBuckets();
-        }
-
-        function loadBucket(slotNum) {
-            if (savedBuckets[slotNum]) {
-                currentPalette = [...savedBuckets[slotNum]];
-                pushHistoryState();
-                renderPaletteBox();
+        // --- History Modal (Editable Colors) ---
+        function openHistoryModal() {
+            const list = document.getElementById('historyListContainer');
+            list.innerHTML = '';
+            if (history.length === 0) {
+                list.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No history logged yet.</p>`;
+            } else {
+                history.forEach((pal, idx) => {
+                    const item = document.createElement('div');
+                    item.className = "flex items-center justify-between bg-gray-50 dark:bg-[var(--bg-alt-dark)] border border-gray-200 dark:border-[var(--border-dark)] p-2 rounded-xl gap-2";
+                    item.innerHTML = `
+                        <div class="flex h-12 flex-1 rounded-lg overflow-hidden gap-[1px]">
+                            ${pal.map((c, cIdx) => `
+                                <div style="background-color: ${c}" class="flex-1 group flex flex-col items-center justify-between relative p-1 cursor-pointer">
+                                    <input type="color" value="${c}" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-0 bg-transparent" onclick="event.stopPropagation()" onchange="updateHistoryColor(${idx},${cIdx}, this.value)">
+                                    <span class="text-[7px] font-bold text-white drop-shadow bg-black/40 px-0.5 rounded">${c}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="historyIndex=${idx}; pushState(); currentPalette=[...history[${idx}]]; renderPaletteBox(); updateHistoryButtons(); closeHistoryModal();" class="text-xs bg-[var(--brand)] text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer">Load</button>
+                    `;
+                    list.appendChild(item);
+                });
             }
+            document.getElementById('historyModal').classList.remove('hidden');
+        }
+        function closeHistoryModal() { document.getElementById('historyModal').classList.add('hidden'); }
+        function updateHistoryColor(historyIdx, colorIdx, newHex) {
+            history[historyIdx][colorIdx] = newHex;
+            openHistoryModal();
         }
 
-        function clearBucket(slotNum) {
-            delete savedBuckets[slotNum];
-            localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
-            renderBuckets();
-        }
-
-        function deleteAchievementBucket(slotNum) {
-            delete savedBuckets[slotNum];
-            localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
-            totalColorsGenerated = Math.max(0, (slotNum - 6) * 50);
-            localStorage.setItem('sx_total_generated', totalColorsGenerated);
-            renderBuckets();
-        }
-
-        function copyBucketHexes(slotNum) {
-            if (savedBuckets[slotNum]) {
-                navigator.clipboard.writeText(savedBuckets[slotNum].join(', '));
-            }
-        }
-
-        function copyBucketRgb(slotNum) {
-            if (savedBuckets[slotNum]) {
-                const rgbArray = savedBuckets[slotNum].map(c => hexToRgb(c)).join(', ');
-                navigator.clipboard.writeText(rgbArray);
-            }
-        }
-
-        // --- Download Suite ---
+        // --- Download ---
         function openDownloadModal() {
             const grid = document.getElementById('formatGrid');
             grid.innerHTML = '';
-            const formats = [
-                'png', 'jpg', 'jpeg', 'jfif', 'bruh', 'webp', 'bmp', 'gif', 'tiff', 'ico',
-                'svg', 'json', 'txt', 'md', 'html', 'css', 'scss', 'less', 'xml', 'csv',
-                'yaml', 'pdf', 'eps', 'ai', 'psd', 'ase', 'aco', 'gpl', 'sketch', 'fig', 'asecl'
-            ];
-
-            formats.forEach(fmt => {
+            ['png', 'jpg', 'svg', 'css', 'json', 'md'].forEach(fmt => {
                 const btn = document.createElement('button');
-                btn.className = "bg-gray-100 dark:bg-[#141417] border border-gray-200 dark:border-[#2a2a2e] hover:border-[#ff3366] text-xs font-bold uppercase py-2 rounded-lg text-gray-700 dark:text-gray-300 transition-colors cursor-pointer";
+                btn.className = "bg-gray-100 dark:bg-[var(--bg-alt-dark)] border border-gray-200 dark:border-[var(--border-dark)] hover:border-[var(--brand)] text-xs font-bold uppercase py-2 rounded-lg transition-colors cursor-pointer";
                 btn.innerText = `.${fmt}`;
-                btn.onclick = () => downloadPaletteFile(fmt);
+                btn.onclick = () => {
+                    closeDownloadModal();
+                    triggerFileDownload(fmt);
+                }
                 grid.appendChild(btn);
             });
             document.getElementById('downloadModal').classList.remove('hidden');
         }
+        function closeDownloadModal() { document.getElementById('downloadModal').classList.add('hidden'); }
 
-        function closeDownloadModal() {
-            document.getElementById('downloadModal').classList.add('hidden');
-        }
-
-        function downloadPaletteFile(format) {
-            closeDownloadModal();
-            const filename = `sensationalx-palette-${Date.now()}.${format}`;
-            const imageFormats = ['png', 'jpg', 'jpeg', 'jfif', 'bruh', 'webp', 'bmp', 'gif', 'tiff', 'ico'];
-
-            if (imageFormats.includes(format)) {
-                const canvas = document.createElement('canvas');
-                canvas.width = 1200;
-                canvas.height = 600;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = document.documentElement.classList.contains('dark') ? '#0b0b0c' : '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                const barWidth = canvas.width / currentPalette.length;
-                currentPalette.forEach((color, i) => {
-                    ctx.fillStyle = color;
-                    ctx.fillRect(i * barWidth, 0, barWidth, canvas.height - 120);
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 24px monospace';
-                    ctx.textAlign = 'center';
-                    ctx.shadowColor = 'rgba(0,0,0,0.7)';
-                    ctx.shadowBlur = 8;
-                    ctx.fillText(color, (i * barWidth) + (barWidth / 2), canvas.height - 60);
-                    ctx.fillText(hexToRgb(color), (i * barWidth) + (barWidth / 2), canvas.height - 30);
-                    ctx.shadowBlur = 0;
-                });
-
-                let mimeType = 'image/png';
-                if (['jpg', 'jpeg', 'jfif', 'bruh'].includes(format)) mimeType = 'image/jpeg';
-                else if (format === 'webp') mimeType = 'image/webp';
-
-                canvas.toBlob(blob => {
-                    const url = URL.createObjectURL(blob || new Blob([]));
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    a.click();
-                    URL.revokeObjectURL(url);
-                }, mimeType, 1.0);
-
-            } else if (format === 'svg') {
-                const barWidth = 200;
-                let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${currentPalette.length * barWidth}" height="400">`;
-                currentPalette.forEach((c, i) => {
-                    svg += `<rect x="${i * barWidth}" y="0" width="${barWidth}" height="320" fill="${c}"/>`;
-                    svg += `<text x="${i * barWidth + barWidth/2}" y="360" font-family="monospace" font-size="18" fill="#888" text-anchor="middle">${c}</text>`;
-                });
-                svg += `</svg>`;
-                triggerTextDownload(svg, filename, 'image/svg+xml');
-
-            } else if (['css', 'scss', 'less'].includes(format)) {
-                let css = `:root {\n`;
-                currentPalette.forEach((c, i) => { css += `  --color-${i + 1}: ${c};\n`; });
-                css += `}\n`;
-                triggerTextDownload(css, filename, 'text/css');
-
-            } else if (format === 'html') {
-                let html = `<!DOCTYPE html><html><head><title>Palette Export</title></head><body style="display:flex;height:100vh;margin:0;">`;
-                currentPalette.forEach(c => { html += `<div style="flex:1;background:${c};display:flex;align-items:center;justify-content:center;color:#fff;font-family:monospace;font-weight:bold;">${c}</div>`; });
-                html += `</body></html>`;
-                triggerTextDownload(html, filename, 'text/html');
-
-            } else if (format === 'json') {
-                const data = JSON.stringify({
-                    generator: "SensationalX Random Palette Generator",
-                    timestamp: new Date().toISOString(),
-                    colors: currentPalette.map(hex => ({ hex, rgb: hexToRgb(hex) }))
-                }, null, 2);
-                triggerTextDownload(data, filename, 'application/json');
-
-            } else if (format === 'md') {
-                let md = `# SensationalX Color Palette\n\n`;
-                currentPalette.forEach((c, i) => { md += `- **Color ${i+1}**: \`${c}\` / \`${hexToRgb(c)}\`\n`; });
-                triggerTextDownload(md, filename, 'text/markdown');
-
+        function triggerFileDownload(fmt) {
+            let content = "";
+            let filename = `palette-${Date.now()}.${fmt}`;
+            if (fmt === 'json') {
+                content = JSON.stringify({ palette: currentPalette, rgb: currentPalette.map(hexToRgb) }, null, 2);
+            } else if (fmt === 'css') {
+                content = `:root {\n` + currentPalette.map((c, i) => `  --color-${i + 1}: ${c};`).join('\n') + `\n}`;
+            } else if (fmt === 'md') {
+                content = `# SensationalX Palette\n\n` + currentPalette.map(c => `- ${c} (${hexToRgb(c)})`).join('\n');
             } else {
-                let text = `SensationalX Palette Export\n` + currentPalette.map(c => `${c} | ${hexToRgb(c)}`).join('\n');
-                triggerTextDownload(text, filename, 'text/plain');
+                content = `SensationalX Color Palette:\n` + currentPalette.join(', ');
+                filename = `palette-${Date.now()}.txt`;
             }
-        }
-
-        function triggerTextDownload(content, filename, mime) {
-            const blob = new Blob([content], { type: mime });
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
         }
 
-        // --- Custom Clear All Modal ---
-        function triggerClearAll() {
-            if (skipClearWarning) {
-                confirmClearAll();
-            } else {
-                document.getElementById('clearModal').classList.remove('hidden');
-                lucide.createIcons();
+        // --- Gemini AI Agent with Attachments & App Control ---
+        function toggleGeminiChat() {
+            document.getElementById('geminiPanel').classList.toggle('translate-x-full');
+        }
+
+        function handleFileAttachment(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentAttachment = { name: file.name, data: e.target.result, type: file.type };
+                    document.getElementById('attachmentName').innerText = file.name;
+                    document.getElementById('attachmentPreviewContainer').classList.remove('hidden');
+                };
+                if (file.type.startsWith('image/')) {
+                    reader.readAsDataURL(file);
+                } else {
+                    reader.readAsText(file);
+                }
             }
         }
 
-        function closeClearModal() {
-            const dontShow = document.getElementById('dontShowAgain').checked;
-            if (dontShow) {
-                skipClearWarning = true;
-                localStorage.setItem('sx_skip_clear_warning', 'true');
-            }
-            document.getElementById('clearModal').classList.add('hidden');
+        function clearAttachment() {
+            currentAttachment = null;
+            document.getElementById('attachmentName').innerText = '';
+            document.getElementById('attachmentPreviewContainer').classList.add('hidden');
+            document.getElementById('aiFileInput').value = '';
         }
 
-        function confirmClearAll() {
-            const dontShow = document.getElementById('dontShowAgain')?.checked;
-            if (dontShow) {
-                skipClearWarning = true;
-                localStorage.setItem('sx_skip_clear_warning', 'true');
-            }
-            savedBuckets = {};
-            localStorage.removeItem('sx_saved_buckets');
-            renderBuckets();
-            document.getElementById('clearModal').classList.add('hidden');
+        function appendChat(role, text, id = null) {
+            const chatBox = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            if (id) div.id = id;
+            div.className = `p-3 rounded-2xl max-w-[85%] border shadow-sm ${role === 'user' ? 'bg-blue-500 text-white self-end rounded-tr-none border-blue-600' : 'bg-gray-100 dark:bg-[var(--bg-alt-dark)] border-gray-200 dark:border-[var(--border-dark)] self-start rounded-tl-none'}`;
+            div.innerHTML = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return div.id;
         }
 
-        // --- History Modal ---
-        function openHistoryModal() {
-            const listContainer = document.getElementById('historyListContainer');
-            listContainer.innerHTML = '';
+        async function sendGeminiMessage() {
+            const input = document.getElementById('geminiInput');
+            const text = input.value.trim();
+            if (!text && !currentAttachment) return;
 
-            if (history.length === 0) {
-                listContainer.innerHTML = `<p class="text-xs text-gray-400 text-center py-4">No history logged yet.</p>`;
-            } else {
-                history.forEach((pal, idx) => {
-                    const item = document.createElement('div');
-                    item.className = "flex items-center justify-between bg-gray-50 dark:bg-[#141417] border border-gray-200 dark:border-[#2a2a2e] p-2 rounded-xl";
-                    item.innerHTML = `
-                        <div class="flex h-8 flex-1 rounded overflow-hidden gap-0.5 mx-2">
-                            ${pal.map(c => `<div style="background-color: ${c}" class="flex-1"></div>`).join('')}
-                        </div>
-                        <button onclick="restoreHistoryItem(${idx})" class="text-xs bg-[#ff3366] text-white px-3 py-1 rounded font-semibold cursor-pointer">Load</button>
-                    `;
-                    listContainer.appendChild(item);
+            let displayHtml = text;
+            if (currentAttachment) {
+                displayHtml += `<br><span class="text-[10px] opacity-85">[Attached: ${currentAttachment.name}]</span>`;
+            }
+
+            appendChat('user', displayHtml);
+            input.value = '';
+
+            const loadId = 'loading-' + Date.now();
+            appendChat('ai', '<div class="flex gap-1 items-center"><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div><div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div></div>', loadId);
+
+            const API_KEY = 'AQ.Ab8RN6LUAFw4nsU8iIP-ORo6mmgJjAEQip3sAnS5aSGwkBCrmA'; 
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+            
+            let systemInstruction = `You are a helpful AI expert in Color Theory with FULL APP CONTROL. 
+Current Palette: ${currentPalette.join(', ')}.
+Saved Buckets: ${JSON.stringify(savedBuckets)}.
+
+You have the power to execute actions in the app by outputting exact code tags in your response:
+1. To change the active palette colors, output: [SET_PALETTE:#HEX1,#HEX2,#HEX3,#HEX4,#HEX5]
+2. To save or change a save bucket, output: [SET_BUCKET:slot_number:#HEX1,#HEX2,#HEX3,#HEX4,#HEX5]
+3. To generate a downloadable text/json file preview for the user, output: [GENERATE_FILE:filename.json|content]
+
+Respond nicely to the user prompt. User prompt: ${text}`;
+
+            let parts = [{ text: systemInstruction }];
+            if (currentAttachment) {
+                if (currentAttachment.type.startsWith('image/')) {
+                    const base64Data = currentAttachment.data.split(',')[1];
+                    parts.push({
+                        inline_data: {
+                            mime_type: currentAttachment.type,
+                            data: base64Data
+                        }
+                    });
+                } else {
+                    parts.push({ text: `Attachment Content (${currentAttachment.name}):\n${currentAttachment.data}` });
+                }
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: parts }] })
                 });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                
+                let reply = data.candidates[0].content.parts[0].text;
+
+                let paletteMatch = reply.match(/\[SET_PALETTE:(#[a-fA-F0-9_,#]+)\]/);
+                if (paletteMatch) {
+                    let newColors = paletteMatch[1].split(',');
+                    if (newColors.length === 5) {
+                        pushState();
+                        currentPalette = newColors;
+                        renderPaletteBox();
+                        reply = reply.replace(paletteMatch[0], '<br><span class="text-xs text-emerald-500 font-bold">✨ [AI updated your active palette!]</span>');
+                    }
+                }
+
+                let bucketMatch = reply.match(/\[SET_BUCKET:(\d+):(#[a-fA-F0-9_,#]+)\]/);
+                if (bucketMatch) {
+                    let slotNum = parseInt(bucketMatch[1]);
+                    let bucketColors = bucketMatch[2].split(',');
+                    if (slotNum >= 1 && slotNum <= 5 && bucketColors.length === 5) {
+                        savedBuckets[slotNum] = bucketColors;
+                        localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
+                        renderBuckets();
+                        reply = reply.replace(bucketMatch[0], `<br><span class="text-xs text-emerald-500 font-bold">✨ [AI updated Save Bucket #${slotNum}!]</span>`);
+                    }
+                }
+
+                let fileMatch = reply.match(/\[GENERATE_FILE:(.*?)\Vert{}(.*?)\]/s);
+                if (fileMatch) {
+                    let fname = fileMatch[1];
+                    let fcontent = fileMatch[2];
+                    reply = reply.replace(fileMatch[0], `<br><div class="mt-2 p-2 bg-black/10 rounded-lg flex items-center justify-between"><span>📄 ${fname}</span><button onclick="downloadAiFile('${fname}', `+`btoa(\`${btoa(fcontent)}\`)" class="text-xs bg-blue-500 text-white px-2 py-1 rounded font-bold">Download</button></div>`);
+                }
+
+                reply = reply.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\*(.*?)\*/g, '<i>$1</i>').replace(/\n/g, '<br/>');
+                document.getElementById(loadId).innerHTML = reply;
+                document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+                clearAttachment();
+            } catch (err) {
+                document.getElementById(loadId).innerHTML = `<b>Error:</b> Cannot connect to Gemini AI. Check your <code>[GEMINI_API_KEY]</code> placeholder substitution!`;
             }
-            document.getElementById('historyModal').classList.remove('hidden');
-            lucide.createIcons();
         }
 
-        function closeHistoryModal() {
-            document.getElementById('historyModal').classList.add('hidden');
-        }
-
-        function restoreHistoryItem(idx) {
-            historyIndex = idx;
-            currentPalette = [...history[historyIndex]];
-            renderPaletteBox();
-            updateHistoryButtons();
-            closeHistoryModal();
+        window.downloadAiFile = function(filename, base64EncodedContent) {
+            let decoded = atob(atob(base64EncodedContent));
+            const blob = new Blob([decoded], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            document.body.removeChild(a);
         }
     </script>
 </body>
