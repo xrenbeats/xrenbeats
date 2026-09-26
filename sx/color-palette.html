@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SensationalX Random Palette Generator</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = { darkMode: 'class' }
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+
+<body class="bg-gray-50 dark:bg-[#0b0b0c] text-gray-900 dark:text-white font-sans antialiased transition-colors duration-300 min-h-screen flex flex-col relative pb-20">
+
+    <!-- Header -->
+    <header class="flex items-center justify-between border-b border-gray-200 dark:border-[#2a2a2e] bg-white dark:bg-[#1c1c1f] px-[8%] py-4 sticky top-0 z-40 transition-colors">
+        <div class="text-xl font-extrabold tracking-widest uppercase flex items-center gap-2">
+            <span class="text-[#ff3366]">SX</span> PALETTE
+            <i data-lucide="sparkles" class="w-5 h-5 text-[#ff3366]"></i>
+        </div>
+        <nav class="flex items-center gap-6">
+            <a href="../index.html" class="text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-[#ff3366] transition-colors">Home</a>
+            <a href="../tools" class="text-sm font-bold uppercase tracking-wider text-gray-500 hover:text-[#ff3366] transition-colors">Tools</a>
+            <button onclick="toggleTheme()" class="text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors cursor-pointer">
+                <i id="themeIcon" data-lucide="moon" class="w-5 h-5"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center justify-center p-5 max-w-5xl mx-auto w-full gap-8">
+        
+        <!-- Main Generator Card -->
+        <div class="w-full max-w-xl bg-white dark:bg-[#1c1c1f] p-8 rounded-2xl border border-gray-200 dark:border-[#2a2a2e] shadow-xl text-center relative">
+            
+            <!-- Achievement Stats / Counter Badge -->
+            <div class="absolute top-4 right-4 bg-pink-100 dark:bg-pink-950/60 text-[#ff3366] text-xs font-bold px-3 py-1 rounded-full border border-pink-200 dark:border-pink-900 flex items-center gap-1 shadow-sm">
+                <i data-lucide="trophy" class="w-3.5 h-3.5"></i>
+                <span id="achievementStat">Slots: 5/5 Unlocked</span>
+            </div>
+
+            <h2 class="font-bold text-2xl mb-2 text-gray-900 dark:text-white mt-3">Random Palette Generator</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Click to copy hex • Double-click to edit custom color</p>
+            
+            <!-- Palette Container -->
+            <div id="paletteBox" class="flex justify-center h-32 my-6 gap-1 rounded-lg overflow-hidden shadow-inner w-full bg-gray-100 dark:bg-gray-800 p-1">
+                <!-- Colors will be injected here -->
+            </div>
+
+            <!-- Controls (History Back/Forward & Generate) -->
+            <div class="flex items-center justify-center gap-3 mt-4">
+                <button onclick="historyBack()" id="btnBack" title="Previous Palette" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <button onclick="generatePalette()" class="flex-1 bg-[#ff3366] hover:bg-[#e62e5c] transition-colors duration-200 text-white font-semibold px-8 py-3 rounded-lg shadow-md cursor-pointer">
+                    Generate Colors
+                </button>
+                <button onclick="historyForward()" id="btnForward" title="Next Palette" class="p-3 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- Bucket Saving & Comparison Section -->
+        <div class="w-full bg-white dark:bg-[#1c1c1f] p-6 rounded-2xl border border-gray-200 dark:border-[#2a2a2e] shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-[#ff3366]"></i>
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white">Save Buckets (Compare All)</h3>
+                </div>
+                <span class="text-xs text-gray-400">Generate 50 colors to unlock extra buckets!</span>
+            </div>
+
+            <!-- Smaller Slots Container -->
+            <div id="bucketsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+                <!-- Buckets injected dynamically -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Right Clear All Buckets Button -->
+    <button onclick="clearAllBuckets()" title="Clear All Buckets" class="fixed bottom-6 right-6 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/30 p-3.5 rounded-full shadow-2xl transition-all duration-200 cursor-pointer z-50 flex items-center justify-center group">
+        <i data-lucide="trash-2" class="w-5 h-5"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:ml-2 transition-all duration-300 ease-in-out text-xs font-bold uppercase tracking-wider">Clear Buckets</span>
+    </button>
+
+    <!-- Scripts -->
+    <script>
+        // State Variables
+        let currentPalette = [];
+        let history = [];
+        let historyIndex = -1;
+        
+        let totalColorsGenerated = parseInt(localStorage.getItem('sx_total_generated') || '0');
+        let savedBuckets = JSON.parse(localStorage.getItem('sx_saved_buckets') || '{}');
+
+        function getMaxSlots() {
+            return 5 + Math.floor(totalColorsGenerated / 50);
+        }
+
+        // Helper: Convert HEX to RGB string
+        function hexToRgb(hex) {
+            let sanitizedHex = hex.replace('#', '');
+            if (sanitizedHex.length === 3) {
+                sanitizedHex = sanitizedHex.split('').map(c => c + c).join('');
+            }
+            const num = parseInt(sanitizedHex, 16);
+            const r = (num >> 16) & 255;
+            const g = (num >> 8) & 255;
+            const b = num & 255;
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Helper: Parse any user input (HEX or RGB) into a valid HEX code
+        function parseColorInput(input) {
+            input = input.trim();
+            if (input.startsWith('#')) {
+                if (/^#([0-9A-F]{3}){1,2}$/i.test(input)) return input;
+            } else if (input.toLowerCase().startsWith('rgb')) {
+                const match = input.match(/\d+/g);
+                if (match && match.length >= 3) {
+                    const r = parseInt(match[0]).toString(16).padStart(2, '0');
+                    const g = parseInt(match[1]).toString(16).padStart(2, '0');
+                    const b = parseInt(match[2]).toString(16).padStart(2, '0');
+                    return `#${r}${g}${b}`;
+                }
+            } else {
+                // Try treating it as raw hex without '#'
+                const withHash = '#' + input;
+                if (/^#([0-9A-F]{3}){1,2}$/i.test(withHash)) return withHash;
+            }
+            return null;
+        }
+
+        // Theme Toggle Logic
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+            lucide.createIcons();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'moon' : 'sun');
+            lucide.createIcons();
+            
+            generatePalette(true);
+            renderBuckets();
+            updateAchievementUI();
+        });
+
+        function updateAchievementUI() {
+            const maxSlots = getMaxSlots();
+            document.getElementById('achievementStat').innerText = `Slots: ${Object.keys(savedBuckets).length}/${maxSlots} (Gen: ${totalColorsGenerated})`;
+        }
+
+        // Palette Generator Logic
+        function generatePalette(isInitial = false) {
+            const box = document.getElementById('paletteBox');
+            box.innerHTML = ''; 
+            currentPalette = [];
+
+            for (let i = 0; i < 5; i++) {
+                const array = new Uint8Array(3);
+                window.crypto.getRandomValues(array);
+                const color = '#' + Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+                currentPalette.push(color);
+            }
+
+            renderPaletteBox();
+
+            if (!isInitial) {
+                totalColorsGenerated += 5;
+                localStorage.setItem('sx_total_generated', totalColorsGenerated);
+                
+                history = history.slice(0, historyIndex + 1);
+                history.push([...currentPalette]);
+                historyIndex = history.length - 1;
+                updateHistoryButtons();
+                updateAchievementUI();
+            } else {
+                history.push([...currentPalette]);
+                historyIndex = 0;
+                updateHistoryButtons();
+            }
+        }
+
+        function renderPaletteBox() {
+            const box = document.getElementById('paletteBox');
+            box.innerHTML = '';
+
+            currentPalette.forEach((color, index) => {
+                const rgbVal = hexToRgb(color);
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'flex-1 h-full flex flex-col items-center justify-between text-xs text-white font-mono cursor-pointer transition-all duration-200 hover:scale-[1.03] hover:z-10 hover:shadow-lg rounded-sm group relative py-3';
+                colorDiv.style.backgroundColor = color;
+                
+                colorDiv.innerHTML = `
+                    <span class="bg-black/60 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity font-semibold pointer-events-none">Copy</span>
+                    <div class="mt-auto bg-black/50 px-2 py-1 rounded drop-shadow-sm flex flex-col items-center pointer-events-none">
+                        <span class="font-bold">${color}</span>
+                        <span class="text-[10px] text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">${rgbVal}</span>
+                    </div>
+                `;
+
+                // Click to copy hex code
+                colorDiv.addEventListener('click', () => {
+                    navigator.clipboard.writeText(color);
+                    const originalHTML = colorDiv.innerHTML;
+                    colorDiv.innerHTML = `
+                        <span class="bg-white/90 text-black px-2 py-1 rounded font-bold shadow-sm pointer-events-none">Copied!</span>
+                        <div class="mt-auto bg-black/50 px-2 py-1 rounded drop-shadow-sm flex flex-col items-center pointer-events-none">
+                            <span class="font-bold">${color}</span>
+                        </div>
+                    `;
+                    setTimeout(() => { colorDiv.innerHTML = originalHTML; }, 1000);
+                });
+
+                // Double click to edit custom color (HEX or RGB)
+                colorDiv.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    const userInput = prompt(`Enter custom HEX or RGB for color #${index + 1}:`, color);
+                    if (userInput !== null) {
+                        const parsedHex = parseColorInput(userInput);
+                        if (parsedHex) {
+                            currentPalette[index] = parsedHex;
+                            renderPaletteBox();
+                        } else {
+                            alert("Invalid color format! Please use a valid Hex code (e.g., #ff3366) or RGB code (e.g., rgb(255, 51, 102)).");
+                        }
+                    }
+                });
+
+                box.appendChild(colorDiv);
+            });
+        }
+
+        // History Navigation
+        function historyBack() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                currentPalette = [...history[historyIndex]];
+                renderPaletteBox();
+                updateHistoryButtons();
+            }
+        }
+
+        function historyForward() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                currentPalette = [...history[historyIndex]];
+                renderPaletteBox();
+                updateHistoryButtons();
+            }
+        }
+
+        function updateHistoryButtons() {
+            document.getElementById('btnBack').disabled = historyIndex <= 0;
+            document.getElementById('btnForward').disabled = historyIndex >= history.length - 1;
+        }
+
+        // --- Bucket Saving & LocalStorage Logic ---
+        function renderBuckets() {
+            const container = document.getElementById('bucketsContainer');
+            container.innerHTML = '';
+            const maxSlots = getMaxSlots();
+
+            for (let i = 1; i <= maxSlots; i++) {
+                const bucketData = savedBuckets[i];
+                const slotDiv = document.createElement('div');
+                slotDiv.className = "bg-gray-50 dark:bg-[#141417] border border-gray-200 dark:border-[#2a2a2e] rounded-xl p-3 flex flex-col gap-2 relative transition-all";
+
+                if (bucketData) {
+                    slotDiv.innerHTML = `
+                        <div class="flex items-center justify-between text-xs font-bold text-gray-500 dark:text-gray-400">
+                            <span>Bucket #${i}</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="loadBucket(${i})" title="Load Palette" class="hover:text-[#ff3366] transition-colors cursor-pointer"><i data-lucide="upload" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="clearBucket(${i})" title="Delete Bucket" class="hover:text-red-500 transition-colors cursor-pointer"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex h-12 rounded overflow-hidden shadow-inner gap-0.5 bg-gray-200 dark:bg-gray-800 p-0.5">
+                            ${bucketData.map(c => `<div style="background-color: ${c}" class="flex-1 cursor-pointer" onclick="navigator.clipboard.writeText('${c}')" title="Copy ${c}"></div>`).join('')}
+                        </div>
+                        <button onclick="copyBucketHexes(${i})" class="text-[10px] text-center text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors font-mono">Copy All Hexes</button>
+                    `;
+                } else {
+                    slotDiv.innerHTML = `
+                        <div class="flex items-center justify-between text-xs font-bold text-gray-400">
+                            <span>Bucket #${i}</span>
+                            <span>Empty</span>
+                        </div>
+                        <div class="h-12 rounded border border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center text-xs text-gray-400 bg-transparent">
+                            Slot Open
+                        </div>
+                        <button onclick="saveToBucket(${i})" class="w-full mt-1 bg-gray-200 dark:bg-gray-800 hover:bg-[#ff3366] hover:text-white text-gray-700 dark:text-gray-300 text-xs font-semibold py-1.5 rounded transition-colors cursor-pointer">
+                            Save Current
+                        </button>
+                    `;
+                }
+                container.appendChild(slotDiv);
+            }
+            lucide.createIcons();
+            updateAchievementUI();
+        }
+
+        function saveToBucket(slotNum) {
+            savedBuckets[slotNum] = [...currentPalette];
+            localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
+            renderBuckets();
+        }
+
+        function loadBucket(slotNum) {
+            if (savedBuckets[slotNum]) {
+                currentPalette = [...savedBuckets[slotNum]];
+                history = history.slice(0, historyIndex + 1);
+                history.push([...currentPalette]);
+                historyIndex = history.length - 1;
+                renderPaletteBox();
+                updateHistoryButtons();
+            }
+        }
+
+        function clearBucket(slotNum) {
+            delete savedBuckets[slotNum];
+            localStorage.setItem('sx_saved_buckets', JSON.stringify(savedBuckets));
+            renderBuckets();
+        }
+
+        function clearAllBuckets() {
+            if (confirm("Are you sure you want to clear all your saved buckets?")) {
+                savedBuckets = {};
+                localStorage.removeItem('sx_saved_buckets');
+                renderBuckets();
+            }
+        }
+
+        function copyBucketHexes(slotNum) {
+            if (savedBuckets[slotNum]) {
+                navigator.clipboard.writeText(savedBuckets[slotNum].join(', '));
+                alert(`Copied bucket #${slotNum} hex codes to clipboard!`);
+            }
+        }
+    </script>
+</body>
+</html>
