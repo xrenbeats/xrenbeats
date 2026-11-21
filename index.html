@@ -22,7 +22,6 @@
       --font-mono: 'Space Mono', monospace;
     }
 
-```
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
@@ -360,6 +359,16 @@ section {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 30% 30%, rgba(200,255,0,0.15), transparent 60%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.release-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 1;
 }
 
 .release-info .release-type {
@@ -507,6 +516,305 @@ footer {
   letter-spacing: 0.08em;
 }
 
+/* ── CUSTOM AUDIO PLAYER ── */
+.release-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.release-actions .track-launch {
+  margin-top: 0;
+}
+
+/* ── DOWNLOAD CHOOSER ── */
+.download-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 11000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0,0,0,0.78);
+  backdrop-filter: blur(8px);
+}
+
+.download-modal[hidden] { display: none; }
+
+.download-dialog {
+  width: min(100%, 440px);
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid rgba(200,255,0,0.32);
+  box-shadow: 0 20px 70px rgba(0,0,0,0.7), 0 0 35px rgba(200,255,0,0.08);
+  position: relative;
+}
+
+.download-dialog h2 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  line-height: 1;
+  margin-bottom: 0.6rem;
+}
+
+.download-dialog > p:not(.section-label) {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.download-choices {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.download-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  color: var(--white);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.download-choice:hover {
+  border-color: var(--accent);
+  background: rgba(200,255,0,0.06);
+  transform: translateX(3px);
+}
+
+.download-choice strong {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.download-choice span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.download-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.download-close:hover { color: var(--accent); border-color: var(--accent); }
+
+.music-player {
+  position: fixed;
+  z-index: 10000;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(240px, 1.4fr) minmax(130px, 0.8fr);
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.85rem 1.25rem;
+  background: rgba(17,17,17,0.96);
+  border: 1px solid rgba(200,255,0,0.28);
+  box-shadow: 0 12px 50px rgba(0,0,0,0.65), 0 0 30px rgba(200,255,0,0.08);
+  backdrop-filter: blur(18px);
+}
+
+.music-player[hidden] { display: none; }
+
+.player-track {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.player-art {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.player-track-info { min-width: 0; }
+.player-track-title {
+  overflow: hidden;
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.player-track-artist {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.player-center { min-width: 0; }
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.player-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--white);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.player-button:hover { color: var(--accent); transform: scale(1.08); }
+.player-button-main {
+  width: 38px;
+  height: 38px;
+  color: var(--black);
+  background: var(--accent);
+  border-radius: 50%;
+  font-size: 0.9rem;
+}
+.player-button-main:hover { color: var(--black); background: #d4ff1a; }
+
+.player-timeline {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+}
+
+.player-range {
+  --range-progress: 0%;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.player-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent) 0 var(--range-progress), rgba(255,255,255,0.16) var(--range-progress) 100%);
+}
+
+.player-range::-moz-range-track {
+  height: 4px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.16);
+}
+
+.player-range::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.player-range::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  margin-top: -5px;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(200,255,0,0.2), 0 0 12px rgba(200,255,0,0.55);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.player-range::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--black);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 2px rgba(200,255,0,0.2), 0 0 12px rgba(200,255,0,0.55);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.player-range:hover::-webkit-slider-thumb,
+.player-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(200,255,0,0.22), 0 0 16px rgba(200,255,0,0.7);
+}
+
+.player-range:hover::-moz-range-thumb,
+.player-range:focus-visible::-moz-range-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgba(200,255,0,0.22), 0 0 16px rgba(200,255,0,0.7);
+}
+
+.player-range:focus-visible {
+  outline: 1px solid rgba(200,255,0,0.45);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+.player-volume {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.player-volume .player-range { max-width: 100px; }
+
+@media (max-width: 768px) {
+  .music-player {
+    left: 0.5rem;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    grid-template-columns: 1fr auto;
+    gap: 0.35rem 0.75rem;
+    padding: 0.7rem 0.85rem;
+  }
+  .player-track { grid-column: 1; grid-row: 1; }
+  .player-art { width: 42px; height: 42px; flex-basis: 42px; }
+  .player-center { grid-column: 1 / -1; grid-row: 2; }
+  .player-controls { margin-bottom: 0.2rem; }
+  .player-volume { grid-column: 2; grid-row: 1; }
+  .player-volume .player-range { width: 58px; }
+}
+
 /* ── TEAM ── */
 #team {
   border-top: 1px solid var(--border);
@@ -621,7 +929,6 @@ footer {
   footer { flex-direction: column; gap: 1.5rem; text-align: center; }
   .footer-links { flex-wrap: wrap; justify-content: center; }
 }
-```
 
   </style>
 </head>
@@ -701,7 +1008,7 @@ footer {
         <div class="stat-label">Independent</div>
       </div>
       <div class="stat-card">
-        <div class="stat-num"Making Beats</div>
+        <div class="stat-num">Making Beats</div>
         <div class="stat-label">Together</div>
       </div>
       <div class="stat-card">
@@ -720,36 +1027,38 @@ footer {
   <section id="release">
     <p class="section-label">// Latest Release</p>
     <h2 class="section-title">New Drop.</h2>
-
-```
-<div class="release-card" style="background: #1e1e24; color: #fff; padding: 1.5rem; border-radius: 12px; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-family: sans-serif;">
-  <div class="release-art" style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🎧</div>
-  <div class="release-info">
-    <div class="release-type" style="text-transform: uppercase; font-size: 0.75rem; tracking: 1px; color: #aaa; margin-bottom: 0.25rem;">Single</div>
-    <h3 id="release-title" style="margin: 0 0 0.5rem 0; font-size: 1.5rem;">FAR AWAY!</h3>
-    <p class="release-artist" style="margin: 0 0 1rem 0; color: #ddd; font-size: 0.9rem;">Xren &mdash; XrenBeats</p>
-    
-    <!-- Inline Audio Player -->
-    <div class="audio-preview" style="margin-bottom: 1.25rem;">
-      <p style="margin: 0 0 0.5rem 0; font-size: 0.8rem; color: #888;">Preview Track:</p>
-      <audio controls style="width: 100%; height: 40px;">
-        <source src="https://files.catbox.moe/9bjvhf.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-      </audio>
+    <div class="release-card">
+      <div class="release-art">
+        <img src="assets/animal-hospital.png" alt="ANIMAL HOSPITAL cover art">
+      </div>
+      <div class="release-info">
+        <div class="release-type">Single</div>
+        <h3 id="release-title">ANIMAL HOSPITAL</h3>
+        <p class="release-artist">Xren &mdash; XrenBeats</p>
+        <p class="release-desc" id="release-desc">ANIMAL HOSPITAL — listen now.</p>
+        <button class="btn btn-primary track-launch" type="button" data-track="animal">▶ Play Track</button>
+      </div>
     </div>
+  </section>
 
-    <p class="release-desc" id="release-desc" style="margin: 0 0 1.25rem 0; font-size: 0.85rem; color: #bbb;">
-      FAR AWAY - out now!
-    </p>
-    
-    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-      <a href="https://www.mediafire.com/file/hnnxh9bn9y4wkij/far-away.wav/file" target="_blank" class="btn btn-primary" style="display: inline-block; background: #0070f3; color: white; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: bold;">Download WAV</a>
+  <section id="popular-releases">
+    <p class="section-label">// Popular Releases</p>
+    <h2 class="section-title">Listen Again.</h2>
+    <div class="release-card">
+      <div class="release-art">
+        <img src="assets/far-away.png" alt="Far Away cover art">
+      </div>
+      <div class="release-info">
+        <div class="release-type">Single</div>
+        <h3>FAR AWAY!</h3>
+        <p class="release-artist">Xren &mdash; XrenBeats</p>
+        <p class="release-desc">FAR AWAY — out now!</p>
+        <div class="release-actions">
+          <button class="btn btn-primary track-launch" type="button" data-track="far-away">▶ Play Preview</button>
+          <button class="btn btn-ghost" id="far-away-download" type="button">Download</button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-
-```
-
   </section>
 
   <!-- ALBUM COUNTDOWN (hidden by default — add class="active" to show) -->
@@ -786,50 +1095,47 @@ footer {
     <p class="section-label">// The Team</p>
     <h2 class="section-title">Who We Are.</h2>
     <div class="team-grid">
+      <!-- Xren (Owner) -->
+      <a class="team-card" href="https://xrenbeats.com">
+        <span class="team-owner-badge">Owner</span>
+        <div class="team-avatar">X</div>
+        <div class="team-name">Xren</div>
+        <div class="team-role">Founder &middot; Producer</div>
+        <div class="team-link">xrenbeats.com →</div>
+      </a>
 
-```
-  <!-- Xren (Owner) -->
-  <a class="team-card" href="https://xrenbeats.com">
-    <span class="team-owner-badge">Owner</span>
-    <div class="team-avatar">X</div>
-    <div class="team-name">Xren</div>
-    <div class="team-role">Founder &middot; Producer</div>
-    <div class="team-link">xrenbeats.com →</div>
-  </a>
+      <!-- XCamBeats -->
+      <a class="team-card" href="https://xrenbeats.com/team/xcambeats" target="_blank" rel="noopener">
+        <div class="team-avatar">XC</div>
+        <div class="team-name">XCamBeats</div>
+        <div class="team-role">Producer &middot; Artist</div>
+        <div class="team-link">View Profile →</div>
+      </a>
 
-  <!-- XCamBeats -->
-  <a class="team-card" href="https://xrenbeats.com/team/xcambeats" target="_blank" rel="noopener">
-    <div class="team-avatar">XC</div>
-    <div class="team-name">XCamBeats</div>
-    <div class="team-role">Producer &middot; Artist</div>
-    <div class="team-link">View Profile →</div>
-  </a>
+      <!-- XrenBruh :3 -->
+      <a class="team-card" href="https://xrenbeats.com/team/xrenbruh.html" target="_blank" rel="noopener">
+        <div class="team-avatar">XB</div>
+        <div class="team-name">XrenBruh</div>
+        <div class="team-role">Producer &middot; Artist</div>
+        <div class="team-link">View Profile →</div>
+      </a>
 
-     <!-- XrenBruh :3 -->
-  <a class="team-card" href="https://xrenbeats.com/team/xrenbruh.html" target="_blank" rel="noopener">
-    <div class="team-avatar">XB</div>
-    <div class="team-name">XrenBruh</div>
-    <div class="team-role">Producer &middot; Artist</div>
-    <div class="team-link">View Profile →</div>
-  </a>
-</div>
-```
+      <!-- Fallen Ashes -->
+      <a class="team-card" href="https://xrenbeats.com/team/fallen-ashes.html" target="_blank" rel="noopener">
+        <div class="team-avatar">FA</div>
+        <div class="team-name">Fallen Ashes</div>
+        <div class="team-role">Producer &middot; Artist</div>
+        <div class="team-link">View Profile →</div>
+      </a>
 
-   <!-- Fallen ashes -->
-  <a class="team-card" href="https://xrenbeats.com/team/fallen-ashes.html" target="_blank" rel="noopener">
-    <div class="team-avatar">FA</div>
-    <div class="team-name">Fallen Ashes</div>
-    <div class="team-role">Producer &middot; Artist</div>
-    <div class="team-link">View Profile →</div>
-  </a>
-
-   <!-- LILI! -->
-  <a class="team-card" href="https://xrenbeats.com/team/lili.html" target="_blank" rel="noopener">
-    <div class="team-avatar">L</div>
-    <div class="team-name">LILI!</div>
-    <div class="team-role">Singer &middot; Artist</div>
-    <div class="team-link">View Profile →</div>
-  </a>
+      <!-- LILI! -->
+      <a class="team-card" href="https://xrenbeats.com/team/lili.html" target="_blank" rel="noopener">
+        <div class="team-avatar">L</div>
+        <div class="team-name">LILI!</div>
+        <div class="team-role">Singer &middot; Artist</div>
+        <div class="team-link">View Profile →</div>
+      </a>
+    </div>
   </section>
 
   <!-- FOOTER -->
@@ -845,7 +1151,160 @@ footer {
     <p class="footer-copy">&copy; 2026 XrenBeats. All rights reserved.</p>
   </footer>
 
+  <div class="download-modal" id="download-modal" hidden>
+    <div class="download-dialog" role="dialog" aria-modal="true" aria-labelledby="download-title">
+      <button class="download-close" id="download-close" type="button" aria-label="Close download options">×</button>
+      <p class="section-label">// FAR AWAY!</p>
+      <h2 id="download-title">Choose a download.</h2>
+      <p>Pick where you want to get the track.</p>
+      <div class="download-choices">
+        <a class="download-choice" href="https://www.mediafire.com/file/hnnxh9bn9y4wkij/far-away.wav/file" target="_blank" rel="noopener">
+          <strong>Download via MediaFire</strong>
+          <span>Get the WAV file from MediaFire.</span>
+        </a>
+        <a class="download-choice" href="https://files.catbox.moe/9bjvhf.mp3" download="far-away.mp3">
+          <strong>Download from Files</strong>
+          <span>Download the MP3 directly from this site.</span>
+        </a>
+        <a class="download-choice" href="https://files.catbox.moe/9bjvhf.mp3" target="_blank" rel="noopener">
+          <strong>Open Files link</strong>
+          <span>Open the Catbox file in a new tab.</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="music-player" id="music-player" role="region" aria-label="Music player" hidden>
+    <div class="player-track">
+      <img class="player-art" id="player-art" src="assets/animal-hospital.png" alt="">
+      <div class="player-track-info">
+        <div class="player-track-title" id="player-title">ANIMAL HOSPITAL</div>
+        <div class="player-track-artist" id="player-artist">Xren — XrenBeats</div>
+      </div>
+    </div>
+    <div class="player-center">
+      <div class="player-controls">
+        <button class="player-button" id="player-prev" type="button" aria-label="Previous track">|◀</button>
+        <button class="player-button player-button-main" id="player-toggle" type="button" aria-label="Play">▶</button>
+        <button class="player-button" id="player-next" type="button" aria-label="Next track">▶|</button>
+      </div>
+      <div class="player-timeline">
+        <span id="player-current">0:00</span>
+        <input class="player-range" id="player-seek" type="range" min="0" max="1000" value="0" aria-label="Seek track">
+        <span id="player-duration">0:00</span>
+      </div>
+    </div>
+    <label class="player-volume" aria-label="Volume">
+      <span aria-hidden="true">♪</span>
+      <input class="player-range" id="player-volume" type="range" min="0" max="1" step="0.01" value="0.8" aria-label="Volume">
+    </label>
+  </div>
+  <audio id="site-audio" preload="metadata"></audio>
+
   <script>
+    // ── CUSTOM MUSIC PLAYER ───────────────────────────────────────────
+    const tracks = [
+      { id: 'animal', title: 'ANIMAL HOSPITAL', artist: 'Xren — XrenBeats', src: 'https://files.catbox.moe/sk6j4a.flac', art: 'assets/animal-hospital.png' },
+      { id: 'far-away', title: 'FAR AWAY!', artist: 'Xren — XrenBeats', src: 'https://files.catbox.moe/9bjvhf.mp3', art: 'assets/far-away.png' }
+    ];
+    const audio = document.getElementById('site-audio');
+    const player = document.getElementById('music-player');
+    const playToggle = document.getElementById('player-toggle');
+    const seek = document.getElementById('player-seek');
+    const downloadModal = document.getElementById('download-modal');
+    const downloadButton = document.getElementById('far-away-download');
+    const downloadClose = document.getElementById('download-close');
+    let currentTrackIndex = 0;
+
+    function closeDownloadModal() {
+      downloadModal.hidden = true;
+      downloadButton.focus();
+    }
+
+    downloadButton.addEventListener('click', () => {
+      downloadModal.hidden = false;
+      downloadClose.focus();
+    });
+    downloadClose.addEventListener('click', closeDownloadModal);
+    downloadModal.addEventListener('click', event => {
+      if (event.target === downloadModal) closeDownloadModal();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !downloadModal.hidden) closeDownloadModal();
+    });
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds)) return '0:00';
+      const minutes = Math.floor(seconds / 60);
+      return `${minutes}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+    }
+
+    function updateRangeFill(range, progress) {
+      const percentage = Math.max(0, Math.min(100, progress));
+      range.style.setProperty('--range-progress', `${percentage}%`);
+    }
+
+    const volumeRange = document.getElementById('player-volume');
+    updateRangeFill(seek, 0);
+    updateRangeFill(volumeRange, Number(volumeRange.value) * 100);
+    audio.volume = Number(volumeRange.value);
+
+    function loadTrack(index, autoplay = true) {
+      currentTrackIndex = (index + tracks.length) % tracks.length;
+      const track = tracks[currentTrackIndex];
+      document.getElementById('player-title').textContent = track.title;
+      document.getElementById('player-artist').textContent = track.artist;
+      document.getElementById('player-art').src = track.art;
+      audio.src = track.src;
+      player.hidden = false;
+      if (autoplay) {
+        audio.play().catch(() => {
+          playToggle.textContent = '▶';
+          playToggle.setAttribute('aria-label', 'Play');
+        });
+      }
+    }
+
+    function updatePlayButton() {
+      const isPlaying = !audio.paused;
+      playToggle.textContent = isPlaying ? 'Ⅱ' : '▶';
+      playToggle.setAttribute('aria-label', isPlaying ? 'Pause' : 'Play');
+    }
+
+    document.querySelectorAll('.track-launch').forEach(button => {
+      button.addEventListener('click', () => {
+        const index = tracks.findIndex(track => track.id === button.dataset.track);
+        if (index !== -1) loadTrack(index);
+      });
+    });
+
+    playToggle.addEventListener('click', () => {
+      if (!audio.src) return loadTrack(currentTrackIndex);
+      if (audio.paused) audio.play().catch(() => {});
+      else audio.pause();
+    });
+    document.getElementById('player-prev').addEventListener('click', () => loadTrack(currentTrackIndex - 1));
+    document.getElementById('player-next').addEventListener('click', () => loadTrack(currentTrackIndex + 1));
+    volumeRange.addEventListener('input', event => {
+      audio.volume = Number(event.target.value);
+      updateRangeFill(volumeRange, Number(event.target.value) * 100);
+    });
+    seek.addEventListener('input', () => {
+      updateRangeFill(seek, Number(seek.value) / 10);
+      if (Number.isFinite(audio.duration)) audio.currentTime = (Number(seek.value) / 1000) * audio.duration;
+    });
+    audio.addEventListener('timeupdate', () => {
+      document.getElementById('player-current').textContent = formatTime(audio.currentTime);
+      document.getElementById('player-duration').textContent = formatTime(audio.duration);
+      if (Number.isFinite(audio.duration) && !seek.matches(':active')) {
+        seek.value = String((audio.currentTime / audio.duration) * 1000);
+        updateRangeFill(seek, Number(seek.value) / 10);
+      }
+    });
+    audio.addEventListener('play', updatePlayButton);
+    audio.addEventListener('pause', updatePlayButton);
+    audio.addEventListener('ended', () => loadTrack(currentTrackIndex + 1));
+
     // ── COUNTDOWN CONFIG ──────────────────────────────────────────────
     // To activate the countdown:
     // 1. Set ALBUM_DROP_DATE to your album release date
